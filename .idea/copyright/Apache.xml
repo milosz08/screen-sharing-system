@@ -1,0 +1,6 @@
+<component name="CopyrightManager">
+  <copyright>
+    <option name="notice" value="Copyright (c) &amp;#36;originalComment.match(&quot;Copyright (\d+)&quot;, 1, &quot;-&quot;)&amp;#36;today.year by MULTIPLE AUTHORS&#10;Part of the CS study course project." />
+    <option name="myName" value="Apache" />
+  </copyright>
+</component>
