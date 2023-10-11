@@ -8,6 +8,7 @@ target/
 .idea/libraries/
 .idea/discord.xml
 .idea/aws.xml
+.idea/workspace.xml
 *.iws
 *.iml
 *.ipr
