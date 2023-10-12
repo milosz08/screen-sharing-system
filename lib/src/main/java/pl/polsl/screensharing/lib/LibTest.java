@@ -5,7 +5,6 @@
 package pl.polsl.screensharing.lib;
 
 public class LibTest {
-
     public static String verify() {
         return "Library test";
     }
