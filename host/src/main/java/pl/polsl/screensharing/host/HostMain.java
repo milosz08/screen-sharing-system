@@ -4,10 +4,18 @@
  */
 package pl.polsl.screensharing.host;
 
-import pl.polsl.screensharing.lib.LibTest;
+import pl.polsl.screensharing.host.gui.HostWindow;
+import pl.polsl.screensharing.lib.gui.AbstractFrame;
+import pl.polsl.screensharing.lib.gui.GuiConfig;
+
+import java.awt.*;
 
 public class HostMain {
     public static void main(String[] args) {
-        System.out.println(LibTest.verify());
+        GuiConfig.prepareForMacos();
+        EventQueue.invokeLater(() -> {
+            final AbstractFrame window = new HostWindow();
+            window.guiInit();
+        });
     }
 }
