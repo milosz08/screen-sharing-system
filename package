@@ -1,0 +1,13 @@
+#!/usr/bin/sh
+#
+# Copyright (c) 2023 by MULTIPLE AUTHORS
+# Part of the CS study course project.
+#
+
+set -e
+set -u
+
+mvn -N clean package install
+
+mvn -pl "client" clean assembly:assembly
+mvn -pl "host" clean assembly:assembly

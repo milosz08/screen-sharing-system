@@ -26,6 +26,13 @@
     <lib.version>1.0.0</lib.version>
   </properties>
 
+  <repositories>
+    <repository>
+      <id>local-repo</id>
+      <url>file:${user.home}/.m2/repository</url>
+    </repository>
+  </repositories>
+
   <dependencyManagement>
     <dependencies>
       <dependency>
