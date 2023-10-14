@@ -54,8 +54,10 @@ All executable JAR files will be available in `.bin` directory.
 ## Tech stack
 
 * Java SE 1.8
+* JSSE (Java Secure Socket Extension)
+* JCA (Java Cryptography Architecture)
+* JCE (Java Cryptography Extension)
 * Asymetric JKS certifications
-* Java TLS Socker wrapper
 
 <a name="project-status"></a>
 
