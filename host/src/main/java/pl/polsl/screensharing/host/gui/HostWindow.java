@@ -4,15 +4,17 @@
  */
 package pl.polsl.screensharing.host.gui;
 
-import pl.polsl.screensharing.lib.gui.AbstractFrame;
+import pl.polsl.screensharing.lib.AppType;
+import pl.polsl.screensharing.lib.gui.AbstractRootFrame;
 
-public class HostWindow extends AbstractFrame {
-    private static final String TITLE = "HOST - Screen sharing";
-    private static final String ICON_PATCH = "assets/host-icon.png";
-    private static final int WIDTH = 800;
-    private static final int HEIGHT = 600;
+import javax.swing.*;
 
+public class HostWindow extends AbstractRootFrame {
     public HostWindow() {
-        super(TITLE, WIDTH, HEIGHT, ICON_PATCH, HostWindow.class);
+        super(AppType.HOST, HostWindow.class);
+    }
+
+    @Override
+    protected void extendsFrame(JFrame frame, JPanel rootPanel) {
     }
 }

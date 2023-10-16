@@ -5,17 +5,17 @@
 package pl.polsl.screensharing.client;
 
 import pl.polsl.screensharing.client.gui.ClientWindow;
-import pl.polsl.screensharing.lib.gui.AbstractFrame;
+import pl.polsl.screensharing.lib.gui.AbstractRootFrame;
 import pl.polsl.screensharing.lib.gui.GuiConfig;
 
-import java.awt.*;
+import javax.swing.*;
 
 public class ClientMain {
     public static void main(String[] args) {
         GuiConfig.prepareForMacos();
-        EventQueue.invokeLater(() -> {
-            final AbstractFrame window = new ClientWindow();
-            window.guiInit();
+        SwingUtilities.invokeLater(() -> {
+            final AbstractRootFrame window = new ClientWindow();
+            window.guiInitAndShow();
         });
     }
 }

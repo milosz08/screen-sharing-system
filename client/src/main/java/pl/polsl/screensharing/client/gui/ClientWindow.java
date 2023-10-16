@@ -4,15 +4,21 @@
  */
 package pl.polsl.screensharing.client.gui;
 
-import pl.polsl.screensharing.lib.gui.AbstractFrame;
+import pl.polsl.screensharing.lib.AppType;
+import pl.polsl.screensharing.lib.gui.AbstractRootFrame;
 
-public class ClientWindow extends AbstractFrame {
-    private static final String TITLE = "CLIENT - Screen sharing";
-    private static final String ICON_PATH = "assets/client-icon.png";
-    private static final int WIDTH = 800;
-    private static final int HEIGHT = 600;
+import javax.swing.*;
+
+public class ClientWindow extends AbstractRootFrame {
+    private final TopMenuBar topMenuBar;
 
     public ClientWindow() {
-        super(TITLE, WIDTH, HEIGHT, ICON_PATH, ClientWindow.class);
+        super(AppType.CLIENT, ClientWindow.class);
+        this.topMenuBar = new TopMenuBar(this);
+    }
+
+    @Override
+    protected void extendsFrame(JFrame frame, JPanel rootPanel) {
+        frame.setJMenuBar(topMenuBar);
     }
 }
