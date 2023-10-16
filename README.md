@@ -3,7 +3,7 @@
 [![](https://img.shields.io/badge/Made%20with-Java%20SE%201.8-brown.svg)](https://www.java.com/en/)&nbsp;&nbsp;
 [![](https://img.shields.io/badge/Build%20with-Maven%203.9.4-1abc9c.svg)](https://maven.apache.org//)&nbsp;&nbsp;
 
-TL;DR Protected screen sharing system created with Java SE 1.8, JSSE, JCA, JCE and TSL Socket wrapper.
+TL;DR Protected screen sharing system created with Java SE 1.8, JSSE, JCA, JCE and Swing UI.
 
 ## Table of content
 
@@ -57,7 +57,7 @@ All executable JAR files will be available in `.bin` directory.
 * JSSE (Java Secure Socket Extension)
 * JCA (Java Cryptography Architecture)
 * JCE (Java Cryptography Extension)
-* Asymetric JKS certifications
+* Swing UI, AWT
 
 <a name="project-status"></a>
 
