@@ -9,8 +9,8 @@ public class GuiConfig {
     }
 
     public static void prepareForMacos() {
+        // set menu for macos top floating bar
         if (System.getProperty("os.name").contains("Mac")) {
-            // set menu for macos top floating bar
             System.setProperty("apple.laf.useScreenMenuBar", "true");
         }
     }

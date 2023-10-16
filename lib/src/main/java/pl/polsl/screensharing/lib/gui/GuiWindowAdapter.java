@@ -9,17 +9,17 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 public class GuiWindowAdapter extends WindowAdapter {
-    private final AbstractFrame frame;
+    private final AbstractRootFrame frame;
 
-    public GuiWindowAdapter(AbstractFrame frame) {
+    public GuiWindowAdapter(AbstractRootFrame frame) {
         this.frame = frame;
     }
 
     @Override
     public void windowClosing(WindowEvent e) {
-        final int result = JOptionPane
-            .showConfirmDialog(frame, "Are you sure to close app?", "Please confirm", JOptionPane.YES_NO_OPTION);
-        if (result == 0) {
+        final int result = JOptionPane.showConfirmDialog(frame,
+            "Are you sure to close app?", "Please confirm", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+        if (result == JOptionPane.YES_OPTION) {
             System.exit(0);
         }
     }
