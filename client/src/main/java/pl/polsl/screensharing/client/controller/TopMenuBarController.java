@@ -4,29 +4,26 @@
  */
 package pl.polsl.screensharing.client.controller;
 
-import pl.polsl.screensharing.client.gui.ClientWindow;
-import pl.polsl.screensharing.client.gui.EstablishedConnectionWindow;
-import pl.polsl.screensharing.client.gui.LastConnectionsWindow;
-import pl.polsl.screensharing.client.gui.TopMenuBar;
+import pl.polsl.screensharing.client.view.ClientWindow;
+import pl.polsl.screensharing.client.view.EstablishedConnectionWindow;
+import pl.polsl.screensharing.client.view.LastConnectionsWindow;
 
 import javax.swing.*;
 
 public class TopMenuBarController {
     private final ClientWindow clientWindow;
-    private final TopMenuBar topMenuBar;
 
-    public TopMenuBarController(ClientWindow clientWindow, TopMenuBar topMenuBar) {
+    public TopMenuBarController(ClientWindow clientWindow) {
         this.clientWindow = clientWindow;
-        this.topMenuBar = topMenuBar;
     }
 
     public void openMakeConnectionWindow() {
-        final EstablishedConnectionWindow window = topMenuBar.getMakeConnectionWindow();
+        final EstablishedConnectionWindow window = clientWindow.getEstablishedConnectionWindow();
         window.setVisible(true);
     }
 
     public void openLastConnectionsWindow() {
-        final LastConnectionsWindow window = topMenuBar.getLastConnectionsWindow();
+        final LastConnectionsWindow window = clientWindow.getLastConnectionsWindow();
         window.setVisible(true);
     }
 

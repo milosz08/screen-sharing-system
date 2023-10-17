@@ -10,7 +10,7 @@ import pl.polsl.screensharing.lib.gui.components.JAppPasswordTextField;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
-public class EstabilishedConnectionController {
+public class EstabilishedConnectionController implements IConnectController {
     private final EstablishedConnectionWindow connectionWindow;
 
     private boolean isSaveEnabled;
@@ -19,6 +19,7 @@ public class EstabilishedConnectionController {
         this.connectionWindow = connectionWindow;
     }
 
+    @Override
     public void estabilishedConnection() {
         final String host = connectionWindow.getIpAddressTextField().getText();
         final String port = connectionWindow.getPortTextField().getText();
@@ -35,8 +36,7 @@ public class EstabilishedConnectionController {
     }
 
     public void closeWindow() {
-        connectionWindow.setVisible(false);
-        connectionWindow.dispose();
+        connectionWindow.closeWindow();
         isSaveEnabled = true;
     }
 
@@ -51,7 +51,6 @@ public class EstabilishedConnectionController {
     public void resetSaveButtonState() {
         final JButton saveDetailsButton = connectionWindow.getSaveDetailsButton();
         saveDetailsButton.setEnabled(!isSaveEnabled);
-
     }
 
     public void togglePasswordField(ActionEvent event) {

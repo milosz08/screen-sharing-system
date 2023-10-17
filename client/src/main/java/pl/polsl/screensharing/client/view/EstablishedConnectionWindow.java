@@ -2,7 +2,7 @@
  * Copyright (c) 2023 by MULTIPLE AUTHORS
  * Part of the CS study course project.
  */
-package pl.polsl.screensharing.client.gui;
+package pl.polsl.screensharing.client.view;
 
 import pl.polsl.screensharing.client.controller.EstabilishedConnectionController;
 import pl.polsl.screensharing.lib.AppType;

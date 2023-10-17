@@ -2,7 +2,7 @@
  * Copyright (c) 2023 by MULTIPLE AUTHORS
  * Part of the CS study course project.
  */
-package pl.polsl.screensharing.client.gui;
+package pl.polsl.screensharing.client.view;
 
 import pl.polsl.screensharing.client.controller.TopMenuBarController;
 
@@ -10,9 +10,6 @@ import javax.swing.*;
 
 public class TopMenuBar extends JMenuBar {
     private final TopMenuBarController controller;
-
-    private final EstablishedConnectionWindow establishedConnectionWindow;
-    private final LastConnectionsWindow lastConnectionsWindow;
 
     private final JMenu connectMenu = new JMenu("Connect");
 
@@ -23,9 +20,7 @@ public class TopMenuBar extends JMenuBar {
     };
 
     public TopMenuBar(ClientWindow clientWindow) {
-        this.establishedConnectionWindow = new EstablishedConnectionWindow(clientWindow);
-        this.lastConnectionsWindow = new LastConnectionsWindow(clientWindow);
-        this.controller = new TopMenuBarController(clientWindow, this);
+        this.controller = new TopMenuBarController(clientWindow);
 
         connectMenuItems[0].addActionListener(e -> controller.openMakeConnectionWindow());
         connectMenuItems[1].addActionListener(e -> controller.openLastConnectionsWindow());
@@ -39,13 +34,5 @@ public class TopMenuBar extends JMenuBar {
         for (final JMenuItem item : items) {
             menu.add(item);
         }
-    }
-
-    public EstablishedConnectionWindow getMakeConnectionWindow() {
-        return establishedConnectionWindow;
-    }
-
-    public LastConnectionsWindow getLastConnectionsWindow() {
-        return lastConnectionsWindow;
     }
 }

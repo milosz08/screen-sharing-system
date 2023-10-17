@@ -32,7 +32,7 @@ public abstract class AbstractPopupDialog extends JDialog {
         this.iconImageOptional = appType.getIconPath(frameClazz);
     }
 
-    protected void initDialogGui() {
+    protected void initDialogGui(boolean fixedToContent) {
         iconImageOptional.ifPresent(this::setIconImage);
         rootPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         rootPanel.setLayout(new BorderLayout(10, 10));
@@ -47,7 +47,14 @@ public abstract class AbstractPopupDialog extends JDialog {
         setTitle(title);
         extendsDialog(this, rootPanel);
         add(rootPanel);
-        pack();
+        if (fixedToContent) {
+            pack();
+        }
+    }
+
+    public void closeWindow() {
+        setVisible(false);
+        dispose();
     }
 
     protected abstract void extendsDialog(JDialog dialog, JPanel rootPanel);

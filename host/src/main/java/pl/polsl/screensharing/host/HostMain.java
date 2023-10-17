@@ -4,7 +4,7 @@
  */
 package pl.polsl.screensharing.host;
 
-import pl.polsl.screensharing.host.gui.HostWindow;
+import pl.polsl.screensharing.host.view.HostWindow;
 import pl.polsl.screensharing.lib.gui.AbstractRootFrame;
 import pl.polsl.screensharing.lib.gui.GuiConfig;
 
