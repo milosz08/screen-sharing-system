@@ -4,8 +4,8 @@
  */
 package pl.polsl.screensharing.client.controller;
 
-import pl.polsl.screensharing.client.gui.EstablishedConnectionWindow;
-import pl.polsl.screensharing.lib.gui.components.JAppPasswordTextField;
+import pl.polsl.screensharing.client.view.EstablishedConnectionWindow;
+import pl.polsl.screensharing.lib.gui.component.JAppPasswordTextField;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -25,12 +25,14 @@ public class EstabilishedConnectionController implements IConnectController {
         final String port = connectionWindow.getPortTextField().getText();
         final String username = connectionWindow.getUsernameTextField().getText();
         final String password = new String(connectionWindow.getPasswordTextField().getPassword());
+        final String description = connectionWindow.getDescriptionTextArea().getText();
         final boolean isSaving = connectionWindow.getAddToListCheckbox().isSelected();
 
         // TODO: check ip address, check port
 
         System.out.println("dialing up... bip boop bip");
-        System.out.printf("%s:%s, username: %s, password: %s, is saving: %s%n", host, port, username, password, isSaving);
+        System.out.printf("%s:%s, username: %s, password: %s, is saving: %s, description: %s%n",
+            host, port, username, password, isSaving, description);
 
         closeWindow();
     }

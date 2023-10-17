@@ -8,8 +8,9 @@ import pl.polsl.screensharing.client.controller.EstabilishedConnectionController
 import pl.polsl.screensharing.lib.AppType;
 import pl.polsl.screensharing.lib.gui.AbstractPopupDialog;
 import pl.polsl.screensharing.lib.gui.GridBagDrawer;
-import pl.polsl.screensharing.lib.gui.components.JAppPasswordTextField;
-import pl.polsl.screensharing.lib.gui.components.JAppTextField;
+import pl.polsl.screensharing.lib.gui.component.JAppPasswordTextField;
+import pl.polsl.screensharing.lib.gui.component.JAppTextArea;
+import pl.polsl.screensharing.lib.gui.component.JAppTextField;
 import pl.polsl.screensharing.lib.gui.input.SimpleDocumentListener;
 
 import javax.swing.*;
@@ -21,6 +22,7 @@ import java.awt.*;
 public class EstablishedConnectionWindow extends AbstractPopupDialog {
     private final JPanel formPanel;
     private final JPanel rightPanel;
+    private final JPanel addtlDataPanel;
 
     private final JPanel basicInfoPanel;
     private final TitledBorder basicInfoTitledBorder;
@@ -47,6 +49,10 @@ public class EstablishedConnectionWindow extends AbstractPopupDialog {
     private final JAppPasswordTextField passwordTextField;
     private final JCheckBox passwordTogglerCheckbox;
 
+    private final JScrollPane descriptionScrollPane;
+    private final JLabel descriptionLabel;
+    private final JAppTextArea descriptionTextArea;
+
     private final JButton estabilishedConnButton;
     private final JButton cancelButton;
     private final JButton saveDetailsButton;
@@ -62,7 +68,8 @@ public class EstablishedConnectionWindow extends AbstractPopupDialog {
         this.documentListener = new SimpleDocumentListener(controller::resetSaveButtonState);
 
         this.formPanel = new JPanel();
-        this.rightPanel = new JPanel(new GridLayout(6, 1, 5, 5));
+        this.rightPanel = new JPanel(new GridLayout(8, 1, 5, 5));
+        this.addtlDataPanel = new JPanel(new GridBagLayout());
 
         this.basicInfoPanel = new JPanel(new GridBagLayout());
         this.basicInfoTitledBorder = new TitledBorder("Connection parameters");
@@ -94,9 +101,14 @@ public class EstablishedConnectionWindow extends AbstractPopupDialog {
         this.saveDetailsButton = new JButton("Save");
         this.addToListCheckbox = new JCheckBox("Add to list", true);
 
+        this.descriptionLabel = new JLabel("Connection description (optional)");
+        this.descriptionTextArea = new JAppTextArea(3, 30, 100);
+        this.descriptionScrollPane = new JScrollPane(descriptionTextArea);
+
         this.ipAddressTextField.getDocument().addDocumentListener(this.documentListener);
         this.portTextField.getDocument().addDocumentListener(this.documentListener);
         this.usernameTextField.getDocument().addDocumentListener(this.documentListener);
+        this.descriptionTextArea.getDocument().addDocumentListener(this.documentListener);
 
         this.passwordTogglerCheckbox.addActionListener(controller::togglePasswordField);
 
@@ -104,7 +116,7 @@ public class EstablishedConnectionWindow extends AbstractPopupDialog {
         this.cancelButton.addActionListener(e -> controller.closeWindow());
         this.saveDetailsButton.addActionListener(controller::saveConnectionDetails);
 
-        initDialogGui();
+        initDialogGui(true);
     }
 
     @Override
@@ -120,9 +132,14 @@ public class EstablishedConnectionWindow extends AbstractPopupDialog {
         basicInfoDrawer.drawGridBagLabels(ipAddressLabel, portLabel);
         basicInfoDrawer.drawGridBagInputs(ipAddressTextField, portTextField);
 
-        final GridBagDrawer addtlnInfoDrawer = new GridBagDrawer(additlnInfoPanel, addtlnInfoGridBag, gridInset);
+        final GridBagDrawer addtlnInfoDrawer = new GridBagDrawer(addtlDataPanel, addtlnInfoGridBag, gridInset);
         addtlnInfoDrawer.drawGridBagLabels(usernameLabel, passwordLabel);
         addtlnInfoDrawer.drawGridBagInputs(usernameTextField, passwordPanel);
+
+        descriptionTextArea.setLineWrap(true);
+
+        final GridBagDrawer textareaDrawer = new GridBagDrawer(additlnInfoPanel, addtlnInfoGridBag, new Insets(0, 0, 3, 0));
+        textareaDrawer.drawGridBagLabels(addtlDataPanel, descriptionLabel, descriptionScrollPane);
 
         formPanel.setLayout(new BoxLayout(this.formPanel, BoxLayout.Y_AXIS));
         formPanel.add(basicInfoPanel);
@@ -131,8 +148,11 @@ public class EstablishedConnectionWindow extends AbstractPopupDialog {
         rightPanel.add(estabilishedConnButton);
         rightPanel.add(saveDetailsButton);
         rightPanel.add(addToListCheckbox);
-        rightPanel.add(new JPanel());
-        rightPanel.add(new JPanel());
+
+        for (int i = 0; i < 4; i++) {
+            rightPanel.add(new JPanel());
+        }
+
         rightPanel.add(cancelButton);
 
         rootPanel.add(formPanel, BorderLayout.CENTER);
@@ -161,5 +181,9 @@ public class EstablishedConnectionWindow extends AbstractPopupDialog {
 
     public JButton getSaveDetailsButton() {
         return saveDetailsButton;
+    }
+
+    public JAppTextArea getDescriptionTextArea() {
+        return descriptionTextArea;
     }
 }

@@ -18,6 +18,11 @@ public class SimpleDocumentFilter extends DocumentFilter {
         this.regex = regex;
     }
 
+    public SimpleDocumentFilter(int maxCharacters) {
+        this.maxCharacters = maxCharacters;
+        this.regex = null;
+    }
+
     @Override
     public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr) throws BadLocationException {
         String newText = fb.getDocument().getText(0, fb.getDocument().getLength()) + string;
@@ -35,6 +40,9 @@ public class SimpleDocumentFilter extends DocumentFilter {
     }
 
     private boolean isValidRegex(String text) {
+        if (regex == null) {
+            return true;
+        }
         return Pattern.matches(regex, text);
     }
 }
