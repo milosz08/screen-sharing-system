@@ -7,7 +7,7 @@
 set -e
 set -u
 
-mvn clean package install
+./mvnw clean package install
 
-mvn -pl "client" clean assembly:assembly
-mvn -pl "host" clean assembly:assembly
+./mvnw -pl "client" clean assembly:assembly
+./mvnw -pl "host" clean assembly:assembly
