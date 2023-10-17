@@ -48,7 +48,7 @@ $ ./package
 ```
 or for Windows system:
 ```cmd
-.\package.bin
+.\package.bat
 ```
 
 All executable JAR files will be available in `.bin` directory.
