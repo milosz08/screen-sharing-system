@@ -4,7 +4,7 @@
  */
 package pl.polsl.screensharing.client.controller;
 
-import pl.polsl.screensharing.client.view.LastConnectionsWindow;
+import pl.polsl.screensharing.client.view.dialog.LastConnectionsWindow;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;

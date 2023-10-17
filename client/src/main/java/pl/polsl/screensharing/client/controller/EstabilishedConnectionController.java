@@ -4,7 +4,7 @@
  */
 package pl.polsl.screensharing.client.controller;
 
-import pl.polsl.screensharing.client.view.EstablishedConnectionWindow;
+import pl.polsl.screensharing.client.view.dialog.EstablishedConnectionWindow;
 import pl.polsl.screensharing.lib.gui.component.JAppPasswordTextField;
 
 import javax.swing.*;
@@ -12,7 +12,6 @@ import java.awt.event.ActionEvent;
 
 public class EstabilishedConnectionController implements IConnectController {
     private final EstablishedConnectionWindow connectionWindow;
-
     private boolean isSaveEnabled;
 
     public EstabilishedConnectionController(EstablishedConnectionWindow connectionWindow) {

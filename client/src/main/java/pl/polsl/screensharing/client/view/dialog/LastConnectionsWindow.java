@@ -2,7 +2,7 @@
  * Copyright (c) 2023 by MULTIPLE AUTHORS
  * Part of the CS study course project.
  */
-package pl.polsl.screensharing.client.view;
+package pl.polsl.screensharing.client.view.dialog;
 
 import pl.polsl.screensharing.client.controller.LastConnectionsController;
 import pl.polsl.screensharing.client.view.ClientWindow;
@@ -29,10 +29,10 @@ public class LastConnectionsWindow extends AbstractPopupDialog {
 
     private final LastConnectionsController controller;
 
-    private final String[] tableHeaders = {"IP address", "Port", "Description"};
+    private final String[] tableHeaders = { "IP address", "Port", "Description" };
     private final Object[][] dane = {
-        {"127.0.0.1", "9091", "This is a sample description"},
-        {"127.0.0.1", "9094", "This is a another sample description"},
+        { "127.0.0.1", "9091", "This is a sample description" },
+        { "127.0.0.1", "9094", "This is a another sample description" },
     };
 
     public LastConnectionsWindow(ClientWindow clientWindow) {
