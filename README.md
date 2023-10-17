@@ -41,10 +41,14 @@ $ mvn -pl "<module>" clean assembly:assembly
 
 where `<module>` is `client` or `host`.
 
-3. Optionally, build all modules via:
+3. Optionally, build all modules via (for UNIX system):
 
 ```bash
 $ ./package
+```
+or for Windows system:
+```cmd
+.\package.bin
 ```
 
 All executable JAR files will be available in `.bin` directory.
