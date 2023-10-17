@@ -53,9 +53,9 @@ public class EstablishedConnectionWindow extends AbstractPopupDialog {
     private final JLabel descriptionLabel;
     private final JAppTextArea descriptionTextArea;
 
-    private final JButton estabilishedConnButton;
-    private final JButton cancelButton;
-    private final JButton saveDetailsButton;
+    private final JAppIconButton estabilishedConnButton;
+    private final JAppIconButton cancelButton;
+    private final JAppIconButton saveDetailsButton;
     private final JCheckBox addToListCheckbox;
 
     private final EstabilishedConnectionController controller;
@@ -96,9 +96,9 @@ public class EstablishedConnectionWindow extends AbstractPopupDialog {
         this.passwordTextField = new JAppPasswordTextField(10);
         this.passwordTogglerCheckbox = new JCheckBox("Show password");
 
-        this.estabilishedConnButton = new JButton("Connect >>");
-        this.cancelButton = new JButton("Cancel");
-        this.saveDetailsButton = new JButton("Save");
+        this.estabilishedConnButton = new JAppIconButton("Connect", AppIcon.CONNECT_TO_REMOTE_SERVER);
+        this.cancelButton = new JAppIconButton("Cancel", AppIcon.CANCEL);
+        this.saveDetailsButton = new JAppIconButton("Save", AppIcon.SAVE);
         this.addToListCheckbox = new JCheckBox("Add to list", true);
 
         this.descriptionLabel = new JLabel("Connection description (optional)");
@@ -179,7 +179,7 @@ public class EstablishedConnectionWindow extends AbstractPopupDialog {
         return addToListCheckbox;
     }
 
-    public JButton getSaveDetailsButton() {
+    public JAppIconButton getSaveDetailsButton() {
         return saveDetailsButton;
     }
 

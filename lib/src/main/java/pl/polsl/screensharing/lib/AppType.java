@@ -4,14 +4,14 @@
  */
 package pl.polsl.screensharing.lib;
 
-import javax.swing.*;
+import pl.polsl.screensharing.lib.gui.file.FileUtils;
+
 import java.awt.*;
-import java.net.URL;
 import java.util.Optional;
 
 public enum AppType {
-    HOST("HOST", "host-icon", new Dimension(1280, 720)),
-    CLIENT("CLIENT", "client-icon", new Dimension(1280, 720));
+    HOST("HOST", "HostIcon", new Dimension(1280, 720)),
+    CLIENT("CLIENT", "ClientIcon", new Dimension(1280, 720));
 
     private final String rootWindowName;
     private final String iconName;
@@ -28,12 +28,11 @@ public enum AppType {
     }
 
     public Optional<Image> getIconPath(Class<?> frameClazz) {
-        final URL iconUrl = frameClazz.getClassLoader()
-            .getResource(String.format("/assets/%s.png", iconName));
-        if (iconUrl == null) {
-            return Optional.empty();
-        }
-        return Optional.of(new ImageIcon(iconUrl).getImage());
+        return FileUtils.getRootWindowIconFromResources(frameClazz, this);
+    }
+
+    public String getIconName() {
+        return iconName;
     }
 
     public Dimension getRootWindowSize() {

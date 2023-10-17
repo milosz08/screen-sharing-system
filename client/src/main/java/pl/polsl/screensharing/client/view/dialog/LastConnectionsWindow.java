@@ -5,8 +5,11 @@
 package pl.polsl.screensharing.client.view;
 
 import pl.polsl.screensharing.client.controller.LastConnectionsController;
+import pl.polsl.screensharing.client.view.ClientWindow;
+import pl.polsl.screensharing.lib.AppIcon;
 import pl.polsl.screensharing.lib.AppType;
 import pl.polsl.screensharing.lib.gui.AbstractPopupDialog;
+import pl.polsl.screensharing.lib.gui.component.JAppIconButton;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -19,10 +22,10 @@ public class LastConnectionsWindow extends AbstractPopupDialog {
     private final DefaultTableModel tableModel;
     private final JTable table;
 
-    private final JButton estabilishedConnButton;
-    private final JButton cancelButton;
-    private final JButton removeRowButton;
-    private final JButton removeAllRowsButton;
+    private final JAppIconButton estabilishedConnButton;
+    private final JAppIconButton cancelButton;
+    private final JAppIconButton removeRowButton;
+    private final JAppIconButton removeAllRowsButton;
 
     private final LastConnectionsController controller;
 
@@ -43,11 +46,11 @@ public class LastConnectionsWindow extends AbstractPopupDialog {
 
         this.scrollPane = new JScrollPane(table);
 
-        this.estabilishedConnButton = new JButton("Connect >>");
-        this.cancelButton = new JButton("Cancel");
-        this.removeRowButton = new JButton("Remove");
-        this.removeAllRowsButton = new JButton("Remove all");
-
+        this.estabilishedConnButton = new JAppIconButton("Connect", AppIcon.CONNECT_TO_REMOTE_SERVER);
+        this.removeRowButton = new JAppIconButton("Remove", AppIcon.DELETE_CLAUSE);
+        this.removeAllRowsButton = new JAppIconButton("Remove all", AppIcon.DELETE_TABLE);
+        this.cancelButton = new JAppIconButton("Cancel", AppIcon.CANCEL);
+        
         this.estabilishedConnButton.addActionListener(e -> controller.estabilishedConnection());
         this.cancelButton.addActionListener(e -> closeWindow());
         this.removeRowButton.addActionListener(e -> controller.removeSelectedRow());
