@@ -4,6 +4,7 @@
  */
 package pl.polsl.screensharing.client.view;
 
+import pl.polsl.screensharing.client.ClientState;
 import pl.polsl.screensharing.client.view.dialog.AboutDialogWindow;
 import pl.polsl.screensharing.client.view.dialog.EstablishedConnectionWindow;
 import pl.polsl.screensharing.client.view.dialog.LastConnectionsWindow;
@@ -17,6 +18,8 @@ import javax.swing.*;
 import java.awt.*;
 
 public class ClientWindow extends AbstractRootFrame {
+    private final ClientState clientState;
+
     private final TopMenuBar topMenuBar;
     private final TopToolbar topToolbar;
 
@@ -27,14 +30,15 @@ public class ClientWindow extends AbstractRootFrame {
 
     public ClientWindow() {
         super(AppType.CLIENT, ClientWindow.class);
+        this.clientState = new ClientState();
 
+        this.topMenuBar = new TopMenuBar(this);
+        this.topToolbar = new TopToolbar(this);
+        
         this.establishedConnectionWindow = new EstablishedConnectionWindow(this);
         this.lastConnectionsWindow = new LastConnectionsWindow(this);
         this.aboutDialogWindow = new AboutDialogWindow(this);
         this.licenseDialogWindow = new LicenseDialogWindow(this);
-
-        this.topMenuBar = new TopMenuBar(this);
-        this.topToolbar = new TopToolbar(this);
     }
 
     @Override
@@ -57,5 +61,9 @@ public class ClientWindow extends AbstractRootFrame {
 
     public LicenseDialogWindow getLicenseDialogWindow() {
         return licenseDialogWindow;
+    }
+
+    public ClientState getCurrentState() {
+        return clientState;
     }
 }

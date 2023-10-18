@@ -10,6 +10,7 @@ import pl.polsl.screensharing.lib.AppIcon;
 import pl.polsl.screensharing.lib.AppType;
 import pl.polsl.screensharing.lib.gui.AbstractPopupDialog;
 import pl.polsl.screensharing.lib.gui.component.JAppIconButton;
+import pl.polsl.screensharing.lib.gui.input.AppCellEditor;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -19,29 +20,27 @@ public class LastConnectionsWindow extends AbstractPopupDialog {
     private final JPanel rightPanel;
     private final JScrollPane scrollPane;
 
-    private final DefaultTableModel tableModel;
-    private final JTable table;
+    private final LastConnectionsController controller;
 
     private final JAppIconButton estabilishedConnButton;
     private final JAppIconButton cancelButton;
     private final JAppIconButton removeRowButton;
     private final JAppIconButton removeAllRowsButton;
 
-    private final LastConnectionsController controller;
-
     private final String[] tableHeaders = { "IP address", "Port", "Description" };
-    private final Object[][] dane = {
-        { "127.0.0.1", "9091", "This is a sample description" },
-        { "127.0.0.1", "9094", "This is a another sample description" },
-    };
+
+    private final JTable table;
+    private final DefaultTableModel tableModel;
+    private final Object[][] tableData;
 
     public LastConnectionsWindow(ClientWindow clientWindow) {
         super(AppType.HOST, 620, 210, "Last connections", clientWindow, LastConnectionsWindow.class);
-        this.controller = new LastConnectionsController(this);
+        this.controller = new LastConnectionsController(clientWindow, this);
 
         this.rightPanel = new JPanel(new GridLayout(5, 1, 5, 5));
 
-        this.tableModel = new DefaultTableModel(dane, tableHeaders);
+        this.tableData = clientWindow.getCurrentState().getParsedLastConnectionsList();
+        this.tableModel = new DefaultTableModel(tableData, tableHeaders);
         this.table = new JTable(tableModel);
 
         this.scrollPane = new JScrollPane(table);
@@ -50,12 +49,18 @@ public class LastConnectionsWindow extends AbstractPopupDialog {
         this.removeRowButton = new JAppIconButton("Remove", AppIcon.DELETE_CLAUSE);
         this.removeAllRowsButton = new JAppIconButton("Remove all", AppIcon.DELETE_TABLE);
         this.cancelButton = new JAppIconButton("Cancel", AppIcon.CANCEL);
-        
+
         this.estabilishedConnButton.addActionListener(e -> controller.estabilishedConnection());
         this.cancelButton.addActionListener(e -> closeWindow());
         this.removeRowButton.addActionListener(e -> controller.removeSelectedRow());
         this.removeAllRowsButton.addActionListener(e -> controller.removeAllRows());
+
+        AppCellEditor.setCellEditor(0, 15, "^[0-9.]+$", table);
+        AppCellEditor.setCellEditor(1, 6, "^[0-9]+$", table);
+        AppCellEditor.setCellEditor(2, 100, table);
+
         this.table.getSelectionModel().addListSelectionListener(e -> controller.markupSelectedRow());
+        this.table.addPropertyChangeListener(controller::updateLastConnectionsData);
 
         initDialogGui(false);
     }

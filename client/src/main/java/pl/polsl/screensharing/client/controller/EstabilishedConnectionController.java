@@ -4,6 +4,9 @@
  */
 package pl.polsl.screensharing.client.controller;
 
+import pl.polsl.screensharing.client.ClientState;
+import pl.polsl.screensharing.client.dto.ConnectionDetailsDto;
+import pl.polsl.screensharing.client.view.ClientWindow;
 import pl.polsl.screensharing.client.view.dialog.EstablishedConnectionWindow;
 import pl.polsl.screensharing.lib.gui.component.JAppPasswordTextField;
 
@@ -12,10 +15,16 @@ import java.awt.event.ActionEvent;
 
 public class EstabilishedConnectionController implements IConnectController {
     private final EstablishedConnectionWindow connectionWindow;
+    private final ClientState state;
+
     private boolean isSaveEnabled;
 
-    public EstabilishedConnectionController(EstablishedConnectionWindow connectionWindow) {
-        this.connectionWindow = connectionWindow;
+    public EstabilishedConnectionController(
+        ClientWindow clientWindow,
+        EstablishedConnectionWindow establishedConnectionWindow
+    ) {
+        this.connectionWindow = establishedConnectionWindow;
+        this.state = clientWindow.getCurrentState();
     }
 
     @Override
@@ -26,6 +35,13 @@ public class EstabilishedConnectionController implements IConnectController {
         final String password = new String(connectionWindow.getPasswordTextField().getPassword());
         final String description = connectionWindow.getDescriptionTextArea().getText();
         final boolean isSaving = connectionWindow.getAddToListCheckbox().isSelected();
+
+        final ConnectionDetailsDto connDetails = state.getConnectionDetails();
+
+        connDetails.setConnectionDetails(host, Integer.parseInt(port));
+        connDetails.setAuthConnectionDetails(username, password);
+
+        state.addNewSavedConnection(host, Integer.parseInt(port), description);
 
         // TODO: check ip address, check port
 
