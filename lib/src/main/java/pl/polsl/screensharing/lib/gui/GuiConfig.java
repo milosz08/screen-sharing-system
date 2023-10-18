@@ -4,14 +4,18 @@
  */
 package pl.polsl.screensharing.lib.gui;
 
+import javax.swing.*;
+import javax.swing.plaf.metal.MetalLookAndFeel;
+
 public class GuiConfig {
     private GuiConfig() {
     }
 
-    public static void prepareForMacos() {
-        // set menu for macos top floating bar
-        if (System.getProperty("os.name").contains("Mac")) {
-            System.setProperty("apple.laf.useScreenMenuBar", "true");
+    public static void setDefaultLayout() {
+        try {
+            UIManager.setLookAndFeel(new MetalLookAndFeel());
+        } catch (UnsupportedLookAndFeelException e) {
+            throw new RuntimeException(e);
         }
     }
 }

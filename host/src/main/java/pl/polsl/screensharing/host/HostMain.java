@@ -12,7 +12,7 @@ import javax.swing.*;
 
 public class HostMain {
     public static void main(String[] args) {
-        GuiConfig.prepareForMacos();
+        GuiConfig.setDefaultLayout();
         SwingUtilities.invokeLater(() -> {
             final AbstractRootFrame window = new HostWindow();
             window.guiInitAndShow();

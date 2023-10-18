@@ -12,7 +12,7 @@ import javax.swing.*;
 
 public class ClientMain {
     public static void main(String[] args) {
-        GuiConfig.prepareForMacos();
+        GuiConfig.setDefaultLayout();
         SwingUtilities.invokeLater(() -> {
             final AbstractRootFrame window = new ClientWindow();
             window.guiInitAndShow();
