@@ -22,7 +22,7 @@ public class TopToolbar extends JToolBar {
         this.controller = new TopToolbarController(clientWindow);
 
         this.createConnectionButton = new JAppIconButton("Connect", AppIcon.ADD_CONNECTION, true);
-        this.disconnectButton = new JAppIconButton("Disconnect", AppIcon.DISCONNECT, true);
+        this.disconnectButton = new JAppIconButton("Disconnect", AppIcon.DISCONNECT, true, false);
         this.lastConnectionsButton = new JAppIconButton("Last connections", AppIcon.CHECK_BOX_LIST, true);
 
         this.createConnectionButton.addActionListener(e -> controller.openMakeConnectionWindow());
@@ -39,5 +39,11 @@ public class TopToolbar extends JToolBar {
     private void addButtonWithSeparation(JAppIconButton button) {
         add(button);
         add(Box.createHorizontalStrut(5));
+    }
+
+    public void setConnectionButtonsState(boolean onIsConnect) {
+        disconnectButton.setEnabled(onIsConnect);
+        createConnectionButton.setEnabled(!onIsConnect);
+        lastConnectionsButton.setEnabled(!onIsConnect);
     }
 }

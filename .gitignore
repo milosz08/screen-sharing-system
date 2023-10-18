@@ -14,3 +14,6 @@ target/
 *.iml
 *.ipr
 .bin/
+client.json
+server.json
+.logs/

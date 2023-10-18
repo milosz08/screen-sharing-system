@@ -4,8 +4,10 @@
  */
 package pl.polsl.screensharing.client.controller;
 
-import pl.polsl.screensharing.client.ClientState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pl.polsl.screensharing.client.dto.LastConnectionRowDto;
+import pl.polsl.screensharing.client.state.ClientState;
 import pl.polsl.screensharing.client.view.ClientWindow;
 import pl.polsl.screensharing.client.view.dialog.LastConnectionsWindow;
 
@@ -17,11 +19,15 @@ import java.util.List;
 import java.util.Objects;
 
 public class LastConnectionsController implements IConnectController {
+    private static final Logger LOG = LoggerFactory.getLogger(EstabilishedConnectionController.class);
+
     private final LastConnectionsWindow lastConnectionsWindow;
+    private final ClientWindow clientWindow;
     private final ClientState state;
 
     public LastConnectionsController(ClientWindow clientWindow, LastConnectionsWindow lastConnectionsWindow) {
         this.lastConnectionsWindow = lastConnectionsWindow;
+        this.clientWindow = clientWindow;
         this.state = clientWindow.getCurrentState();
     }
 
@@ -30,11 +36,19 @@ public class LastConnectionsController implements IConnectController {
         final String ip = getTableValue(0);
         final String port = getTableValue(1);
 
-        System.out.printf("connecting... %s:%s%n", ip, port);
+        state.setConnectionEstabilished(true);
+        clientWindow.getTopMenuBar().setConnectionButtonsState(true);
+        clientWindow.getTopToolbar().setConnectionButtonsState(true);
+
+        // TODO: connect to host
+
+        LOG.info("Estabilished connection: {}", state.getConnectionDetails());
+        lastConnectionsWindow.closeWindow();
     }
 
     public void removeSelectedRow() {
         final JTable table = lastConnectionsWindow.getTable();
+        final int selectedRow = table.getSelectedRow();
 
         final String ip = getTableValue(0);
         final String port = getTableValue(1);
@@ -44,8 +58,8 @@ public class LastConnectionsController implements IConnectController {
             "Please confirm", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 
         if (result == JOptionPane.YES_OPTION) {
-            ((DefaultTableModel) table.getModel()).removeRow(table.getSelectedRow());
-            state.removeConnectionByIndex(table.getSelectedRow());
+            ((DefaultTableModel) table.getModel()).removeRow(selectedRow);
+            state.removeConnectionByIndex(selectedRow);
         }
     }
 
@@ -62,7 +76,6 @@ public class LastConnectionsController implements IConnectController {
             }
             state.removeAllSavedConnections();
         }
-
     }
 
     public void updateLastConnectionsData(PropertyChangeEvent evt) {
@@ -74,9 +87,10 @@ public class LastConnectionsController implements IConnectController {
         }
         for (int i = 0; i < table.getRowCount(); i++) {
             final String ip = (String) table.getValueAt(i, 0);
-            final int port = Integer.parseInt((String) table.getValueAt(i, 1));
-            final String description = (String) table.getValueAt(i, 2);
-            rows.add(new LastConnectionRowDto(ip, port, description));
+            final int port = Integer.parseInt(String.valueOf(table.getValueAt(i, 1)));
+            final String username = (String) table.getValueAt(i, 2);
+            final String description = (String) table.getValueAt(i, 3);
+            rows.add(new LastConnectionRowDto(ip, port, username, description));
         }
         state.copyAndPushLastSavedConnections(rows);
     }

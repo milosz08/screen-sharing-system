@@ -5,9 +5,11 @@
 package pl.polsl.screensharing.client.view.dialog;
 
 import pl.polsl.screensharing.client.controller.EstabilishedConnectionController;
+import pl.polsl.screensharing.client.dto.ConnectionDetailsDto;
 import pl.polsl.screensharing.client.view.ClientWindow;
 import pl.polsl.screensharing.lib.AppIcon;
 import pl.polsl.screensharing.lib.AppType;
+import pl.polsl.screensharing.lib.SharedConstants;
 import pl.polsl.screensharing.lib.gui.AbstractPopupDialog;
 import pl.polsl.screensharing.lib.gui.GridBagDrawer;
 import pl.polsl.screensharing.lib.gui.component.JAppIconButton;
@@ -63,12 +65,14 @@ public class EstablishedConnectionWindow extends AbstractPopupDialog {
 
     private final EstabilishedConnectionController controller;
     private final SimpleDocumentListener documentListener;
+    private final ConnectionDetailsDto connDetails;
 
     public EstablishedConnectionWindow(ClientWindow clientWindow) {
         super(AppType.HOST, 480, 210, "Established connection", clientWindow, EstablishedConnectionWindow.class);
 
         this.controller = new EstabilishedConnectionController(clientWindow, this);
         this.documentListener = new SimpleDocumentListener(controller::resetSaveButtonState);
+        this.connDetails = clientWindow.getCurrentState().getConnectionDetails();
 
         this.formPanel = new JPanel();
         this.rightPanel = new JPanel(new GridLayout(8, 1, 5, 5));
@@ -86,13 +90,13 @@ public class EstablishedConnectionWindow extends AbstractPopupDialog {
         this.gridInset = new Insets(3, 3, 3, 3);
 
         this.ipAddressLabel = new JLabel("IP address");
-        this.ipAddressTextField = new JAppTextField("127.0.0.1", 10, 15, "^[0-9.]+$");
+        this.ipAddressTextField = new JAppTextField(connDetails.getHostAddress(), 10, 15, SharedConstants.IPV4_REGEX);
 
         this.portLabel = new JLabel("Connection port (optional)");
-        this.portTextField = new JAppTextField("9191", 10, 6, "^[0-9]+$");
+        this.portTextField = new JAppTextField(String.valueOf(connDetails.getIpv4().getPort()), 10, 6, SharedConstants.PORT_REGEX);
 
         this.usernameLabel = new JLabel("Username (optional)");
-        this.usernameTextField = new JAppTextField(10, 50, "^[0-9a-z]+$");
+        this.usernameTextField = new JAppTextField(connDetails.getUsername(), 10, 50, SharedConstants.USERNAME_REGEX);
 
         this.passwordPanel = new JPanel();
         this.passwordLabel = new JLabel("Password");
@@ -105,7 +109,7 @@ public class EstablishedConnectionWindow extends AbstractPopupDialog {
         this.addToListCheckbox = new JCheckBox("Add to list", true);
 
         this.descriptionLabel = new JLabel("Connection description (optional)");
-        this.descriptionTextArea = new JAppTextArea(3, 30, 100);
+        this.descriptionTextArea = new JAppTextArea(connDetails.getDescription(), 3, 30, 100);
         this.descriptionScrollPane = new JScrollPane(descriptionTextArea);
 
         this.ipAddressTextField.getDocument().addDocumentListener(this.documentListener);

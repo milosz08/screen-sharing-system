@@ -14,4 +14,9 @@ public class JAppMenuIconItem extends JMenuItem {
         super(text);
         FileUtils.getImageIconFromResources(JAppMenuIconItem.class, iconName).ifPresent(this::setIcon);
     }
+
+    public JAppMenuIconItem(String text, AppIcon iconName, boolean isEnabled) {
+        this(text, iconName);
+        setEnabled(isEnabled);
+    }
 }

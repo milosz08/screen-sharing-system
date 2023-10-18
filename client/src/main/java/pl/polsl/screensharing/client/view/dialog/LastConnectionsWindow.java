@@ -27,14 +27,14 @@ public class LastConnectionsWindow extends AbstractPopupDialog {
     private final JAppIconButton removeRowButton;
     private final JAppIconButton removeAllRowsButton;
 
-    private final String[] tableHeaders = { "IP address", "Port", "Description" };
+    private final String[] tableHeaders = { "IP address", "Port", "Username", "Description" };
 
     private final JTable table;
     private final DefaultTableModel tableModel;
     private final Object[][] tableData;
 
     public LastConnectionsWindow(ClientWindow clientWindow) {
-        super(AppType.HOST, 620, 210, "Last connections", clientWindow, LastConnectionsWindow.class);
+        super(AppType.HOST, 650, 210, "Last connections", clientWindow, LastConnectionsWindow.class);
         this.controller = new LastConnectionsController(clientWindow, this);
 
         this.rightPanel = new JPanel(new GridLayout(5, 1, 5, 5));
@@ -57,7 +57,8 @@ public class LastConnectionsWindow extends AbstractPopupDialog {
 
         AppCellEditor.setCellEditor(0, 15, "^[0-9.]+$", table);
         AppCellEditor.setCellEditor(1, 6, "^[0-9]+$", table);
-        AppCellEditor.setCellEditor(2, 100, table);
+        AppCellEditor.setCellEditor(2, 40, "^[0-9a-zA-Z]+$", table);
+        AppCellEditor.setCellEditor(3, 100, table);
 
         this.table.getSelectionModel().addListSelectionListener(e -> controller.markupSelectedRow());
         this.table.addPropertyChangeListener(controller::updateLastConnectionsData);
@@ -69,6 +70,7 @@ public class LastConnectionsWindow extends AbstractPopupDialog {
     protected void extendsDialog(JDialog dialog, JPanel rootPanel) {
         setColumnWidth(0, 100);
         setColumnWidth(1, 60);
+        setColumnWidth(2, 100);
 
         estabilishedConnButton.setEnabled(false);
         removeRowButton.setEnabled(false);

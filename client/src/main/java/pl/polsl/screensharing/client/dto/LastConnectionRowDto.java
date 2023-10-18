@@ -7,22 +7,31 @@ package pl.polsl.screensharing.client.dto;
 import java.util.Objects;
 
 public class LastConnectionRowDto {
-    private final String ip;
-    private final int port;
-    private final String description;
+    private String ipv4;
+    private int port;
+    private String username;
+    private String description;
 
-    public LastConnectionRowDto(String ip, int port, String description) {
-        this.ip = ip;
+    public LastConnectionRowDto() {
+    }
+
+    public LastConnectionRowDto(String ipv4, int port, String username, String description) {
+        this.ipv4 = ipv4;
         this.port = port;
+        this.username = username;
         this.description = description;
     }
 
-    public String getIp() {
-        return ip;
+    public String getIpv4() {
+        return ipv4;
     }
 
     public int getPort() {
         return port;
+    }
+
+    public String getUsername() {
+        return username;
     }
 
     public String getDescription() {
@@ -34,20 +43,22 @@ public class LastConnectionRowDto {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         LastConnectionRowDto that = (LastConnectionRowDto) o;
-        return port == that.port && Objects.equals(ip, that.ip) && Objects.equals(description, that.description);
+        return port == that.port && Objects.equals(ipv4, that.ipv4) && Objects.equals(description, that.description)
+            && Objects.equals(username, that.username);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(ip, port, description);
+        return Objects.hash(ipv4, port, description, username);
     }
 
     @Override
     public String toString() {
         return "LastConnectionRowDto{" +
-            "ip='" + ip + '\'' +
+            "ipv4='" + ipv4 + '\'' +
             ", port=" + port +
             ", description='" + description + '\'' +
+            ", username='" + username + '\'' +
             '}';
     }
 }

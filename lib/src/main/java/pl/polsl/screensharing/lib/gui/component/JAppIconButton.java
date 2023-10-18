@@ -23,4 +23,9 @@ public class JAppIconButton extends JButton {
         setFocusable(false);
         FileUtils.getImageIconFromResources(getClass(), iconName).ifPresent(this::setIcon);
     }
+
+    public JAppIconButton(String text, AppIcon iconName, boolean setDesciption, boolean isEnabled) {
+        this(text, iconName, setDesciption);
+        setEnabled(isEnabled);
+    }
 }

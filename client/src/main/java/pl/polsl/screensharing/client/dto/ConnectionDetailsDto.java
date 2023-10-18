@@ -4,24 +4,44 @@
  */
 package pl.polsl.screensharing.client.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.apache.commons.lang3.StringUtils;
+import pl.polsl.screensharing.lib.SharedConstants;
+
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.SocketAddress;
+import java.net.UnknownHostException;
 
 public class ConnectionDetailsDto {
-    private SocketAddress ipv4;
+    private InetSocketAddress ipv4;
     private String username;
-    private String password;
+    private String description;
 
-    public void setConnectionDetails(String ipv4, int port) {
+    public ConnectionDetailsDto() {
+        this.ipv4 = new InetSocketAddress(SharedConstants.DEFAULT_HOST, 9091);
+        this.username = parseLocalMachineAddress();
+        this.description = StringUtils.EMPTY;
+    }
+
+    public ConnectionDetailsDto(String ipv4, int port, String username, String description) {
         this.ipv4 = new InetSocketAddress(ipv4, port);
-    }
-
-    public void setAuthConnectionDetails(String username, String password) {
         this.username = username;
-        this.password = password;
+        this.description = description;
     }
 
-    public SocketAddress getIpv4() {
+    public void setConnectionDetails(ConnectionDetailsDto detailsDto) {
+        this.ipv4 = detailsDto.ipv4;
+        this.username = detailsDto.username;
+        this.description = detailsDto.description;
+    }
+
+    public void updateConnectionDetails(ConnectionDetailsDto connectionDetailsDto) {
+        this.ipv4 = connectionDetailsDto.ipv4;
+        this.username = connectionDetailsDto.username;
+        this.description = connectionDetailsDto.description;
+    }
+
+    public InetSocketAddress getIpv4() {
         return ipv4;
     }
 
@@ -29,8 +49,21 @@ public class ConnectionDetailsDto {
         return username;
     }
 
-    public String getPassword() {
-        return password;
+    public String getDescription() {
+        return description;
+    }
+
+    @JsonIgnore
+    public String getHostAddress() {
+        return ipv4.getAddress().getHostAddress();
+    }
+
+    private String parseLocalMachineAddress() {
+        try {
+            return InetAddress.getLocalHost().getHostAddress();
+        } catch (UnknownHostException e) {
+            return SharedConstants.DEFAULT_USERNAME;
+        }
     }
 
     @Override
@@ -38,7 +71,7 @@ public class ConnectionDetailsDto {
         return "ConnectionDetailsDto{" +
             "ipv4=" + ipv4 +
             ", username='" + username + '\'' +
-            ", password='" + password + '\'' +
+            ", description='" + description + '\'' +
             '}';
     }
 }

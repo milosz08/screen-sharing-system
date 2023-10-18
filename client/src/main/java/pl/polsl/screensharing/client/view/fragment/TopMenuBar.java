@@ -14,29 +14,49 @@ import javax.swing.*;
 public class TopMenuBar extends JMenuBar {
     private final TopMenuBarController controller;
 
-    private final JMenu connectMenu = new JMenu("Connect");
-    private final JMenu helpMenu = new JMenu("Help");
+    private final JMenu connectMenu;
+    private final JMenu helpMenu;
 
-    private final JAppMenuIconItem[] connectMenuItems = {
-        new JAppMenuIconItem("Established connection", AppIcon.ADD_CONNECTION),
-        new JAppMenuIconItem("Disconnect", AppIcon.DISCONNECT),
-        new JAppMenuIconItem("Last connections", AppIcon.CHECK_BOX_LIST),
-    };
+    private final JAppMenuIconItem estabilishedConnectionMenuItem;
+    private final JAppMenuIconItem disconnectMenuItem;
+    private final JAppMenuIconItem lastConnectionsMenuItem;
 
-    private final JAppMenuIconItem[] helpMenuItems = {
-        new JAppMenuIconItem("About", AppIcon.CODE_INFORMATION),
-        new JAppMenuIconItem("License", AppIcon.CODE_INFORMATION_RULE),
-    };
+    private final JAppMenuIconItem aboutMenuItem;
+    private final JAppMenuIconItem licenseMenuItem;
+
+    private final JAppMenuIconItem[] connectMenuItems;
+    private final JAppMenuIconItem[] helpMenuItems;
 
     public TopMenuBar(ClientWindow clientWindow) {
         this.controller = new TopMenuBarController(clientWindow);
 
-        connectMenuItems[0].addActionListener(e -> controller.openMakeConnectionWindow());
-        connectMenuItems[1].addActionListener(e -> controller.disconnectFromSession());
-        connectMenuItems[2].addActionListener(e -> controller.openLastConnectionsWindow());
+        this.connectMenu = new JMenu("Connect");
+        this.helpMenu = new JMenu("Help");
 
-        helpMenuItems[0].addActionListener(e -> controller.openAboutProgramSection());
-        helpMenuItems[1].addActionListener(e -> controller.openLicenseSection());
+        this.estabilishedConnectionMenuItem = new JAppMenuIconItem("Established connection", AppIcon.ADD_CONNECTION);
+        this.disconnectMenuItem = new JAppMenuIconItem("Disconnect", AppIcon.DISCONNECT, false);
+        this.lastConnectionsMenuItem = new JAppMenuIconItem("Last connections", AppIcon.CHECK_BOX_LIST);
+
+        this.aboutMenuItem = new JAppMenuIconItem("About", AppIcon.CODE_INFORMATION);
+        this.licenseMenuItem = new JAppMenuIconItem("License", AppIcon.CODE_INFORMATION_RULE);
+
+        this.connectMenuItems = new JAppMenuIconItem[]{
+            estabilishedConnectionMenuItem,
+            disconnectMenuItem,
+            lastConnectionsMenuItem
+        };
+
+        this.helpMenuItems = new JAppMenuIconItem[]{
+            aboutMenuItem,
+            licenseMenuItem
+        };
+
+        this.estabilishedConnectionMenuItem.addActionListener(e -> controller.openMakeConnectionWindow());
+        this.disconnectMenuItem.addActionListener(e -> controller.disconnectFromSession());
+        this.lastConnectionsMenuItem.addActionListener(e -> controller.openLastConnectionsWindow());
+
+        this.aboutMenuItem.addActionListener(e -> controller.openAboutProgramSection());
+        this.licenseMenuItem.addActionListener(e -> controller.openLicenseSection());
 
         addMenuItems(connectMenu, connectMenuItems);
         addMenuItems(helpMenu, helpMenuItems);
@@ -49,5 +69,11 @@ public class TopMenuBar extends JMenuBar {
         for (final JMenuItem item : items) {
             menu.add(item);
         }
+    }
+
+    public void setConnectionButtonsState(boolean onIsConnect) {
+        this.estabilishedConnectionMenuItem.setEnabled(!onIsConnect);
+        this.disconnectMenuItem.setEnabled(onIsConnect);
+        this.lastConnectionsMenuItem.setEnabled(!onIsConnect);
     }
 }
