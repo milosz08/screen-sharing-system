@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class LastConnectionsController implements IConnectController {
-    private static final Logger LOG = LoggerFactory.getLogger(EstabilishedConnectionController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LastConnectionsController.class);
 
     private final LastConnectionsWindow lastConnectionsWindow;
     private final ClientWindow clientWindow;
