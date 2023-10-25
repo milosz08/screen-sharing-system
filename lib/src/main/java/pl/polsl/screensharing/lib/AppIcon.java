@@ -14,7 +14,9 @@ public enum AppIcon {
     DELETE_CLAUSE("DeleteClause"),
     DELETE_TABLE("DeleteTable"),
     DISCONNECT("Disconnect"),
-    SAVE("Save");
+    SAVE("Save"),
+    SERVER_SETTINGS("ServerSettings");
+
 
     private final String name;
 
