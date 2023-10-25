@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class LastConnectionsController implements IConnectController {
+public class LastConnectionsController implements ConnectController {
     private static final Logger LOG = LoggerFactory.getLogger(LastConnectionsController.class);
 
     private final LastConnectionsWindow lastConnectionsWindow;

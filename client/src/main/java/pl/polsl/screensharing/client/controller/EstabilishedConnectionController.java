@@ -17,7 +17,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 
-public class EstabilishedConnectionController implements IConnectController {
+public class EstabilishedConnectionController implements ConnectController {
     private static final Logger LOG = LoggerFactory.getLogger(EstabilishedConnectionController.class);
 
     private final EstablishedConnectionWindow connectionWindow;

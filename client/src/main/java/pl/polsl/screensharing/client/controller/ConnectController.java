@@ -4,6 +4,6 @@
  */
 package pl.polsl.screensharing.client.controller;
 
-interface IConnectController {
+interface ConnectController {
     void estabilishedConnection();
 }
