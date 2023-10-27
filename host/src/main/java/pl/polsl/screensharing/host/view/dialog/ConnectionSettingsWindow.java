@@ -11,8 +11,6 @@ import pl.polsl.screensharing.lib.gui.AbstractPopupDialog;
 import javax.swing.*;
 
 public class ConnectionSettingsWindow extends AbstractPopupDialog {
-
-
     public ConnectionSettingsWindow(HostWindow hostWindow) {
         super(AppType.HOST, 480, 210, "Connection settings", hostWindow, ConnectionSettingsWindow.class);
 
@@ -21,8 +19,5 @@ public class ConnectionSettingsWindow extends AbstractPopupDialog {
 
     @Override
     protected void extendsDialog(JDialog dialog, JPanel rootPanel) {
-
     }
-
-
 }
