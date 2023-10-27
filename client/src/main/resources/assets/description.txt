@@ -1,0 +1,3 @@
+This is a client for Screen Sharing System available
+to connect with host and capture transmitted screen
+content.

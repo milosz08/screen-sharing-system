@@ -1,0 +1,2 @@
+This is a host application for Screen Sharing System
+available create screen real-time data stream.
