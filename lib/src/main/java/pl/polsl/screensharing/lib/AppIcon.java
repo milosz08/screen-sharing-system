@@ -16,8 +16,7 @@ public enum AppIcon {
     DISCONNECT("Disconnect"),
     SAVE("Save"),
     SERVER_SETTINGS("ServerSettings");
-
-
+    
     private final String name;
 
     AppIcon(String name) {
