@@ -5,6 +5,7 @@
 package pl.polsl.screensharing.client;
 
 import lombok.extern.slf4j.Slf4j;
+import pl.polsl.screensharing.client.net.StartNet;
 import pl.polsl.screensharing.client.state.ClientState;
 import pl.polsl.screensharing.client.view.ClientWindow;
 import pl.polsl.screensharing.lib.gui.AbstractRootFrame;
@@ -21,6 +22,8 @@ public class ClientMain {
             log.info("Starting GUI thread.");
             final AbstractRootFrame window = new ClientWindow(clientState);
             window.guiInitAndShow();
+            thread.start();
+
             log.info("Initialized application GUI.");
         });
     }

@@ -5,6 +5,7 @@
 package pl.polsl.screensharing.host.view;
 
 import lombok.Getter;
+import pl.polsl.screensharing.host.state.HostState;
 import pl.polsl.screensharing.host.view.dialog.AboutDialogWindow;
 import pl.polsl.screensharing.host.view.dialog.ConnectionSettingsWindow;
 import pl.polsl.screensharing.host.view.dialog.LicenseDialogWindow;

@@ -28,7 +28,7 @@ public class EstabilishedConnectionController implements ConnectController {
     ) {
         this.connectionWindow = establishedConnectionWindow;
         this.clientWindow = clientWindow;
-        this.state = clientWindow.getCurrentState();
+        this.state = clientWindow.getClientState();
     }
 
     @Override

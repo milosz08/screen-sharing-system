@@ -26,7 +26,7 @@ public class LastConnectionsController implements ConnectController {
     public LastConnectionsController(ClientWindow clientWindow, LastConnectionsWindow lastConnectionsWindow) {
         this.lastConnectionsWindow = lastConnectionsWindow;
         this.clientWindow = clientWindow;
-        this.state = clientWindow.getCurrentState();
+        this.state = clientWindow.getClientState();
     }
 
     @Override

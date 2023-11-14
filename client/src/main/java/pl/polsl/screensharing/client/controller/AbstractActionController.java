@@ -19,7 +19,7 @@ abstract class AbstractActionController {
 
     AbstractActionController(ClientWindow clientWindow) {
         this.clientWindow = clientWindow;
-        this.state = clientWindow.getCurrentState();
+        this.state = clientWindow.getClientState();
     }
 
     public void openMakeConnectionWindow() {
@@ -31,7 +31,7 @@ abstract class AbstractActionController {
         final LastConnectionsWindow window = clientWindow.getLastConnectionsWindow();
         window.setVisible(true);
     }
-    
+
     public void disconnectFromSession() {
         final int result = JOptionPane.showConfirmDialog(clientWindow, "Are you sure to end up connection?",
             "Please confirm", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);

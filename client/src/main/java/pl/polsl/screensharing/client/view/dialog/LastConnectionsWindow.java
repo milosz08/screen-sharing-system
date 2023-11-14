@@ -41,7 +41,7 @@ public class LastConnectionsWindow extends AbstractPopupDialog {
 
         this.rightPanel = new JPanel(new GridLayout(5, 1, 5, 5));
 
-        this.tableData = clientWindow.getCurrentState().getParsedLastConnectionsList();
+        this.tableData = clientWindow.getClientState().getParsedLastConnectionsList();
         this.tableModel = new DefaultTableModel(tableData, tableHeaders);
         this.table = new JTable(tableModel);
 

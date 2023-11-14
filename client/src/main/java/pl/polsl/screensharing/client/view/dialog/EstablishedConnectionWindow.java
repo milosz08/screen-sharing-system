@@ -74,7 +74,7 @@ public class EstablishedConnectionWindow extends AbstractPopupDialog {
 
         this.controller = new EstabilishedConnectionController(clientWindow, this);
         this.documentListener = new SimpleDocumentListener(controller::resetSaveButtonState);
-        this.connDetails = clientWindow.getCurrentState().getConnectionDetails();
+        this.connDetails = clientWindow.getClientState().getConnectionDetails();
 
         this.formPanel = new JPanel();
         this.rightPanel = new JPanel(new GridLayout(8, 1, 5, 5));
