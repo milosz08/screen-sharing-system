@@ -27,7 +27,7 @@ abstract class AbstractMenuActionController {
     public void createSession() {
         final HostState state = hostWindow.getHostState();
         state.setSessionCreated(true);
-        updateSessionButtonsState(state.isSessionCreated());
+        updateSessionButtonsState(true);
 
         log.info("Created and started new session");
 
@@ -48,7 +48,7 @@ abstract class AbstractMenuActionController {
 
             state.setSessionCreated(false);
             state.setVideoStreaming(false);
-            updateSessionButtonsState(state.isSessionCreated());
+            updateSessionButtonsState(false);
 
             // TODO: removing session
         }
@@ -64,7 +64,7 @@ abstract class AbstractMenuActionController {
             log.info("Started screen streaming");
 
             state.setVideoStreaming(true);
-            updateVideoStreamButtonsState(state.isSessionCreated());
+            updateVideoStreamButtonsState(true, state.isSessionCreated());
 
             // TODO: starting screen sharing
         }
@@ -73,7 +73,7 @@ abstract class AbstractMenuActionController {
     public void stopVideoStreaming() {
         final HostState state = hostWindow.getHostState();
         state.setVideoStreaming(false);
-        updateVideoStreamButtonsState(state.isVideoStreaming());
+        updateVideoStreamButtonsState(false, state.isSessionCreated());
 
         log.info("Stopped screen streaming");
 
@@ -87,22 +87,22 @@ abstract class AbstractMenuActionController {
         topMenuBar.getSessionParamsMenuItem().setEnabled(!isSesionCreated);
         topMenuBar.getCreateSessionMenuItem().setEnabled(!isSesionCreated);
         topMenuBar.getRemoveSessionMenuItem().setEnabled(isSesionCreated);
-        topMenuBar.getStartVideoStreamingMenuItem().setEnabled(isSesionCreated);
 
         topToolbar.getSessionParamsButton().setEnabled(!isSesionCreated);
         topToolbar.getCreateSessionButton().setEnabled(!isSesionCreated);
         topToolbar.getRemoveSessionButton().setEnabled(isSesionCreated);
-        topToolbar.getStartVideoStreamingButton().setEnabled(isSesionCreated);
+
+        updateVideoStreamButtonsState(false, isSesionCreated);
     }
 
-    private void updateVideoStreamButtonsState(boolean isVideoStreaming) {
+    private void updateVideoStreamButtonsState(boolean isVideoStreaming, boolean isSessionCreated) {
         final TopMenuBar topMenuBar = hostWindow.getTopMenuBar();
         final TopToolbar topToolbar = hostWindow.getTopToolbar();
 
-        topMenuBar.getStartVideoStreamingMenuItem().setEnabled(!isVideoStreaming);
-        topMenuBar.getStopVideoStreamingMenuItem().setEnabled(isVideoStreaming);
+        topMenuBar.getStartVideoStreamingMenuItem().setEnabled(!isVideoStreaming && isSessionCreated);
+        topMenuBar.getStopVideoStreamingMenuItem().setEnabled(isVideoStreaming && isSessionCreated);
 
-        topToolbar.getStartVideoStreamingButton().setEnabled(!isVideoStreaming);
-        topToolbar.getStopVideoStreamingButton().setEnabled(isVideoStreaming);
+        topToolbar.getStartVideoStreamingButton().setEnabled(!isVideoStreaming && isSessionCreated);
+        topToolbar.getStopVideoStreamingButton().setEnabled(isVideoStreaming && isSessionCreated);
     }
 }

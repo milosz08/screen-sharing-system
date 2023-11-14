@@ -53,7 +53,7 @@ abstract class AbstractMenuActionController extends AbstractController {
     public void startRecording() {
         final ClientState state = clientWindow.getClientState();
         state.setRecording(true);
-        updateRecordingButtonsState(true);
+        updateRecordingButtonsState(true, state.isConnected());
 
         // TODO: start recording session
 
@@ -63,7 +63,7 @@ abstract class AbstractMenuActionController extends AbstractController {
     public void stopRecording() {
         final ClientState state = clientWindow.getClientState();
         state.setRecording(false);
-        updateRecordingButtonsState(false);
+        updateRecordingButtonsState(false, state.isConnected());
 
         // TODO: stop recording session
 

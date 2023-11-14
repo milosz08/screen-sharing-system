@@ -22,26 +22,22 @@ abstract class AbstractController {
         topToolbar.getCreateConnectionButton().setEnabled(!isConnected);
         topToolbar.getLastConnectionsButton().setEnabled(!isConnected);
         topToolbar.getDisconnectButton().setEnabled(isConnected);
-        topToolbar.getStartRecordingButton().setEnabled(isConnected);
-        topToolbar.getStopRecordingButton().setEnabled(isConnected);
-        topToolbar.getTakeScreenshotButton().setEnabled(isConnected);
 
         topMenuBar.getCreateConnectionMenuItem().setEnabled(!isConnected);
         topMenuBar.getLastConnectionsMenuItem().setEnabled(!isConnected);
         topMenuBar.getDisconnectMenuItem().setEnabled(isConnected);
-        topMenuBar.getStartRecordingMenuItem().setEnabled(isConnected);
-        topMenuBar.getStopRecordingMenuItem().setEnabled(isConnected);
-        topMenuBar.getTakeScreenshotMenuItem().setEnabled(isConnected);
+
+        updateRecordingButtonsState(false, isConnected);
     }
 
-    protected void updateRecordingButtonsState(boolean isRecording) {
+    protected void updateRecordingButtonsState(boolean isRecording, boolean isConnected) {
         final TopToolbar topToolbar = clientWindow.getTopToolbar();
         final TopMenuBar topMenuBar = clientWindow.getTopMenuBar();
 
-        topToolbar.getStartRecordingButton().setEnabled(!isRecording);
-        topToolbar.getStopRecordingButton().setEnabled(isRecording);
+        topToolbar.getStartRecordingButton().setEnabled(!isRecording && isConnected);
+        topToolbar.getStopRecordingButton().setEnabled(isRecording && isConnected);
 
-        topMenuBar.getStartRecordingMenuItem().setEnabled(!isRecording);
-        topMenuBar.getStopRecordingMenuItem().setEnabled(isRecording);
+        topMenuBar.getStartRecordingMenuItem().setEnabled(!isRecording && isConnected);
+        topMenuBar.getStopRecordingMenuItem().setEnabled(isRecording && isConnected);
     }
 }
