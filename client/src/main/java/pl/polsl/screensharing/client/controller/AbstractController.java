@@ -22,10 +22,12 @@ abstract class AbstractController {
         topToolbar.getCreateConnectionButton().setEnabled(!isConnected);
         topToolbar.getLastConnectionsButton().setEnabled(!isConnected);
         topToolbar.getDisconnectButton().setEnabled(isConnected);
+        topToolbar.getTakeScreenshotButton().setEnabled(isConnected);
 
         topMenuBar.getCreateConnectionMenuItem().setEnabled(!isConnected);
         topMenuBar.getLastConnectionsMenuItem().setEnabled(!isConnected);
         topMenuBar.getDisconnectMenuItem().setEnabled(isConnected);
+        topMenuBar.getTakeScreenshotMenuItem().setEnabled(isConnected);
 
         updateRecordingButtonsState(false, isConnected);
     }
