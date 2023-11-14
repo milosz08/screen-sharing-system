@@ -2,7 +2,7 @@
  * Copyright (c) 2023 by MULTIPLE AUTHORS
  * Part of the CS study course project.
  */
-package pl.polsl.screensharing.client.view.fragment;
+package pl.polsl.screensharing.client.view.popup;
 
 import pl.polsl.screensharing.lib.gui.AbstractPopupDialog;
 import pl.polsl.screensharing.lib.gui.component.JAppPasswordTextField;
@@ -10,14 +10,14 @@ import pl.polsl.screensharing.lib.gui.component.JAppPasswordTextField;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
-public class PasswordPopupPanel extends JPanel {
+public class PasswordPopup extends JPanel {
     private final AbstractPopupDialog root;
 
     private final JAppPasswordTextField passwordTextField;
     private final JCheckBox passwordTogglerCheckbox;
     private final String[] options = { "OK", "Cancel" };
 
-    public PasswordPopupPanel(AbstractPopupDialog root) {
+    public PasswordPopup(AbstractPopupDialog root) {
         this.root = root;
 
         this.passwordTextField = new JAppPasswordTextField(10);
@@ -37,7 +37,7 @@ public class PasswordPopupPanel extends JPanel {
         if (option != 0) {
             return null;
         }
-        char[] password = passwordTextField.getPassword();
+        final char[] password = passwordTextField.getPassword();
         return new String(password);
     }
 

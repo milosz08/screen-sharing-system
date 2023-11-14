@@ -10,7 +10,7 @@ import pl.polsl.screensharing.client.dto.SavedConnDetailsDto;
 import pl.polsl.screensharing.client.state.ClientState;
 import pl.polsl.screensharing.client.view.ClientWindow;
 import pl.polsl.screensharing.client.view.dialog.LastConnectionsWindow;
-import pl.polsl.screensharing.client.view.fragment.PasswordPopupPanel;
+import pl.polsl.screensharing.client.view.popup.PasswordPopup;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -30,8 +30,8 @@ public class LastConnectionsController extends AbstractPopupDialogController {
 
     @Override
     protected ConnDetailsDto createConnectionParameters() {
-        final PasswordPopupPanel passwordPopupPanel = new PasswordPopupPanel(lastConnectionsWindow);
-        final String password = passwordPopupPanel.showPopupAndWaitForInput();
+        final PasswordPopup passwordPopup = new PasswordPopup(lastConnectionsWindow);
+        final String password = passwordPopup.showPopupAndWaitForInput();
         if (password == null) {
             return null;
         }
