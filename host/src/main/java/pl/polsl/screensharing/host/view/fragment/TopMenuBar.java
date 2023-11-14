@@ -59,8 +59,4 @@ public class TopMenuBar extends JMenuBar {
             menu.add(item);
         }
     }
-
-    public void setConnectionButtonsState(boolean onIsConnect) {
-        this.connectionSettingsMenuItem.setEnabled(!onIsConnect);
-    }
 }

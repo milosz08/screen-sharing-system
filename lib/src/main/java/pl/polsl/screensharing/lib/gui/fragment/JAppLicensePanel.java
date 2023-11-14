@@ -4,18 +4,18 @@
  */
 package pl.polsl.screensharing.lib.gui.fragment;
 
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import pl.polsl.screensharing.lib.gui.file.Alignment;
 import pl.polsl.screensharing.lib.gui.file.FileUtils;
 
 import javax.swing.*;
 import java.time.LocalDate;
 
+@Slf4j
 public class JAppLicensePanel extends JPanel {
-    private static final Logger LOG = LoggerFactory.getLogger(JAppLicensePanel.class);
-
+    @Getter
     private final JScrollPane scrollPane;
     private final JLabel label;
 
@@ -35,13 +35,9 @@ public class JAppLicensePanel extends JPanel {
                 .loadAndWrapAsHtmlContent("license.txt", getClass(), Alignment.CENTER)
                 .replace("[year]", String.valueOf(LocalDate.now().getYear()));
         } catch (Exception ex) {
-            LOG.error("Unable to load license.txt file from assets resource directory.");
+            log.error("Unable to load license.txt file from assets resource directory.");
             System.exit(-1);
         }
         return StringUtils.EMPTY;
-    }
-
-    public JScrollPane getScrollPane() {
-        return scrollPane;
     }
 }

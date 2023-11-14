@@ -5,6 +5,8 @@
 package pl.polsl.screensharing.client.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
 import pl.polsl.screensharing.lib.SharedConstants;
 
@@ -12,6 +14,8 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 
+@Getter
+@ToString
 public class ConnectionDetailsDto {
     private InetSocketAddress ipv4;
     private String username;
@@ -41,18 +45,6 @@ public class ConnectionDetailsDto {
         this.description = connectionDetailsDto.description;
     }
 
-    public InetSocketAddress getIpv4() {
-        return ipv4;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
     @JsonIgnore
     public String getHostAddress() {
         return ipv4.getAddress().getHostAddress();
@@ -64,14 +56,5 @@ public class ConnectionDetailsDto {
         } catch (UnknownHostException e) {
             return SharedConstants.DEFAULT_USERNAME;
         }
-    }
-
-    @Override
-    public String toString() {
-        return "ConnectionDetailsDto{" +
-            "ipv4=" + ipv4 +
-            ", username='" + username + '\'' +
-            ", description='" + description + '\'' +
-            '}';
     }
 }

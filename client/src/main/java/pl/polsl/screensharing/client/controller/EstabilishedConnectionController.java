@@ -4,8 +4,7 @@
  */
 package pl.polsl.screensharing.client.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import pl.polsl.screensharing.client.dto.ConnectionDetailsDto;
 import pl.polsl.screensharing.client.state.ClientState;
 import pl.polsl.screensharing.client.view.ClientWindow;
@@ -17,9 +16,8 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 
+@Slf4j
 public class EstabilishedConnectionController implements ConnectController {
-    private static final Logger LOG = LoggerFactory.getLogger(EstabilishedConnectionController.class);
-
     private final EstablishedConnectionWindow connectionWindow;
     private final ClientWindow clientWindow;
     private final ClientState state;
@@ -50,7 +48,7 @@ public class EstabilishedConnectionController implements ConnectController {
 
         // TODO: connect to host
 
-        LOG.info("Estabilished connection: {}", connDetails);
+        log.info("Estabilished connection: {}", connDetails);
         closeWindow();
     }
 

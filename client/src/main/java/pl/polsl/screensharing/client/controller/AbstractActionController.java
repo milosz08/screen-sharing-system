@@ -4,8 +4,7 @@
  */
 package pl.polsl.screensharing.client.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import pl.polsl.screensharing.client.state.ClientState;
 import pl.polsl.screensharing.client.view.ClientWindow;
 import pl.polsl.screensharing.client.view.dialog.EstablishedConnectionWindow;
@@ -13,9 +12,8 @@ import pl.polsl.screensharing.client.view.dialog.LastConnectionsWindow;
 
 import javax.swing.*;
 
+@Slf4j
 abstract class AbstractActionController {
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractActionController.class);
-
     protected final ClientWindow clientWindow;
     private final ClientState state;
 
@@ -41,7 +39,7 @@ abstract class AbstractActionController {
             state.setConnectionEstabilished(false);
             clientWindow.getTopMenuBar().setConnectionButtonsState(false);
             clientWindow.getTopToolbar().setConnectionButtonsState(false);
-            LOG.info("Disconected from session.");
+            log.info("Disconected from session.");
         }
     }
 }

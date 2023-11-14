@@ -4,15 +4,14 @@
  */
 package pl.polsl.screensharing.lib.gui.input;
 
+import lombok.RequiredArgsConstructor;
+
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+@RequiredArgsConstructor
 public class SimpleDocumentListener implements DocumentListener {
     private final Runnable executeOnUpdate;
-
-    public SimpleDocumentListener(Runnable executeOnUpdate) {
-        this.executeOnUpdate = executeOnUpdate;
-    }
 
     @Override
     public void insertUpdate(DocumentEvent e) {

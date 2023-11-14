@@ -4,19 +4,16 @@
  */
 package pl.polsl.screensharing.lib.gui;
 
+import lombok.RequiredArgsConstructor;
+
 import javax.swing.*;
 import java.awt.*;
 
+@RequiredArgsConstructor
 public class GridBagDrawer {
     private final JPanel panel;
     private final GridBagConstraints gridBag;
     private final Insets insets;
-
-    public GridBagDrawer(JPanel panel, GridBagConstraints gridBag, Insets insets) {
-        this.panel = panel;
-        this.gridBag = gridBag;
-        this.insets = insets;
-    }
 
     public void drawGridBagLabels(JComponent... components) {
         gridBag.gridx = 0;

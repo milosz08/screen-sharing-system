@@ -4,10 +4,11 @@
  */
 package pl.polsl.screensharing.lib.gui.file;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import pl.polsl.screensharing.lib.AppIcon;
 import pl.polsl.screensharing.lib.AppType;
 
@@ -20,12 +21,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.StringJoiner;
 
+@Slf4j
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class FileUtils {
-    private static final Logger LOG = LoggerFactory.getLogger(FileUtils.class);
-
-    private FileUtils() {
-    }
-
     public static Optional<URL> getAssetFileFromResources(Class<?> invokingClazz, String resourcePath, Object... args) {
         final URL iconUrl = invokingClazz.getResource(String.format("/assets/%s", String.format(resourcePath, args)));
         if (iconUrl != null) {
@@ -56,7 +54,7 @@ public class FileUtils {
                 .add(String.format("<html><div style='%s;'>", alignment.getHtml()))
                 .add(rawBuffer)
                 .add("</div></html>");
-            LOG.info("Successfully load {} file from asset resources directory.", assetName);
+            log.info("Successfully load {} file from asset resources directory.", assetName);
             return joiner.toString()
                 .replaceAll("\n", "<br/>");
         } catch (IOException ex) {

@@ -4,9 +4,8 @@
  */
 package pl.polsl.screensharing.lib.gui.fragment;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import pl.polsl.screensharing.lib.AppType;
 import pl.polsl.screensharing.lib.SystemProp;
 import pl.polsl.screensharing.lib.gui.component.JAppLink;
@@ -19,9 +18,8 @@ import java.awt.*;
 import java.net.URL;
 import java.util.StringJoiner;
 
+@Slf4j
 public class JAppAboutPanel extends JPanel {
-    private static final Logger LOG = LoggerFactory.getLogger(JAppLicensePanel.class);
-
     private final AppType appType;
 
     private final JPanel imageContent;
@@ -83,10 +81,10 @@ public class JAppAboutPanel extends JPanel {
             final URL url = FileUtils.getAssetFileFromResources(getClass(), iconName + ".png")
                 .orElseThrow(RuntimeException::new);
             final Image scaledImage = ImageIO.read(url).getScaledInstance(80, 80, Image.SCALE_SMOOTH);
-            LOG.info("Successfully load {} asset file from asset resources directory.", iconName);
+            log.info("Successfully load {} asset file from asset resources directory.", iconName);
             return new ImageIcon(scaledImage);
         } catch (Exception ex) {
-            LOG.error("Unable to load {} icon from assets resource directory.", iconName);
+            log.error("Unable to load {} icon from assets resource directory.", iconName);
             System.exit(-1);
         }
         return null;
@@ -96,7 +94,7 @@ public class JAppAboutPanel extends JPanel {
         try {
             return FileUtils.loadAndWrapAsHtmlContent("description.txt", getClass(), Alignment.LEFT);
         } catch (Exception ex) {
-            LOG.error("Unable to load description from assets resource directory.");
+            log.error("Unable to load description from assets resource directory.");
             System.exit(-1);
         }
         return StringUtils.EMPTY;

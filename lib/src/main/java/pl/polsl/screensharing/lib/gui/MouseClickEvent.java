@@ -4,15 +4,14 @@
  */
 package pl.polsl.screensharing.lib.gui;
 
+import lombok.RequiredArgsConstructor;
+
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+@RequiredArgsConstructor
 public class MouseClickEvent implements MouseListener {
     private final Runnable runnable;
-
-    public MouseClickEvent(Runnable runnable) {
-        this.runnable = runnable;
-    }
 
     @Override
     public void mouseClicked(MouseEvent e) {

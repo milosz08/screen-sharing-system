@@ -4,8 +4,7 @@
  */
 package pl.polsl.screensharing.lib.gui.component;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import pl.polsl.screensharing.lib.gui.MouseClickEvent;
 
 import javax.swing.*;
@@ -14,9 +13,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+@Slf4j
 public class JAppLink extends JLabel {
-    private static final Logger LOG = LoggerFactory.getLogger(JAppLink.class);
-
     private final URI uri;
 
     public JAppLink(String link, String placeholder) {
@@ -31,7 +29,7 @@ public class JAppLink extends JLabel {
         try {
             return new URI(link);
         } catch (URISyntaxException ex) {
-            LOG.error("Unable to create URI. Link is broken.");
+            log.error("Unable to create URI. Link is broken.");
         }
         return null;
     }
@@ -43,7 +41,7 @@ public class JAppLink extends JLabel {
             }
             Desktop.getDesktop().browse(uri);
         } catch (IOException ex) {
-            LOG.error("Unable to open link. Desktop not supported");
+            log.error("Unable to open link. Desktop not supported");
         }
     }
 }

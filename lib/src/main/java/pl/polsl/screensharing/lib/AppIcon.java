@@ -4,6 +4,11 @@
  */
 package pl.polsl.screensharing.lib;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum AppIcon {
     ADD_CONNECTION("AddConnection"),
     CANCEL("Cancel"),
@@ -16,14 +21,6 @@ public enum AppIcon {
     DISCONNECT("Disconnect"),
     SAVE("Save"),
     SERVER_SETTINGS("ServerSettings");
-    
+
     private final String name;
-
-    AppIcon(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
 }

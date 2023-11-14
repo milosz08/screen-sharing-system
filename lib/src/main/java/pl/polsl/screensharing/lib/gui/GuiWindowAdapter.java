@@ -4,16 +4,15 @@
  */
 package pl.polsl.screensharing.lib.gui;
 
+import lombok.RequiredArgsConstructor;
+
 import javax.swing.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+@RequiredArgsConstructor
 public class GuiWindowAdapter extends WindowAdapter {
     private final AbstractRootFrame frame;
-
-    public GuiWindowAdapter(AbstractRootFrame frame) {
-        this.frame = frame;
-    }
 
     @Override
     public void windowClosing(WindowEvent e) {

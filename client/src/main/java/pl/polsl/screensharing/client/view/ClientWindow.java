@@ -4,6 +4,7 @@
  */
 package pl.polsl.screensharing.client.view;
 
+import lombok.Getter;
 import pl.polsl.screensharing.client.state.ClientState;
 import pl.polsl.screensharing.client.view.dialog.AboutDialogWindow;
 import pl.polsl.screensharing.client.view.dialog.EstablishedConnectionWindow;
@@ -17,6 +18,7 @@ import pl.polsl.screensharing.lib.gui.AbstractRootFrame;
 import javax.swing.*;
 import java.awt.*;
 
+@Getter
 public class ClientWindow extends AbstractRootFrame {
     private final ClientState clientState;
 
@@ -45,33 +47,5 @@ public class ClientWindow extends AbstractRootFrame {
     protected void extendsFrame(JFrame frame, JPanel rootPanel) {
         frame.setJMenuBar(topMenuBar);
         frame.add(topToolbar, BorderLayout.NORTH);
-    }
-
-    public TopMenuBar getTopMenuBar() {
-        return topMenuBar;
-    }
-
-    public TopToolbar getTopToolbar() {
-        return topToolbar;
-    }
-
-    public EstablishedConnectionWindow getEstablishedConnectionWindow() {
-        return establishedConnectionWindow;
-    }
-
-    public LastConnectionsWindow getLastConnectionsWindow() {
-        return lastConnectionsWindow;
-    }
-
-    public AboutDialogWindow getAboutDialogWindow() {
-        return aboutDialogWindow;
-    }
-
-    public LicenseDialogWindow getLicenseDialogWindow() {
-        return licenseDialogWindow;
-    }
-
-    public ClientState getCurrentState() {
-        return clientState;
     }
 }

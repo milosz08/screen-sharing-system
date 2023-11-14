@@ -4,6 +4,7 @@
  */
 package pl.polsl.screensharing.client.view.dialog;
 
+import lombok.Getter;
 import pl.polsl.screensharing.client.controller.LastConnectionsController;
 import pl.polsl.screensharing.client.view.ClientWindow;
 import pl.polsl.screensharing.lib.AppIcon;
@@ -16,6 +17,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
+@Getter
 public class LastConnectionsWindow extends AbstractPopupDialog {
     private final JPanel rightPanel;
     private final JScrollPane scrollPane;
@@ -87,17 +89,5 @@ public class LastConnectionsWindow extends AbstractPopupDialog {
 
     private void setColumnWidth(int index, int width) {
         table.getColumnModel().getColumn(index).setMaxWidth(width);
-    }
-
-    public JTable getTable() {
-        return table;
-    }
-
-    public JButton getEstabilishedConnButton() {
-        return estabilishedConnButton;
-    }
-
-    public JButton getRemoveRowButton() {
-        return removeRowButton;
     }
 }

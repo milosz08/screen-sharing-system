@@ -4,13 +4,14 @@
  */
 package pl.polsl.screensharing.lib.gui;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 import javax.swing.*;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class GuiConfig {
-    private GuiConfig() {
-    }
-
     public static void setDefaultLayout() {
         try {
             UIManager.setLookAndFeel(new MetalLookAndFeel());

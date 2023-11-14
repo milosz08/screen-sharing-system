@@ -4,6 +4,7 @@
  */
 package pl.polsl.screensharing.client.view.dialog;
 
+import lombok.Getter;
 import pl.polsl.screensharing.client.controller.EstabilishedConnectionController;
 import pl.polsl.screensharing.client.dto.ConnectionDetailsDto;
 import pl.polsl.screensharing.client.view.ClientWindow;
@@ -24,6 +25,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 
+@Getter
 public class EstablishedConnectionWindow extends AbstractPopupDialog {
     private final JPanel formPanel;
     private final JPanel rightPanel;
@@ -164,33 +166,5 @@ public class EstablishedConnectionWindow extends AbstractPopupDialog {
 
         rootPanel.add(formPanel, BorderLayout.CENTER);
         rootPanel.add(rightPanel, BorderLayout.EAST);
-    }
-
-    public JAppTextField getIpAddressTextField() {
-        return ipAddressTextField;
-    }
-
-    public JAppTextField getPortTextField() {
-        return portTextField;
-    }
-
-    public JAppTextField getUsernameTextField() {
-        return usernameTextField;
-    }
-
-    public JAppPasswordTextField getPasswordTextField() {
-        return passwordTextField;
-    }
-
-    public JCheckBox getAddToListCheckbox() {
-        return addToListCheckbox;
-    }
-
-    public JAppIconButton getSaveDetailsButton() {
-        return saveDetailsButton;
-    }
-
-    public JAppTextArea getDescriptionTextArea() {
-        return descriptionTextArea;
     }
 }

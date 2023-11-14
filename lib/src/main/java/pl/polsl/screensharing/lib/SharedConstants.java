@@ -4,6 +4,10 @@
  */
 package pl.polsl.screensharing.lib;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SharedConstants {
     public static final String IPV4_REGEX = "^[0-9.]+$";
     public static final String PORT_REGEX = "^[0-9]+$";
@@ -12,7 +16,4 @@ public class SharedConstants {
     public static final String DEFAULT_HOST = "127.0.0.1";
     public static final String DEFAULT_PORT = "9092";
     public static final String DEFAULT_USERNAME = "127.0.0.1";
-
-    private SharedConstants() {
-    }
 }

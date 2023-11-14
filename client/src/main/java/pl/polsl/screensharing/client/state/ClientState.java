@@ -4,6 +4,7 @@
  */
 package pl.polsl.screensharing.client.state;
 
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.polsl.screensharing.client.dto.ConnectionDetailsDto;
@@ -15,8 +16,9 @@ public class ClientState {
     private static final Logger LOG = LoggerFactory.getLogger(ClientState.class);
 
     private final PersistedStateLoader persistedStateLoader;
-
+    @Getter
     private List<LastConnectionRowDto> lastConnections;
+    @Getter
     private ConnectionDetailsDto connectionDetails;
     private boolean isConnectionEstabilished;
 
@@ -64,14 +66,6 @@ public class ClientState {
         lastConnections.addAll(rowDtos);
         LOG.info("Update last connections table rows. Updated table: {}.", rowDtos);
         persistedStateLoader.persistLastConnectionsState();
-    }
-
-    public ConnectionDetailsDto getConnectionDetails() {
-        return connectionDetails;
-    }
-
-    public List<LastConnectionRowDto> getLastConnections() {
-        return lastConnections;
     }
 
     public void persistConnectionDetails(ConnectionDetailsDto detailsDto) {

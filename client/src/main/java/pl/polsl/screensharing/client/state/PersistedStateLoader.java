@@ -4,8 +4,7 @@
  */
 package pl.polsl.screensharing.client.state;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import pl.polsl.screensharing.client.dto.ConnectionDetailsDto;
 import pl.polsl.screensharing.client.dto.LastConnectionRowDto;
 import pl.polsl.screensharing.lib.AppType;
@@ -14,9 +13,8 @@ import pl.polsl.screensharing.lib.gui.file.AbstractPersistorStateLoader;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 class PersistedStateLoader extends AbstractPersistorStateLoader<ClientState> {
-    private static final Logger LOG = LoggerFactory.getLogger(PersistedStateLoader.class);
-
     PersistedStateLoader(ClientState clientState) {
         super(AppType.CLIENT, clientState);
     }
@@ -27,11 +25,11 @@ class PersistedStateLoader extends AbstractPersistorStateLoader<ClientState> {
             final SavedStateDto settings = objectMapper.readValue(file, SavedStateDto.class);
             state.setConnectionDetails(settings.getConnectionDetails());
             state.setLastConnections(settings.getLastConnections());
-            LOG.info("Found config file. Moved persisted settings into application context.");
+            log.info("Found config file. Moved persisted settings into application context.");
         } catch (Exception ex) {
             state.setConnectionDetails(new ConnectionDetailsDto());
             state.setLastConnections(new ArrayList<>());
-            LOG.warn("Cannot localized config file, skipping initialization.");
+            log.warn("Cannot localized config file, skipping initialization.");
         }
     }
 
@@ -41,9 +39,9 @@ class PersistedStateLoader extends AbstractPersistorStateLoader<ClientState> {
             final ConnectionDetailsDto connection = settings.getConnectionDetails();
             connection.updateConnectionDetails(state.getConnectionDetails());
             objectMapper.writeValue(file, settings);
-            LOG.info("Persist connection details: {}.", state.getConnectionDetails());
+            log.info("Persist connection details: {}.", state.getConnectionDetails());
         } catch (Exception ex) {
-            LOG.error("Failure during persist connection details. Cause {}.", ex.getMessage());
+            log.error("Failure during persist connection details. Cause {}.", ex.getMessage());
         }
     }
 
@@ -54,9 +52,9 @@ class PersistedStateLoader extends AbstractPersistorStateLoader<ClientState> {
             persistedConnections.clear();
             persistedConnections.addAll(state.getLastConnections());
             objectMapper.writeValue(file, settings);
-            LOG.info("Persist last connections: {}.", state.getLastConnections());
+            log.info("Persist last connections: {}.", state.getLastConnections());
         } catch (Exception ex) {
-            LOG.error("Failure during persist last connections. Cause {}.", ex.getMessage());
+            log.error("Failure during persist last connections. Cause {}.", ex.getMessage());
         }
     }
 }

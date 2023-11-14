@@ -4,21 +4,15 @@
  */
 package pl.polsl.screensharing.host.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import pl.polsl.screensharing.host.view.HostWindow;
 import pl.polsl.screensharing.host.view.dialog.ConnectionSettingsWindow;
 
-import javax.swing.*;
-
+@Slf4j
+@RequiredArgsConstructor
 abstract class AbstractActionController {
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractActionController.class);
-
     protected final HostWindow hostWindow;
-
-    AbstractActionController(HostWindow hostWindow) {
-        this.hostWindow = hostWindow;
-    }
 
     public void openMakeConnectionWindow() {
         final ConnectionSettingsWindow window = hostWindow.getConnectionSettingsWindow();

@@ -4,19 +4,17 @@
  */
 package pl.polsl.screensharing.lib.gui.input;
 
+import lombok.RequiredArgsConstructor;
+
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
 import java.util.regex.Pattern;
 
+@RequiredArgsConstructor
 public class SimpleDocumentFilter extends DocumentFilter {
     private final int maxCharacters;
     private final String regex;
-
-    public SimpleDocumentFilter(int maxCharacters, String regex) {
-        this.maxCharacters = maxCharacters;
-        this.regex = regex;
-    }
 
     public SimpleDocumentFilter(int maxCharacters) {
         this.maxCharacters = maxCharacters;
