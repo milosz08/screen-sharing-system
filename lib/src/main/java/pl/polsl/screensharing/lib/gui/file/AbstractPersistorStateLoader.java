@@ -7,6 +7,7 @@ package pl.polsl.screensharing.lib.gui.file;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.extern.slf4j.Slf4j;
 import pl.polsl.screensharing.lib.AppType;
 
@@ -24,6 +25,7 @@ public abstract class AbstractPersistorStateLoader<T> {
         this.objectMapper = new ObjectMapper();
 
         this.objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+        this.objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
     }
 
     public <E> void initPersistor(E initStateWrapper) {
