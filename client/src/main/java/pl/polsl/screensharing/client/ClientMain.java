@@ -22,8 +22,6 @@ public class ClientMain {
             log.info("Starting GUI thread.");
             final AbstractRootFrame window = new ClientWindow(clientState);
             window.guiInitAndShow();
-            thread.start();
-
             log.info("Initialized application GUI.");
         });
     }
