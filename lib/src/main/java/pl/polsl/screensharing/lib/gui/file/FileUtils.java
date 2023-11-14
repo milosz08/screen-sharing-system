@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import pl.polsl.screensharing.lib.AppIcon;
 import pl.polsl.screensharing.lib.AppType;
+import pl.polsl.screensharing.lib.gui.icon.AppIcon;
 
 import javax.swing.*;
 import java.awt.*;
@@ -32,8 +32,8 @@ public class FileUtils {
         return Optional.empty();
     }
 
-    public static Optional<ImageIcon> getImageIconFromResources(Class<?> invokingClazz, AppIcon appIcon) {
-        final Optional<URL> iconUrl = getAssetFileFromResources(invokingClazz, "icons/%s.png", appIcon.getName());
+    public static Optional<ImageIcon> getImageIconFromResources(Class<?> invokingClazz, AppIcon libIcon) {
+        final Optional<URL> iconUrl = getAssetFileFromResources(invokingClazz, "icons/%s.png", libIcon.getName());
         return iconUrl.map(ImageIcon::new);
     }
 

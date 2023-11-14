@@ -5,9 +5,10 @@
 package pl.polsl.screensharing.client.view.fragment;
 
 import pl.polsl.screensharing.client.controller.TopMenuBarController;
+import pl.polsl.screensharing.client.view.ClientIcon;
 import pl.polsl.screensharing.client.view.ClientWindow;
-import pl.polsl.screensharing.lib.AppIcon;
 import pl.polsl.screensharing.lib.gui.component.JAppMenuIconItem;
+import pl.polsl.screensharing.lib.gui.icon.LibIcon;
 
 import javax.swing.*;
 

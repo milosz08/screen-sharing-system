@@ -6,8 +6,8 @@ package pl.polsl.screensharing.client.view.fragment;
 
 import pl.polsl.screensharing.client.controller.TopToolbarController;
 import pl.polsl.screensharing.client.view.ClientWindow;
-import pl.polsl.screensharing.lib.AppIcon;
 import pl.polsl.screensharing.lib.gui.component.JAppIconButton;
+import pl.polsl.screensharing.lib.gui.icon.LibIcon;
 
 import javax.swing.*;
 

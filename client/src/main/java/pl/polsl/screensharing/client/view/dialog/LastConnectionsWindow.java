@@ -7,10 +7,10 @@ package pl.polsl.screensharing.client.view.dialog;
 import lombok.Getter;
 import pl.polsl.screensharing.client.controller.LastConnectionsController;
 import pl.polsl.screensharing.client.view.ClientWindow;
-import pl.polsl.screensharing.lib.AppIcon;
 import pl.polsl.screensharing.lib.AppType;
 import pl.polsl.screensharing.lib.gui.AbstractPopupDialog;
 import pl.polsl.screensharing.lib.gui.component.JAppIconButton;
+import pl.polsl.screensharing.lib.gui.icon.LibIcon;
 import pl.polsl.screensharing.lib.gui.input.AppCellEditor;
 
 import javax.swing.*;

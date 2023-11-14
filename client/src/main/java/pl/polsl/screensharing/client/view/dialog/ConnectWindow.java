@@ -8,7 +8,6 @@ import lombok.Getter;
 import pl.polsl.screensharing.client.controller.EstabilishedConnectionController;
 import pl.polsl.screensharing.client.dto.ConnectionDetailsDto;
 import pl.polsl.screensharing.client.view.ClientWindow;
-import pl.polsl.screensharing.lib.AppIcon;
 import pl.polsl.screensharing.lib.AppType;
 import pl.polsl.screensharing.lib.SharedConstants;
 import pl.polsl.screensharing.lib.gui.AbstractPopupDialog;
@@ -17,6 +16,7 @@ import pl.polsl.screensharing.lib.gui.component.JAppIconButton;
 import pl.polsl.screensharing.lib.gui.component.JAppPasswordTextField;
 import pl.polsl.screensharing.lib.gui.component.JAppTextArea;
 import pl.polsl.screensharing.lib.gui.component.JAppTextField;
+import pl.polsl.screensharing.lib.gui.icon.LibIcon;
 import pl.polsl.screensharing.lib.gui.input.SimpleDocumentListener;
 
 import javax.swing.*;
