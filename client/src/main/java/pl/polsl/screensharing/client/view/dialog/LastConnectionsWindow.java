@@ -6,6 +6,8 @@ package pl.polsl.screensharing.client.view.dialog;
 
 import lombok.Getter;
 import pl.polsl.screensharing.client.controller.LastConnectionsController;
+import pl.polsl.screensharing.client.dto.SavedConnDetailsDto;
+import pl.polsl.screensharing.client.view.ClientIcon;
 import pl.polsl.screensharing.client.view.ClientWindow;
 import pl.polsl.screensharing.lib.AppType;
 import pl.polsl.screensharing.lib.gui.AbstractPopupDialog;
@@ -16,6 +18,7 @@ import pl.polsl.screensharing.lib.gui.input.AppCellEditor;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.util.SortedSet;
 
 @Getter
 public class LastConnectionsWindow extends AbstractPopupDialog {
@@ -41,7 +44,7 @@ public class LastConnectionsWindow extends AbstractPopupDialog {
 
         this.rightPanel = new JPanel(new GridLayout(5, 1, 5, 5));
 
-        this.tableData = clientWindow.getClientState().getParsedLastConnectionsList();
+        this.tableData = parseSavedConnectionToTableModel(clientWindow.getClientState().getSavedConnDetails());
         this.tableModel = new DefaultTableModel(tableData, tableHeaders);
         this.table = new JTable(tableModel);
 
@@ -89,5 +92,26 @@ public class LastConnectionsWindow extends AbstractPopupDialog {
 
     private void setColumnWidth(int index, int width) {
         table.getColumnModel().getColumn(index).setMaxWidth(width);
+    }
+
+    public void mapNewConnectionToTableModel(SavedConnDetailsDto detailsDto) {
+        final DefaultTableModel model = (DefaultTableModel) table.getModel();
+        model.addRow(new Object[]{
+            detailsDto.getIpAddress(),
+            detailsDto.getPort(),
+            detailsDto.getUsername(),
+            detailsDto.getDescription()
+        });
+    }
+
+    public Object[][] parseSavedConnectionToTableModel(SortedSet<SavedConnDetailsDto> connsDetails) {
+        return connsDetails.stream()
+            .map(detailsDto -> new Object[]{
+                detailsDto.getIpAddress(),
+                detailsDto.getPort(),
+                detailsDto.getUsername(),
+                detailsDto.getDescription()
+            })
+            .toArray(Object[][]::new);
     }
 }

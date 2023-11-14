@@ -5,47 +5,53 @@
 package pl.polsl.screensharing.client.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import pl.polsl.screensharing.client.dto.LastConnectionRowDto;
+import pl.polsl.screensharing.client.dto.ConnDetailsDto;
+import pl.polsl.screensharing.client.dto.SavedConnDetailsDto;
 import pl.polsl.screensharing.client.state.ClientState;
 import pl.polsl.screensharing.client.view.ClientWindow;
 import pl.polsl.screensharing.client.view.dialog.LastConnectionsWindow;
+import pl.polsl.screensharing.client.view.fragment.PasswordPopupPanel;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.beans.PropertyChangeEvent;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 @Slf4j
-public class LastConnectionsController implements ConnectController {
+public class LastConnectionsController extends AbstractPopupDialogController {
     private final LastConnectionsWindow lastConnectionsWindow;
-    private final ClientWindow clientWindow;
-    private final ClientState state;
 
     public LastConnectionsController(ClientWindow clientWindow, LastConnectionsWindow lastConnectionsWindow) {
+        super(clientWindow, lastConnectionsWindow);
         this.lastConnectionsWindow = lastConnectionsWindow;
-        this.clientWindow = clientWindow;
-        this.state = clientWindow.getClientState();
     }
 
     @Override
-    public void estabilishedConnection() {
-        final String ip = getTableValue(0);
-        final String port = getTableValue(1);
+    protected ConnDetailsDto createConnectionParameters() {
+        final PasswordPopupPanel passwordPopupPanel = new PasswordPopupPanel(lastConnectionsWindow);
+        final String password = passwordPopupPanel.showPopupAndWaitForInput();
+        if (password == null) {
+            return null;
+        }
+        return ConnDetailsDto.builder()
+            .ipAddress(getTableValue(0))
+            .port(Integer.parseInt(getTableValue(1)))
+            .username(getTableValue(1))
+            .password(password)
+            .build();
+    }
 
-        state.setConnectionEstabilished(true);
-        clientWindow.getTopMenuBar().setConnectionButtonsState(true);
-        clientWindow.getTopToolbar().setConnectionButtonsState(true);
-
-        // TODO: connect to host
-
-        log.info("Estabilished connection: {}", state.getConnectionDetails());
-        lastConnectionsWindow.closeWindow();
+    @Override
+    protected void onSuccessConnect(ConnDetailsDto detailsDto) {
+        System.out.println("to jest test");
     }
 
     public void removeSelectedRow() {
         final JTable table = lastConnectionsWindow.getTable();
+        final ClientState state = clientWindow.getClientState();
+
         final int selectedRow = table.getSelectedRow();
 
         final String ip = getTableValue(0);
@@ -57,12 +63,13 @@ public class LastConnectionsController implements ConnectController {
 
         if (result == JOptionPane.YES_OPTION) {
             ((DefaultTableModel) table.getModel()).removeRow(selectedRow);
-            state.removeConnectionByIndex(selectedRow);
+            state.removeConnDetailsByIndex(selectedRow);
         }
     }
 
     public void removeAllRows() {
         final JTable table = lastConnectionsWindow.getTable();
+        final ClientState state = clientWindow.getClientState();
 
         final int result = JOptionPane.showConfirmDialog(lastConnectionsWindow,
             "Are you sure to remove all saved connections?",
@@ -72,34 +79,36 @@ public class LastConnectionsController implements ConnectController {
             for (int i = table.getRowCount() - 1; i >= 0; i--) {
                 ((DefaultTableModel) table.getModel()).removeRow(i);
             }
-            state.removeAllSavedConnections();
+            state.removeAllSavedConnDetails();
         }
     }
 
     public void updateLastConnectionsData(PropertyChangeEvent evt) {
-        final List<LastConnectionRowDto> rows = new ArrayList<>();
+        final SortedSet<SavedConnDetailsDto> rows = new TreeSet<>();
+        final ClientState state = clientWindow.getClientState();
         final JTable table = lastConnectionsWindow.getTable();
 
         if (!Objects.equals("tableCellEditor", evt.getPropertyName())) {
             return;
         }
         for (int i = 0; i < table.getRowCount(); i++) {
-            final String ip = (String) table.getValueAt(i, 0);
-            final int port = Integer.parseInt(String.valueOf(table.getValueAt(i, 1)));
-            final String username = (String) table.getValueAt(i, 2);
-            final String description = (String) table.getValueAt(i, 3);
-            rows.add(new LastConnectionRowDto(ip, port, username, description));
+            final SavedConnDetailsDto detailsDto = SavedConnDetailsDto.builder()
+                .id(i)
+                .ipAddress((String) table.getValueAt(i, 0))
+                .port(Integer.parseInt(String.valueOf(table.getValueAt(i, 1))))
+                .username((String) table.getValueAt(i, 2))
+                .description((String) table.getValueAt(i, 3))
+                .build();
+            rows.add(detailsDto);
         }
-        state.copyAndPushLastSavedConnections(rows);
+        state.copyAndPushSavedConnDetails(rows);
     }
 
     public void markupSelectedRow() {
         final JTable table = lastConnectionsWindow.getTable();
-        setButtonsActive(table.getSelectedRow() != -1);
-    }
+        final boolean isActive = table.getSelectedRow() != -1;
 
-    private void setButtonsActive(boolean isActive) {
-        lastConnectionsWindow.getEstabilishedConnButton().setEnabled(isActive);
+        lastConnectionsWindow.getConnectButton().setEnabled(isActive);
         lastConnectionsWindow.getRemoveRowButton().setEnabled(isActive);
     }
 

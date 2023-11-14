@@ -5,84 +5,83 @@
 package pl.polsl.screensharing.client.state;
 
 import lombok.Getter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import pl.polsl.screensharing.client.dto.ConnectionDetailsDto;
-import pl.polsl.screensharing.client.dto.LastConnectionRowDto;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import pl.polsl.screensharing.client.dto.FastConnDetailsDto;
+import pl.polsl.screensharing.client.dto.SavedConnDetailsDto;
 
-import java.util.List;
+import java.util.Optional;
+import java.util.SortedSet;
 
+@Slf4j
+@Getter
+@Setter
 public class ClientState {
-    private static final Logger LOG = LoggerFactory.getLogger(ClientState.class);
-
+    private boolean isRecording;
+    private boolean isConnecting;
+    private boolean isConnected;
+    private FastConnDetailsDto fastConnDetails;
+    private SortedSet<SavedConnDetailsDto> savedConnDetails;
     private final PersistedStateLoader persistedStateLoader;
-    @Getter
-    private List<LastConnectionRowDto> lastConnections;
-    @Getter
-    private ConnectionDetailsDto connectionDetails;
-    private boolean isConnectionEstabilished;
 
     public ClientState() {
         this.persistedStateLoader = new PersistedStateLoader(this);
-        this.persistedStateLoader.initPersistor(new SavedStateDto());
+        this.persistedStateLoader.initPersistor(new PersistedState());
         this.persistedStateLoader.loadApplicationSavedState();
     }
 
-    public void removeConnectionByIndex(int index) {
-        if (index >= 0 && index < lastConnections.size()) {
-            final LastConnectionRowDto removingRow = lastConnections.get(index);
-            lastConnections.remove(removingRow);
-            LOG.info("Removed last connection: {}.", removingRow);
-            persistedStateLoader.persistLastConnectionsState();
+    public boolean addNewSavedConn(SavedConnDetailsDto detailsDto) {
+        final int index = savedConnDetails.size();
+        detailsDto.setId(index);
+        final boolean isNew = savedConnDetails.stream()
+            .noneMatch(details -> details.equals(detailsDto));
+        if (isNew) {
+            savedConnDetails.add(detailsDto);
+            log.info("Add new saved connection: {}.", detailsDto);
+            persistedStateLoader.persistSavedConnDetails();
+            return true;
+        }
+        log.info("Saved connection {} already exist. Skipping.", detailsDto);
+        return false;
+    }
+
+    public void copyAndPushSavedConnDetails(SortedSet<SavedConnDetailsDto> rowDtos) {
+        savedConnDetails.clear();
+        savedConnDetails.addAll(rowDtos);
+        log.info("Update last connections table rows. Updated table: {}.", rowDtos);
+        persistedStateLoader.persistSavedConnDetails();
+    }
+
+    public void removeAllSavedConnDetails() {
+        savedConnDetails.clear();
+        log.info("Removed all saved last connections.");
+        persistedStateLoader.persistSavedConnDetails();
+    }
+
+    public void removeConnDetailsByIndex(int index) {
+        if (index >= 0 && index < savedConnDetails.size()) {
+            final Optional<SavedConnDetailsDto> removedOptional = savedConnDetails.stream()
+                .filter(details -> details.getId() == index)
+                .findFirst();
+            if (!removedOptional.isPresent()) {
+                return;
+            }
+            final SavedConnDetailsDto removed = removedOptional.get();
+            savedConnDetails.remove(removed);
+
+            int i = 0;
+            for (final SavedConnDetailsDto notRemovable : savedConnDetails) {
+                notRemovable.setId(i++);
+            }
+            log.info("Removed last connection: {}.", removed);
+            log.info("Reorganized rows: {}.", savedConnDetails);
+            persistedStateLoader.persistSavedConnDetails();
         }
     }
 
-    public void removeAllSavedConnections() {
-        lastConnections.clear();
-        LOG.info("Removed all saved last connections.");
-        persistedStateLoader.persistLastConnectionsState();
-    }
-
-    public boolean addNewSavedConnection(String ipv4, int port, String username, String description) {
-        final LastConnectionRowDto addingRow = new LastConnectionRowDto(ipv4, port, username, description);
-        if (lastConnections.stream().noneMatch(row -> row.equals(addingRow))) {
-            lastConnections.add(addingRow);
-            LOG.info("Add new last connection: {}.", addingRow);
-            persistedStateLoader.persistLastConnectionsState();
-            return false;
-        }
-        LOG.info("Connection {} already exist. Skipping.", addingRow);
-        return true;
-    }
-
-    public Object[][] getParsedLastConnectionsList() {
-        return lastConnections.stream()
-            .map(row -> new Object[]{ row.getIpv4(), row.getPort(), row.getUsername(), row.getDescription() })
-            .toArray(Object[][]::new);
-    }
-
-    public void copyAndPushLastSavedConnections(List<LastConnectionRowDto> rowDtos) {
-        lastConnections.clear();
-        lastConnections.addAll(rowDtos);
-        LOG.info("Update last connections table rows. Updated table: {}.", rowDtos);
-        persistedStateLoader.persistLastConnectionsState();
-    }
-
-    public void persistConnectionDetails(ConnectionDetailsDto detailsDto) {
-        connectionDetails.setConnectionDetails(detailsDto);
-        LOG.info("Update connection details: {}.", detailsDto);
-        persistedStateLoader.persistConnectionDetailsState();
-    }
-
-    public void setConnectionEstabilished(boolean isConnectionEstabilished) {
-        this.isConnectionEstabilished = isConnectionEstabilished;
-    }
-
-    void setConnectionDetails(ConnectionDetailsDto connectionDetails) {
-        this.connectionDetails = connectionDetails;
-    }
-
-    void setLastConnections(List<LastConnectionRowDto> lastConnections) {
-        this.lastConnections = lastConnections;
+    public void persistFastConnDetails(FastConnDetailsDto detailsDto) {
+        fastConnDetails.setFastConnDetailsDto(detailsDto);
+        log.info("Update fast connection details: {}.", detailsDto);
+        persistedStateLoader.persistFastConnDetails();
     }
 }
