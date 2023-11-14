@@ -38,14 +38,13 @@ public class LastConnectionsController extends AbstractPopupDialogController {
         return ConnDetailsDto.builder()
             .ipAddress(getTableValue(0))
             .port(Integer.parseInt(getTableValue(1)))
-            .username(getTableValue(1))
+            .username(getTableValue(2))
             .password(password)
             .build();
     }
 
     @Override
     protected void onSuccessConnect(ConnDetailsDto detailsDto) {
-        System.out.println("to jest test");
     }
 
     public void removeSelectedRow() {
@@ -75,12 +74,13 @@ public class LastConnectionsController extends AbstractPopupDialogController {
             "Are you sure to remove all saved connections?",
             "Please confirm", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 
-        if (result == JOptionPane.YES_OPTION) {
-            for (int i = table.getRowCount() - 1; i >= 0; i--) {
-                ((DefaultTableModel) table.getModel()).removeRow(i);
-            }
-            state.removeAllSavedConnDetails();
+        if (result != JOptionPane.YES_OPTION) {
+            return;
         }
+        for (int i = table.getRowCount() - 1; i >= 0; i--) {
+            ((DefaultTableModel) table.getModel()).removeRow(i);
+        }
+        state.removeAllSavedConnDetails();
     }
 
     public void updateLastConnectionsData(PropertyChangeEvent evt) {
