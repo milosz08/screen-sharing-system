@@ -8,7 +8,7 @@ import pl.polsl.screensharing.host.view.HostWindow;
 import pl.polsl.screensharing.host.view.dialog.AboutDialogWindow;
 import pl.polsl.screensharing.host.view.dialog.LicenseDialogWindow;
 
-public class TopMenuBarController extends AbstractActionController {
+public class TopMenuBarController extends AbstractMenuActionController {
     public TopMenuBarController(HostWindow hostWindow) {
         super(hostWindow);
     }
