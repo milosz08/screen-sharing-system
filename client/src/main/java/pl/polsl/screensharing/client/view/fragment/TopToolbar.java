@@ -18,23 +18,38 @@ public class TopToolbar extends JToolBar {
     private final JAppIconButton createConnectionButton;
     private final JAppIconButton disconnectButton;
     private final JAppIconButton lastConnectionsButton;
+    private final JAppIconButton takeScreenshotButton;
+    private final JAppIconButton startRecordingButton;
+    private final JAppIconButton stopRecordingButton;
 
     private final TopToolbarController controller;
 
     public TopToolbar(ClientWindow clientWindow) {
         this.controller = new TopToolbarController(clientWindow);
 
-        this.createConnectionButton = new JAppIconButton("Connect", AppIcon.ADD_CONNECTION, true);
-        this.disconnectButton = new JAppIconButton("Disconnect", AppIcon.DISCONNECT, true, false);
-        this.lastConnectionsButton = new JAppIconButton("Last connections", AppIcon.CHECK_BOX_LIST, true);
+        this.createConnectionButton = new JAppIconButton("Connect", ClientIcon.ADD_CONNECTION, true);
+        this.disconnectButton = new JAppIconButton("Disconnect", ClientIcon.DISCONNECT, true, false);
+        this.lastConnectionsButton = new JAppIconButton("Last connections", LibIcon.CHECK_BOX_LIST, true);
+
+        this.takeScreenshotButton = new JAppIconButton("Take screenshot", ClientIcon.SCREENSHOT, true, false);
+        this.startRecordingButton = new JAppIconButton("Start recording", ClientIcon.RECORD, true, false);
+        this.stopRecordingButton = new JAppIconButton("Stop recording", ClientIcon.STOP, true, false);
 
         this.createConnectionButton.addActionListener(e -> controller.openMakeConnectionWindow());
         this.disconnectButton.addActionListener(e -> controller.disconnectFromSession());
         this.lastConnectionsButton.addActionListener(e -> controller.openLastConnectionsWindow());
 
+        this.takeScreenshotButton.addActionListener(e -> controller.takeScreenshot());
+        this.startRecordingButton.addActionListener(e -> controller.startRecording());
+        this.stopRecordingButton.addActionListener(e -> controller.stopRecording());
+
         addButtonWithSeparation(createConnectionButton);
         addButtonWithSeparation(disconnectButton);
         addButtonWithSeparation(lastConnectionsButton);
+        addSeparator();
+        addButtonWithSeparation(takeScreenshotButton);
+        addButtonWithSeparation(startRecordingButton);
+        addButtonWithSeparation(stopRecordingButton);
 
         setFloatable(false);
     }

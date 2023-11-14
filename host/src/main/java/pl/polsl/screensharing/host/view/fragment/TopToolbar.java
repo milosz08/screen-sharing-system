@@ -11,21 +11,44 @@ import pl.polsl.screensharing.host.view.HostWindow;
 import pl.polsl.screensharing.lib.gui.component.JAppIconButton;
 
 import javax.swing.*;
+import java.awt.*;
 
 @Getter
 public class TopToolbar extends JToolBar {
-    private final JAppIconButton createConnectionButton;
+    private final JAppIconButton sessionParamsButton;
+    private final JAppIconButton createSessionButton;
+    private final JAppIconButton removeSessionButton;
+    private final JAppIconButton startVideoStreamingButton;
+    private final JAppIconButton stopVideoStreamingButton;
 
     private final TopToolbarController controller;
+    private final JToolBar.Separator separator;
 
     public TopToolbar(HostWindow hostWindow) {
         this.controller = new TopToolbarController(hostWindow);
 
-        this.createConnectionButton = new JAppIconButton("Connection settings", AppIcon.SERVER_SETTINGS, true);
+        this.sessionParamsButton = new JAppIconButton("Session settings", HostIcon.SERVER_SETTINGS, true);
+        this.createSessionButton = new JAppIconButton("Create session", HostIcon.ADD_LINK, true);
+        this.removeSessionButton = new JAppIconButton("Remove session", HostIcon.REMOVE_LINK, true, false);
+        this.startVideoStreamingButton = new JAppIconButton("Start streaming", HostIcon.VISIBLE, true, false);
+        this.stopVideoStreamingButton = new JAppIconButton("Stop streaming", HostIcon.CLOAK_OR_HIDE, true, false);
 
-        this.createConnectionButton.addActionListener(e -> controller.openMakeConnectionWindow());
+        this.separator = new JToolBar.Separator();
+        separator.setBackground(Color.GRAY);
 
-        addButtonWithSeparation(createConnectionButton);
+        this.sessionParamsButton.addActionListener(e -> controller.openSessionParamsWindow());
+        this.createSessionButton.addActionListener(e -> controller.createSession());
+        this.removeSessionButton.addActionListener(e -> controller.removeSession());
+        this.startVideoStreamingButton.addActionListener(e -> controller.startVideoStreaming());
+        this.stopVideoStreamingButton.addActionListener(e -> controller.stopVideoStreaming());
+
+        addButtonWithSeparation(sessionParamsButton);
+        addSeparator();
+        addButtonWithSeparation(createSessionButton);
+        addButtonWithSeparation(removeSessionButton);
+        addSeparator();
+        addButtonWithSeparation(startVideoStreamingButton);
+        addButtonWithSeparation(stopVideoStreamingButton);
 
         setFloatable(false);
     }

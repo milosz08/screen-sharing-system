@@ -19,6 +19,8 @@ import java.awt.*;
 
 @Getter
 public class HostWindow extends AbstractRootFrame {
+    private final HostState hostState;
+
     private final AboutDialogWindow aboutDialogWindow;
     private final LicenseDialogWindow licenseDialogWindow;
     private final TopMenuBar topMenuBar;
@@ -26,8 +28,9 @@ public class HostWindow extends AbstractRootFrame {
 
     private final ConnectionSettingsWindow connectionSettingsWindow;
 
-    public HostWindow() {
+    public HostWindow(HostState hostState) {
         super(AppType.HOST, HostWindow.class);
+        this.hostState = hostState;
 
         this.topMenuBar = new TopMenuBar(this);
         this.topToolbar = new TopToolbar(this);
