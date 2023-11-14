@@ -24,7 +24,7 @@ public class LastConnectionsWindow extends AbstractPopupDialog {
 
     private final LastConnectionsController controller;
 
-    private final JAppIconButton estabilishedConnButton;
+    private final JAppIconButton connectButton;
     private final JAppIconButton cancelButton;
     private final JAppIconButton removeRowButton;
     private final JAppIconButton removeAllRowsButton;
@@ -47,12 +47,12 @@ public class LastConnectionsWindow extends AbstractPopupDialog {
 
         this.scrollPane = new JScrollPane(table);
 
-        this.estabilishedConnButton = new JAppIconButton("Connect", AppIcon.CONNECT_TO_REMOTE_SERVER);
-        this.removeRowButton = new JAppIconButton("Remove", AppIcon.DELETE_CLAUSE);
-        this.removeAllRowsButton = new JAppIconButton("Remove all", AppIcon.DELETE_TABLE);
-        this.cancelButton = new JAppIconButton("Cancel", AppIcon.CANCEL);
+        this.connectButton = new JAppIconButton("Connect", ClientIcon.CONNECT_TO_REMOTE_SERVER);
+        this.removeRowButton = new JAppIconButton("Remove", LibIcon.DELETE_CLAUSE);
+        this.removeAllRowsButton = new JAppIconButton("Remove all", LibIcon.DELETE_TABLE);
+        this.cancelButton = new JAppIconButton("Cancel", LibIcon.CANCEL);
 
-        this.estabilishedConnButton.addActionListener(e -> controller.estabilishedConnection());
+        this.connectButton.addActionListener(e -> controller.createConnection());
         this.cancelButton.addActionListener(e -> closeWindow());
         this.removeRowButton.addActionListener(e -> controller.removeSelectedRow());
         this.removeAllRowsButton.addActionListener(e -> controller.removeAllRows());
@@ -74,10 +74,10 @@ public class LastConnectionsWindow extends AbstractPopupDialog {
         setColumnWidth(1, 60);
         setColumnWidth(2, 100);
 
-        estabilishedConnButton.setEnabled(false);
+        connectButton.setEnabled(false);
         removeRowButton.setEnabled(false);
 
-        rightPanel.add(estabilishedConnButton);
+        rightPanel.add(connectButton);
         rightPanel.add(removeRowButton);
         rightPanel.add(removeAllRowsButton);
         rightPanel.add(new JPanel());

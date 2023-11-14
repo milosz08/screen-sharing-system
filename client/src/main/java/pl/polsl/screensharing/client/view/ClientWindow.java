@@ -7,7 +7,7 @@ package pl.polsl.screensharing.client.view;
 import lombok.Getter;
 import pl.polsl.screensharing.client.state.ClientState;
 import pl.polsl.screensharing.client.view.dialog.AboutDialogWindow;
-import pl.polsl.screensharing.client.view.dialog.EstablishedConnectionWindow;
+import pl.polsl.screensharing.client.view.dialog.ConnectWindow;
 import pl.polsl.screensharing.client.view.dialog.LastConnectionsWindow;
 import pl.polsl.screensharing.client.view.dialog.LicenseDialogWindow;
 import pl.polsl.screensharing.client.view.fragment.TopMenuBar;
@@ -25,7 +25,7 @@ public class ClientWindow extends AbstractRootFrame {
     private final TopMenuBar topMenuBar;
     private final TopToolbar topToolbar;
 
-    private final EstablishedConnectionWindow establishedConnectionWindow;
+    private final ConnectWindow connectWindow;
     private final LastConnectionsWindow lastConnectionsWindow;
     private final AboutDialogWindow aboutDialogWindow;
     private final LicenseDialogWindow licenseDialogWindow;
@@ -37,7 +37,7 @@ public class ClientWindow extends AbstractRootFrame {
         this.topMenuBar = new TopMenuBar(this);
         this.topToolbar = new TopToolbar(this);
 
-        this.establishedConnectionWindow = new EstablishedConnectionWindow(this);
+        this.connectWindow = new ConnectWindow(this);
         this.lastConnectionsWindow = new LastConnectionsWindow(this);
         this.aboutDialogWindow = new AboutDialogWindow(this);
         this.licenseDialogWindow = new LicenseDialogWindow(this);

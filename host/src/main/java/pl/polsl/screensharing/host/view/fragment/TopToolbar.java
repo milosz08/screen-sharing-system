@@ -4,13 +4,15 @@
  */
 package pl.polsl.screensharing.host.view.fragment;
 
+import lombok.Getter;
 import pl.polsl.screensharing.host.controller.TopToolbarController;
+import pl.polsl.screensharing.host.view.HostIcon;
 import pl.polsl.screensharing.host.view.HostWindow;
-import pl.polsl.screensharing.lib.AppIcon;
 import pl.polsl.screensharing.lib.gui.component.JAppIconButton;
 
 import javax.swing.*;
 
+@Getter
 public class TopToolbar extends JToolBar {
     private final JAppIconButton createConnectionButton;
 
@@ -31,9 +33,5 @@ public class TopToolbar extends JToolBar {
     private void addButtonWithSeparation(JAppIconButton button) {
         add(button);
         add(Box.createHorizontalStrut(5));
-    }
-
-    public void setConnectionButtonsState(boolean onIsConnect) {
-        createConnectionButton.setEnabled(!onIsConnect);
     }
 }
