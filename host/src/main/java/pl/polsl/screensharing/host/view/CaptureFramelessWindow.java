@@ -54,7 +54,7 @@ public class CaptureFramelessWindow extends JFrame {
         this.bottomControls.add(stopVideoStreamingButton);
 
         this.centerTranslucentFrame = new JPanel();
-        this.centerTranslucentFrame.setBorder(BorderFactory.createLineBorder(Color.green, BORDER_PX));
+        this.centerTranslucentFrame.setBorder(BorderFactory.createLineBorder(Color.GREEN, BORDER_PX));
         this.centerTranslucentFrame.setBackground(new Color(0, 0, 0, 0));
         this.centerTranslucentFrame.setBounds(0, 0, getWidth(), getHeight());
 
