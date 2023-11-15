@@ -12,13 +12,13 @@ import javax.swing.plaf.metal.MetalLookAndFeel;
 
 @Slf4j
 @RequiredArgsConstructor
-public abstract class AbstractGUIThread implements Runnable {
-    private final AbstractRootFrame frame;
+public abstract class AbstractGUIThread<T> implements Runnable {
+    private final T state;
 
     @Override
     public void run() {
         log.info("Starting GUI thread.");
-        createThreadSaveRootFrame(frame);
+        createThreadSaveRootFrame(state);
         log.info("Initialized application GUI.");
     }
 
@@ -31,5 +31,5 @@ public abstract class AbstractGUIThread implements Runnable {
         }
     }
 
-    protected abstract void createThreadSaveRootFrame(AbstractRootFrame frame);
+    protected abstract void createThreadSaveRootFrame(T state);
 }

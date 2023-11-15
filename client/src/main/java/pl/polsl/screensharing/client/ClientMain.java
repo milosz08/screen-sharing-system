@@ -12,14 +12,14 @@ import pl.polsl.screensharing.lib.gui.AbstractGUIThread;
 import pl.polsl.screensharing.lib.gui.AbstractRootFrame;
 
 @Slf4j
-public class ClientMain extends AbstractGUIThread {
-    public ClientMain(AbstractRootFrame frame) {
-        super(frame);
+public class ClientMain extends AbstractGUIThread<ClientState> {
+    public ClientMain(ClientState state) {
+        super(state);
     }
 
     public static void main(String[] args) {
-        final ClientState clientState = new ClientState();
-        final ClientMain clientMain = new ClientMain(new ClientWindow(clientState));
+        final ClientState state = new ClientState();
+        final ClientMain clientMain = new ClientMain(state);
         clientMain.init();
 
         // wątek klienta, do testów
@@ -28,7 +28,8 @@ public class ClientMain extends AbstractGUIThread {
     }
 
     @Override
-    protected void createThreadSaveRootFrame(AbstractRootFrame frame) {
+    protected void createThreadSaveRootFrame(ClientState state) {
+        final AbstractRootFrame frame = new ClientWindow(state);
         frame.guiInitAndShow();
     }
 }
