@@ -60,12 +60,12 @@ public class TopMenuBar extends JMenuBar {
 
         this.videoStreamMenuItems = new JAppMenuIconItem[]{
             startVideoStreamingMenuItem,
-            stopVideoStreamingMenuItem
+            stopVideoStreamingMenuItem,
         };
 
         this.helpMenuItems = new JAppMenuIconItem[]{
             aboutMenuItem,
-            licenseMenuItem
+            licenseMenuItem,
         };
 
         this.sessionParamsMenuItem.addActionListener(e -> controller.openSessionParamsWindow());
