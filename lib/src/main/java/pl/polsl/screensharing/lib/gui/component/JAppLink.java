@@ -5,7 +5,7 @@
 package pl.polsl.screensharing.lib.gui.component;
 
 import lombok.extern.slf4j.Slf4j;
-import pl.polsl.screensharing.lib.gui.MouseClickEvent;
+import pl.polsl.screensharing.lib.gui.lambda.MouseClickEvent;
 
 import javax.swing.*;
 import java.awt.*;
