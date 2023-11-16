@@ -27,7 +27,6 @@ public class HostWindow extends AbstractRootFrame {
     private final TopToolbar topToolbar;
 
     private final ConnectionSettingsWindow connectionSettingsWindow;
-    private final CaptureFramelessWindow captureFramelessWindow;
 
     public HostWindow(HostState hostState) {
         super(AppType.HOST, HostWindow.class);
@@ -35,7 +34,6 @@ public class HostWindow extends AbstractRootFrame {
 
         this.topMenuBar = new TopMenuBar(this);
         this.topToolbar = new TopToolbar(this);
-        this.captureFramelessWindow = new CaptureFramelessWindow(this);
 
         this.aboutDialogWindow = new AboutDialogWindow(this);
         this.licenseDialogWindow = new LicenseDialogWindow(this);
