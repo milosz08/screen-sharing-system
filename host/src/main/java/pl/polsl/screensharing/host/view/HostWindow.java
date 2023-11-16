@@ -32,7 +32,7 @@ public class HostWindow extends AbstractRootFrame {
     private final ConnectionSettingsWindow connectionSettingsWindow;
 
     public HostWindow(HostState hostState) {
-        super(AppType.HOST, HostWindow.class);
+        super(AppType.HOST, hostState, HostWindow.class);
         this.hostState = hostState;
 
         this.topMenuBar = new TopMenuBar(this);

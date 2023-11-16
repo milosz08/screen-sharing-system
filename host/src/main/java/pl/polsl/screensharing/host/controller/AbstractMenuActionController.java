@@ -11,8 +11,6 @@ import pl.polsl.screensharing.host.state.SessionState;
 import pl.polsl.screensharing.host.state.StreamingState;
 import pl.polsl.screensharing.host.view.HostWindow;
 import pl.polsl.screensharing.host.view.dialog.ConnectionSettingsWindow;
-import pl.polsl.screensharing.host.view.fragment.TopMenuBar;
-import pl.polsl.screensharing.host.view.fragment.TopToolbar;
 
 import javax.swing.*;
 
@@ -30,9 +28,7 @@ abstract class AbstractMenuActionController {
         final HostState state = hostWindow.getHostState();
         final BottomInfobarController bottomInfoBarController = hostWindow.getBottomInfobarController();
 
-        state.setSessionState(SessionState.CREATED);
-        updateSessionButtonsState(true);
-        bottomInfoBarController.updateSessionStateUi();
+        state.updateSessionState(SessionState.CREATED);
         bottomInfoBarController.startSessionTimer();
 
         // TODO: creating session
@@ -51,11 +47,8 @@ abstract class AbstractMenuActionController {
             "Please confirm", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 
         if (result == JOptionPane.YES_OPTION) {
-            state.setSessionState(SessionState.INACTIVE);
-            state.setStreamingState(StreamingState.STOPPED);
-
-            updateSessionButtonsState(false);
-            bottomInfoBarController.updateSessionStateUi();
+            state.updateSessionState(SessionState.INACTIVE);
+            state.updateStreamingState(StreamingState.STOPPED);
             bottomInfoBarController.stopSessionTimer();
 
             // TODO: removing session
@@ -72,9 +65,7 @@ abstract class AbstractMenuActionController {
             "Please confirm", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 
         if (result == JOptionPane.YES_OPTION) {
-            state.setStreamingState(StreamingState.STREAMING);
-
-            updateVideoStreamButtonsState(true, state.isSessionCreated());
+            state.updateStreamingState(StreamingState.STREAMING);
             bottomInfoBarController.startStreamingTimer();
 
             // TODO: starting screen sharing
@@ -87,39 +78,11 @@ abstract class AbstractMenuActionController {
         final HostState state = hostWindow.getHostState();
         final BottomInfobarController bottomInfoBarController = hostWindow.getBottomInfobarController();
 
-        state.setStreamingState(StreamingState.STOPPED);
-
-        updateVideoStreamButtonsState(false, state.isSessionCreated());
+        state.updateStreamingState(StreamingState.STOPPED);
         bottomInfoBarController.stopStreamingTimer();
 
         // TODO: stopping screen sharing
 
         log.info("Stopped screen streaming");
-    }
-
-    private void updateSessionButtonsState(boolean isSesionCreated) {
-        final TopMenuBar topMenuBar = hostWindow.getTopMenuBar();
-        final TopToolbar topToolbar = hostWindow.getTopToolbar();
-
-        topMenuBar.getSessionParamsMenuItem().setEnabled(!isSesionCreated);
-        topMenuBar.getCreateSessionMenuItem().setEnabled(!isSesionCreated);
-        topMenuBar.getRemoveSessionMenuItem().setEnabled(isSesionCreated);
-
-        topToolbar.getSessionParamsButton().setEnabled(!isSesionCreated);
-        topToolbar.getCreateSessionButton().setEnabled(!isSesionCreated);
-        topToolbar.getRemoveSessionButton().setEnabled(isSesionCreated);
-
-        updateVideoStreamButtonsState(false, isSesionCreated);
-    }
-
-    private void updateVideoStreamButtonsState(boolean isVideoStreaming, boolean isSessionCreated) {
-        final TopMenuBar topMenuBar = hostWindow.getTopMenuBar();
-        final TopToolbar topToolbar = hostWindow.getTopToolbar();
-
-        topMenuBar.getStartVideoStreamingMenuItem().setEnabled(!isVideoStreaming && isSessionCreated);
-        topMenuBar.getStopVideoStreamingMenuItem().setEnabled(isVideoStreaming && isSessionCreated);
-
-        topToolbar.getStartVideoStreamingButton().setEnabled(!isVideoStreaming && isSessionCreated);
-        topToolbar.getStopVideoStreamingButton().setEnabled(isVideoStreaming && isSessionCreated);
     }
 }

@@ -10,7 +10,7 @@ import pl.polsl.screensharing.host.state.HostState;
 import pl.polsl.screensharing.host.view.HostWindow;
 import pl.polsl.screensharing.lib.Parser;
 import pl.polsl.screensharing.lib.gui.AbstractBottomInfobar;
-import pl.polsl.screensharing.lib.gui.fragment.JAppIntegrityActionRectInfo;
+import pl.polsl.screensharing.lib.gui.fragment.JAppActionRectInfo;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,7 +23,7 @@ public class BottomInfobar extends AbstractBottomInfobar {
     private final JLabel sessionStatusTextLabel;
     private final JLabel sessionStatusLabel;
     private final JLabel sessionTimeLabel;
-    private final JAppIntegrityActionRectInfo streamingRectInfo;
+    private final JAppActionRectInfo streamingRectInfo;
     private final JLabel streamingTimeLabel;
     private final JLabel fpsInfoLabel;
     private final JLabel sendBytesPerSecLabel;
@@ -33,12 +33,14 @@ public class BottomInfobar extends AbstractBottomInfobar {
         this.bottomInfobarController = new BottomInfobarController(hostWindow, this);
 
         this.sessionStatusTextLabel = new JLabel("Session state:");
-        this.sessionStatusLabel = new JLabel(hostState.getSessionState().getState());
-        this.streamingRectInfo = new JAppIntegrityActionRectInfo(hostState);
-        this.sessionTimeLabel = new JLabel(Parser.parseTime(hostState.getSessionTime(), "Session"));
-        this.streamingTimeLabel = new JLabel(Parser.parseTime(hostState.getStreamingTime(), "Streaming"));
-        this.fpsInfoLabel = new JLabel(parseFpsState(hostState.getStreamingFps()));
-        this.sendBytesPerSecLabel = new JLabel(Parser.parseBytesPerSecState(hostState.getSendBytesPerSec(), "Send"));
+        this.sessionStatusLabel = new JLabel();
+        this.streamingRectInfo = new JAppActionRectInfo(hostState.getStreamingState$(), hostState);
+        this.sessionTimeLabel = new JLabel();
+        this.streamingTimeLabel = new JLabel();
+        this.fpsInfoLabel = new JLabel();
+        this.sendBytesPerSecLabel = new JLabel();
+
+        initObservables();
 
         sessionStatusTextLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 3));
         streamingTimeLabel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 20));
@@ -61,7 +63,22 @@ public class BottomInfobar extends AbstractBottomInfobar {
         addPanels();
     }
 
-    public String parseFpsState(int fps) {
-        return String.format("FPS: %s", fps);
+    private void initObservables() {
+        hostState.wrapAsDisposable(hostState.getSessionState$(), state -> {
+            sessionStatusLabel.setForeground(state.getColor());
+            sessionStatusLabel.setText(state.getState());
+        });
+        hostState.wrapAsDisposable(hostState.getSessionTime$(), time -> {
+            sessionTimeLabel.setText(Parser.parseTime(time, "Session"));
+        });
+        hostState.wrapAsDisposable(hostState.getStreamingTime$(), time -> {
+            streamingTimeLabel.setText(Parser.parseTime(time, "Streaming"));
+        });
+        hostState.wrapAsDisposable(hostState.getStreamingFps$(), fps -> {
+            fpsInfoLabel.setText(String.format("FPS: %s", fps));
+        });
+        hostState.wrapAsDisposable(hostState.getSendBytesPerSec$(), bytes -> {
+            sendBytesPerSecLabel.setText(Parser.parseBytesPerSecState(bytes, "Send"));
+        });
     }
 }
