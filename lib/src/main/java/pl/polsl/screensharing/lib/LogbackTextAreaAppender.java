@@ -25,7 +25,7 @@ public class LogbackTextAreaAppender extends AppenderBase<ILoggingEvent> {
     public void start() {
         patternLayout = new PatternLayout();
         patternLayout.setContext(getContext());
-        patternLayout.setPattern("%d{yyyy-MM-dd HH:mm:ss.SSS} > [%-5p] \\(%-35.35logger\\) : %m%n");
+        patternLayout.setPattern("%d{yyyy-MM-dd HH:mm:ss.SSS} > [%-5p] : %m%n");
         patternLayout.start();
         super.start();
     }
