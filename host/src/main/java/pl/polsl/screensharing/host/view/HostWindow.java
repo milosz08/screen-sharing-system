@@ -39,7 +39,7 @@ public class HostWindow extends AbstractRootFrame {
 
         this.topMenuBar = new TopMenuBar(this);
         this.topToolbar = new TopToolbar(this);
-        this.tabbedPaneWindow = new TabbedPaneWindow();
+        this.tabbedPaneWindow = new TabbedPaneWindow(this);
         this.bottomInfobar = new BottomInfobar(this);
 
         this.aboutDialogWindow = new AboutDialogWindow(this);
