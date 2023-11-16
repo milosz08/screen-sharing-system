@@ -4,7 +4,7 @@
 [![](https://img.shields.io/badge/Build%20with-Maven%203.9.4-1abc9c.svg)](https://maven.apache.org//)&nbsp;&nbsp;
 
 Protected screen sharing system created with low-level Socket API, image processing library and Java SE 1.8
-with JSSE, JCA, JCE and Swing UI. Used reactive programming with observable-subscriber pattern supplier
+with JSSE, JCA, JCE and Swing UI. Used event-based reactive programming with observer pattern supplied
 by [RxJava](https://github.com/ReactiveX/RxJava) library.
 
 ## Table of content
