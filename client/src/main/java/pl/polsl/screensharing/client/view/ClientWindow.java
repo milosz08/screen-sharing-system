@@ -14,6 +14,7 @@ import pl.polsl.screensharing.client.view.dialog.LicenseDialogWindow;
 import pl.polsl.screensharing.client.view.fragment.BottomInfobar;
 import pl.polsl.screensharing.client.view.fragment.TopMenuBar;
 import pl.polsl.screensharing.client.view.fragment.TopToolbar;
+import pl.polsl.screensharing.client.view.tabbed.TabbedPaneWindow;
 import pl.polsl.screensharing.lib.AppType;
 import pl.polsl.screensharing.lib.gui.AbstractRootFrame;
 
@@ -26,6 +27,7 @@ public class ClientWindow extends AbstractRootFrame {
 
     private final TopMenuBar topMenuBar;
     private final TopToolbar topToolbar;
+    private final TabbedPaneWindow tabbedPaneWindow;
     private final BottomInfobar bottomInfobar;
 
     private final ConnectWindow connectWindow;
@@ -39,6 +41,7 @@ public class ClientWindow extends AbstractRootFrame {
 
         this.topMenuBar = new TopMenuBar(this);
         this.topToolbar = new TopToolbar(this);
+        this.tabbedPaneWindow = new TabbedPaneWindow();
         this.bottomInfobar = new BottomInfobar(this);
 
         this.connectWindow = new ConnectWindow(this);
@@ -51,6 +54,7 @@ public class ClientWindow extends AbstractRootFrame {
     protected void extendsFrame(JFrame frame, JPanel rootPanel) {
         frame.setJMenuBar(topMenuBar);
         frame.add(topToolbar, BorderLayout.NORTH);
+        frame.add(tabbedPaneWindow, BorderLayout.CENTER);
         frame.add(bottomInfobar, BorderLayout.SOUTH);
     }
 

@@ -13,6 +13,7 @@ import pl.polsl.screensharing.host.view.dialog.LicenseDialogWindow;
 import pl.polsl.screensharing.host.view.fragment.BottomInfobar;
 import pl.polsl.screensharing.host.view.fragment.TopMenuBar;
 import pl.polsl.screensharing.host.view.fragment.TopToolbar;
+import pl.polsl.screensharing.host.view.tabbed.TabbedPaneWindow;
 import pl.polsl.screensharing.lib.AppType;
 import pl.polsl.screensharing.lib.gui.AbstractRootFrame;
 
@@ -23,12 +24,13 @@ import java.awt.*;
 public class HostWindow extends AbstractRootFrame {
     private final HostState hostState;
 
-    private final AboutDialogWindow aboutDialogWindow;
-    private final LicenseDialogWindow licenseDialogWindow;
     private final TopMenuBar topMenuBar;
     private final TopToolbar topToolbar;
+    private final TabbedPaneWindow tabbedPaneWindow;
     private final BottomInfobar bottomInfobar;
 
+    private final AboutDialogWindow aboutDialogWindow;
+    private final LicenseDialogWindow licenseDialogWindow;
     private final ConnectionSettingsWindow connectionSettingsWindow;
 
     public HostWindow(HostState hostState) {
@@ -37,6 +39,7 @@ public class HostWindow extends AbstractRootFrame {
 
         this.topMenuBar = new TopMenuBar(this);
         this.topToolbar = new TopToolbar(this);
+        this.tabbedPaneWindow = new TabbedPaneWindow();
         this.bottomInfobar = new BottomInfobar(this);
 
         this.aboutDialogWindow = new AboutDialogWindow(this);
@@ -48,6 +51,7 @@ public class HostWindow extends AbstractRootFrame {
     protected void extendsFrame(JFrame frame, JPanel rootPanel) {
         frame.setJMenuBar(topMenuBar);
         frame.add(topToolbar, BorderLayout.NORTH);
+        frame.add(tabbedPaneWindow, BorderLayout.CENTER);
         frame.add(bottomInfobar, BorderLayout.SOUTH);
     }
 
