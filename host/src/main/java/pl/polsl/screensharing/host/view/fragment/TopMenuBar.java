@@ -4,8 +4,13 @@
  */
 package pl.polsl.screensharing.host.view.fragment;
 
+import io.reactivex.rxjava3.core.Observable;
 import lombok.Getter;
+import pl.polsl.screensharing.host.aggregator.SessionStreamingAggregator;
 import pl.polsl.screensharing.host.controller.TopMenuBarController;
+import pl.polsl.screensharing.host.state.HostState;
+import pl.polsl.screensharing.host.state.SessionState;
+import pl.polsl.screensharing.host.state.StreamingState;
 import pl.polsl.screensharing.host.view.HostIcon;
 import pl.polsl.screensharing.host.view.HostWindow;
 import pl.polsl.screensharing.lib.gui.component.JAppMenuIconItem;
@@ -16,10 +21,10 @@ import javax.swing.*;
 @Getter
 public class TopMenuBar extends JMenuBar {
     private final TopMenuBarController controller;
+    private final HostState hostState;
 
     private final JMenu sessionMenu;
     private final JMenu videoStreamMenu;
-    private final JMenu captureFrameMenu;
     private final JMenu helpMenu;
 
     private final JAppMenuIconItem sessionParamsMenuItem;
@@ -28,23 +33,20 @@ public class TopMenuBar extends JMenuBar {
 
     private final JAppMenuIconItem startVideoStreamingMenuItem;
     private final JAppMenuIconItem stopVideoStreamingMenuItem;
-    private final JAppMenuIconItem showFramelessCaptureMenuItem;
-    private final JAppMenuIconItem hideFramelessCaptureMenuItem;
 
     private final JAppMenuIconItem aboutMenuItem;
     private final JAppMenuIconItem licenseMenuItem;
 
     private final JAppMenuIconItem[] sessionMenuItems;
     private final JAppMenuIconItem[] videoStreamMenuItems;
-    private final JAppMenuIconItem[] captureFrameMenuItems;
     private final JAppMenuIconItem[] helpMenuItems;
 
     public TopMenuBar(HostWindow hostWindow) {
         this.controller = new TopMenuBarController(hostWindow);
+        this.hostState = hostWindow.getHostState();
 
         this.sessionMenu = new JMenu("Session");
         this.videoStreamMenu = new JMenu("Video stream");
-        this.captureFrameMenu = new JMenu("Capture frame");
         this.helpMenu = new JMenu("Help");
 
         this.sessionParamsMenuItem = new JAppMenuIconItem("Session settings", HostIcon.SERVER_SETTINGS);
@@ -54,11 +56,10 @@ public class TopMenuBar extends JMenuBar {
         this.startVideoStreamingMenuItem = new JAppMenuIconItem("Start streaming", HostIcon.DEBUG_INTERACTIVE_WINDOW, false);
         this.stopVideoStreamingMenuItem = new JAppMenuIconItem("Stop streaming", HostIcon.APPLICATION_ERROR, false);
 
-        this.showFramelessCaptureMenuItem = new JAppMenuIconItem("Show capture frame", HostIcon.VISIBLE, false);
-        this.hideFramelessCaptureMenuItem = new JAppMenuIconItem("Hide capture frame", HostIcon.CLOAK_OR_HIDE, false);
-
         this.aboutMenuItem = new JAppMenuIconItem("About", LibIcon.HELP_TABLE_OF_CONTENTS);
         this.licenseMenuItem = new JAppMenuIconItem("License", LibIcon.CODE_INFORMATION_RULE);
+
+        initObservables();
 
         this.sessionMenuItems = new JAppMenuIconItem[]{
             sessionParamsMenuItem,
@@ -68,10 +69,6 @@ public class TopMenuBar extends JMenuBar {
         this.videoStreamMenuItems = new JAppMenuIconItem[]{
             startVideoStreamingMenuItem,
             stopVideoStreamingMenuItem,
-        };
-        this.captureFrameMenuItems = new JAppMenuIconItem[]{
-            showFramelessCaptureMenuItem,
-            hideFramelessCaptureMenuItem,
         };
         this.helpMenuItems = new JAppMenuIconItem[]{
             aboutMenuItem,
@@ -85,20 +82,15 @@ public class TopMenuBar extends JMenuBar {
         this.startVideoStreamingMenuItem.addActionListener(e -> controller.startVideoStreaming());
         this.stopVideoStreamingMenuItem.addActionListener(e -> controller.stopVideoStreaming());
 
-        this.showFramelessCaptureMenuItem.addActionListener(e -> controller.toggleFramelessCaptureFrame(true));
-        this.hideFramelessCaptureMenuItem.addActionListener(e -> controller.toggleFramelessCaptureFrame(false));
-
         this.aboutMenuItem.addActionListener(e -> controller.openAboutProgramSection());
         this.licenseMenuItem.addActionListener(e -> controller.openLicenseSection());
 
         addMenuItems(sessionMenu, sessionMenuItems);
         addMenuItems(videoStreamMenu, videoStreamMenuItems);
-        addMenuItems(captureFrameMenu, captureFrameMenuItems);
         addMenuItems(helpMenu, helpMenuItems);
 
         add(sessionMenu);
         add(videoStreamMenu);
-        add(captureFrameMenu);
         add(helpMenu);
     }
 
@@ -106,5 +98,26 @@ public class TopMenuBar extends JMenuBar {
         for (final JMenuItem item : items) {
             menu.add(item);
         }
+    }
+
+    private void initObservables() {
+        hostState.wrapAsDisposable(hostState.getSessionState$(), state -> {
+            final boolean isCreated = state.equals(SessionState.CREATED);
+            sessionParamsMenuItem.setEnabled(!isCreated);
+            createSessionMenuItem.setEnabled(!isCreated);
+            removeSessionMenuItem.setEnabled(isCreated);
+        });
+
+        final Observable<SessionStreamingAggregator> aggregator = Observable.combineLatest(
+            hostState.getSessionState$(),
+            hostState.getStreamingState$(),
+            SessionStreamingAggregator::new);
+
+        hostState.wrapAsDisposable(aggregator, aggregated -> {
+            final boolean isCreated = aggregated.getSessionState().equals(SessionState.CREATED);
+            final boolean isStreaming = aggregated.getStreamingState().equals(StreamingState.STREAMING);
+            startVideoStreamingMenuItem.setEnabled(!isStreaming && isCreated);
+            stopVideoStreamingMenuItem.setEnabled(isStreaming && isCreated);
+        });
     }
 }

@@ -2,12 +2,13 @@
  * Copyright (c) 2023 by MULTIPLE AUTHORS
  * Part of the CS study course project.
  */
-package pl.polsl.screensharing.client.dto;
+package pl.polsl.screensharing.client.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Objects;
 
@@ -15,7 +16,7 @@ import java.util.Objects;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class SavedConnDetailsDto implements Comparable<SavedConnDetailsDto> {
+public class SavedConnection implements Comparable<SavedConnection> {
     private int id;
     private String ipAddress;
     private int port;
@@ -23,7 +24,7 @@ public class SavedConnDetailsDto implements Comparable<SavedConnDetailsDto> {
     private String description;
 
     @Override
-    public int compareTo(SavedConnDetailsDto o) {
+    public int compareTo(SavedConnection o) {
         return Integer.compare(this.id, o.id);
     }
 
@@ -35,7 +36,7 @@ public class SavedConnDetailsDto implements Comparable<SavedConnDetailsDto> {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        SavedConnDetailsDto that = (SavedConnDetailsDto) o;
+        SavedConnection that = (SavedConnection) o;
         return port == that.port && Objects.equals(ipAddress, that.ipAddress)
             && Objects.equals(username, that.username) && Objects.equals(description, that.description);
     }
@@ -43,5 +44,16 @@ public class SavedConnDetailsDto implements Comparable<SavedConnDetailsDto> {
     @Override
     public int hashCode() {
         return ipAddress.hashCode() * port * username.hashCode() * description.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "{" +
+            "id=" + id +
+            ", ipAddress=" + ipAddress +
+            ", port=" + port +
+            ", username=" + username +
+            ", description=" + description.replaceAll("\n", StringUtils.SPACE) +
+            '}';
     }
 }

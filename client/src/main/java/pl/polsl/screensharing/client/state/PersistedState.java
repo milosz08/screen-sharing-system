@@ -5,19 +5,19 @@
 package pl.polsl.screensharing.client.state;
 
 import lombok.Getter;
-import pl.polsl.screensharing.client.dto.FastConnDetailsDto;
-import pl.polsl.screensharing.client.dto.SavedConnDetailsDto;
+import pl.polsl.screensharing.client.model.FastConnectionDetails;
+import pl.polsl.screensharing.client.model.SavedConnection;
 
 import java.util.SortedSet;
 import java.util.TreeSet;
 
 @Getter
 class PersistedState {
-    private final FastConnDetailsDto fastConnection;
-    private final SortedSet<SavedConnDetailsDto> savedConnections;
+    private final FastConnectionDetails fastConnection;
+    private final SortedSet<SavedConnection> savedConnections;
 
     PersistedState() {
-        this.fastConnection = new FastConnDetailsDto();
+        this.fastConnection = new FastConnectionDetails();
         this.savedConnections = new TreeSet<>();
     }
 }

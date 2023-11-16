@@ -6,7 +6,8 @@ package pl.polsl.screensharing.client.view.dialog;
 
 import lombok.Getter;
 import pl.polsl.screensharing.client.controller.LastConnectionsController;
-import pl.polsl.screensharing.client.dto.SavedConnDetailsDto;
+import pl.polsl.screensharing.client.model.SavedConnection;
+import pl.polsl.screensharing.client.state.ClientState;
 import pl.polsl.screensharing.client.view.ClientIcon;
 import pl.polsl.screensharing.client.view.ClientWindow;
 import pl.polsl.screensharing.lib.AppType;
@@ -18,10 +19,11 @@ import pl.polsl.screensharing.lib.gui.input.AppCellEditor;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.util.SortedSet;
 
 @Getter
 public class LastConnectionsWindow extends AbstractPopupDialog {
+    private final ClientState clientState;
+
     private final JPanel rightPanel;
     private final JScrollPane scrollPane;
 
@@ -36,16 +38,15 @@ public class LastConnectionsWindow extends AbstractPopupDialog {
 
     private final JTable table;
     private final DefaultTableModel tableModel;
-    private final Object[][] tableData;
 
     public LastConnectionsWindow(ClientWindow clientWindow) {
         super(AppType.HOST, 650, 210, "Last connections", clientWindow, LastConnectionsWindow.class);
+        this.clientState = clientWindow.getClientState();
         this.controller = new LastConnectionsController(clientWindow, this);
 
         this.rightPanel = new JPanel(new GridLayout(5, 1, 5, 5));
 
-        this.tableData = parseSavedConnectionToTableModel(clientWindow.getClientState().getSavedConnDetails());
-        this.tableModel = new DefaultTableModel(tableData, tableHeaders);
+        this.tableModel = new DefaultTableModel(new Object[][]{}, tableHeaders);
         this.table = new JTable(tableModel);
 
         this.scrollPane = new JScrollPane(table);
@@ -54,6 +55,8 @@ public class LastConnectionsWindow extends AbstractPopupDialog {
         this.removeRowButton = new JAppIconButton("Remove", LibIcon.DELETE_CLAUSE);
         this.removeAllRowsButton = new JAppIconButton("Remove all", LibIcon.DELETE_TABLE);
         this.cancelButton = new JAppIconButton("Cancel", LibIcon.CANCEL);
+
+        initObservables();
 
         this.connectButton.addActionListener(e -> controller.createConnection());
         this.cancelButton.addActionListener(e -> closeWindow());
@@ -94,24 +97,20 @@ public class LastConnectionsWindow extends AbstractPopupDialog {
         table.getColumnModel().getColumn(index).setMaxWidth(width);
     }
 
-    public void mapNewConnectionToTableModel(SavedConnDetailsDto detailsDto) {
-        final DefaultTableModel model = (DefaultTableModel) table.getModel();
-        model.addRow(new Object[]{
-            detailsDto.getIpAddress(),
-            detailsDto.getPort(),
-            detailsDto.getUsername(),
-            detailsDto.getDescription()
+    private void initObservables() {
+        clientState.wrapAsDisposable(clientState.getSavedConnections$(), savedConnections -> {
+            final DefaultTableModel model = (DefaultTableModel) table.getModel();
+            for (int i = 0; i < model.getRowCount(); i++) {
+                model.removeRow(i);
+            }
+            for (final SavedConnection savedConnection : savedConnections) {
+                model.addRow(new Object[]{
+                    savedConnection.getIpAddress(),
+                    savedConnection.getPort(),
+                    savedConnection.getUsername(),
+                    savedConnection.getDescription()
+                });
+            }
         });
-    }
-
-    public Object[][] parseSavedConnectionToTableModel(SortedSet<SavedConnDetailsDto> connsDetails) {
-        return connsDetails.stream()
-            .map(detailsDto -> new Object[]{
-                detailsDto.getIpAddress(),
-                detailsDto.getPort(),
-                detailsDto.getUsername(),
-                detailsDto.getDescription()
-            })
-            .toArray(Object[][]::new);
     }
 }

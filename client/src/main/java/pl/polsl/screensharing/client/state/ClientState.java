@@ -4,84 +4,104 @@
  */
 package pl.polsl.screensharing.client.state;
 
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.subjects.BehaviorSubject;
 import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import pl.polsl.screensharing.client.dto.FastConnDetailsDto;
-import pl.polsl.screensharing.client.dto.SavedConnDetailsDto;
+import pl.polsl.screensharing.client.model.FastConnectionDetails;
+import pl.polsl.screensharing.client.model.SavedConnection;
+import pl.polsl.screensharing.lib.state.AbstractDisposableProvider;
 
-import java.util.Optional;
 import java.util.SortedSet;
+import java.util.TreeSet;
 
-@Slf4j
-@Getter
-@Setter
-public class ClientState {
-    private boolean isRecording;
-    private boolean isConnecting;
-    private boolean isConnected;
-    private FastConnDetailsDto fastConnDetails;
-    private SortedSet<SavedConnDetailsDto> savedConnDetails;
+public class ClientState extends AbstractDisposableProvider {
+    private final BehaviorSubject<ConnectionState> connectionState$;
+    private final BehaviorSubject<Long> connectionTime$;
+    private final BehaviorSubject<RecordingState> recordingState$;
+    private final BehaviorSubject<Long> recordingTime$;
+    private final BehaviorSubject<Long> recvBytesPerSec$;
+    private final BehaviorSubject<FastConnectionDetails> fastConnectionDetails$;
+    private final BehaviorSubject<SortedSet<SavedConnection>> savedConnections$;
+
+    @Getter
     private final PersistedStateLoader persistedStateLoader;
 
     public ClientState() {
         this.persistedStateLoader = new PersistedStateLoader(this);
         this.persistedStateLoader.initPersistor(new PersistedState());
+
+        this.connectionState$ = BehaviorSubject.createDefault(ConnectionState.DISCONNECTED);
+        this.connectionTime$ = BehaviorSubject.createDefault(0L);
+        this.recordingState$ = BehaviorSubject.createDefault(RecordingState.IDLE);
+        this.recordingTime$ = BehaviorSubject.createDefault(0L);
+        this.recvBytesPerSec$ = BehaviorSubject.createDefault(0L);
+        this.fastConnectionDetails$ = BehaviorSubject.createDefault(new FastConnectionDetails());
+        this.savedConnections$ = BehaviorSubject.createDefault(new TreeSet<>());
+
         this.persistedStateLoader.loadApplicationSavedState();
     }
 
-    public boolean addNewSavedConn(SavedConnDetailsDto detailsDto) {
-        final int index = savedConnDetails.size();
-        detailsDto.setId(index);
-        final boolean isNew = savedConnDetails.stream()
-            .noneMatch(details -> details.equals(detailsDto));
-        if (isNew) {
-            savedConnDetails.add(detailsDto);
-            log.info("Add new saved connection: {}.", detailsDto);
-            persistedStateLoader.persistSavedConnDetails();
-            return true;
-        }
-        log.info("Saved connection {} already exist. Skipping.", detailsDto);
-        return false;
+    public void updateConnectionState(ConnectionState connectionState) {
+        connectionState$.onNext(connectionState);
     }
 
-    public void copyAndPushSavedConnDetails(SortedSet<SavedConnDetailsDto> rowDtos) {
-        savedConnDetails.clear();
-        savedConnDetails.addAll(rowDtos);
-        log.info("Update last connections table rows. Updated table: {}.", rowDtos);
-        persistedStateLoader.persistSavedConnDetails();
+    public void updateConnectionTime(Long seconds) {
+        connectionTime$.onNext(seconds);
     }
 
-    public void removeAllSavedConnDetails() {
-        savedConnDetails.clear();
-        log.info("Removed all saved last connections.");
-        persistedStateLoader.persistSavedConnDetails();
+    public void updateRecordingState(RecordingState recordingState) {
+        recordingState$.onNext(recordingState);
     }
 
-    public void removeConnDetailsByIndex(int index) {
-        if (index >= 0 && index < savedConnDetails.size()) {
-            final Optional<SavedConnDetailsDto> removedOptional = savedConnDetails.stream()
-                .filter(details -> details.getId() == index)
-                .findFirst();
-            if (!removedOptional.isPresent()) {
-                return;
-            }
-            final SavedConnDetailsDto removed = removedOptional.get();
-            savedConnDetails.remove(removed);
-
-            int i = 0;
-            for (final SavedConnDetailsDto notRemovable : savedConnDetails) {
-                notRemovable.setId(i++);
-            }
-            log.info("Removed last connection: {}.", removed);
-            log.info("Reorganized rows: {}.", savedConnDetails);
-            persistedStateLoader.persistSavedConnDetails();
-        }
+    public void updateRecordingTime(Long seconds) {
+        recordingTime$.onNext(seconds);
     }
 
-    public void persistFastConnDetails(FastConnDetailsDto detailsDto) {
-        fastConnDetails.setFastConnDetailsDto(detailsDto);
-        log.info("Update fast connection details: {}.", detailsDto);
-        persistedStateLoader.persistFastConnDetails();
+    public void updateRecvBytesPerSec(Long bytesPerSec) {
+        recvBytesPerSec$.onNext(bytesPerSec);
+    }
+
+    public void updateFastConnectionDetails(FastConnectionDetails fastConnectionDetails) {
+        fastConnectionDetails$.onNext(fastConnectionDetails);
+    }
+
+    public void updateSavedConnections(SortedSet<SavedConnection> savedConnectionSet) {
+        savedConnections$.onNext(savedConnectionSet);
+    }
+
+    public Observable<ConnectionState> getConnectionState$() {
+        return connectionState$.hide();
+    }
+
+    public Observable<Long> getConnectionTime$() {
+        return connectionTime$.hide();
+    }
+
+    public Observable<RecordingState> getRecordingState$() {
+        return recordingState$.hide();
+    }
+
+    public Observable<Long> getRecordingTime$() {
+        return recordingTime$.hide();
+    }
+
+    public Observable<Long> getRecvBytesPerSec$() {
+        return recvBytesPerSec$.hide();
+    }
+
+    public Observable<FastConnectionDetails> getFastConnectionDetails$() {
+        return fastConnectionDetails$.hide();
+    }
+
+    public Observable<SortedSet<SavedConnection>> getSavedConnections$() {
+        return savedConnections$.hide();
+    }
+
+    public SortedSet<SavedConnection> getLastEmittedSavedConnections() {
+        return savedConnections$.getValue();
+    }
+
+    public FastConnectionDetails getLastEmittedFastConnectionDetails() {
+        return fastConnectionDetails$.getValue();
     }
 }

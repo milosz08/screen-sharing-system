@@ -4,8 +4,11 @@
  */
 package pl.polsl.screensharing.client.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import pl.polsl.screensharing.client.state.ClientState;
+import pl.polsl.screensharing.client.state.ConnectionState;
+import pl.polsl.screensharing.client.state.RecordingState;
 import pl.polsl.screensharing.client.view.ClientWindow;
 import pl.polsl.screensharing.client.view.dialog.ConnectWindow;
 import pl.polsl.screensharing.client.view.dialog.LastConnectionsWindow;
@@ -13,10 +16,9 @@ import pl.polsl.screensharing.client.view.dialog.LastConnectionsWindow;
 import javax.swing.*;
 
 @Slf4j
-abstract class AbstractMenuActionController extends AbstractController {
-    AbstractMenuActionController(ClientWindow clientWindow) {
-        super(clientWindow);
-    }
+@RequiredArgsConstructor
+abstract class AbstractMenuActionController {
+    protected final ClientWindow clientWindow;
 
     public void openMakeConnectionWindow() {
         final ConnectWindow window = clientWindow.getConnectWindow();
@@ -30,13 +32,14 @@ abstract class AbstractMenuActionController extends AbstractController {
 
     public void disconnectFromSession() {
         final ClientState state = clientWindow.getClientState();
+        final BottomInfobarController bottomInfobarController = clientWindow.getBottomInfobarController();
 
         final int result = JOptionPane.showConfirmDialog(clientWindow, "Are you sure to end up connection?",
             "Please confirm", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 
         if (result == JOptionPane.YES_OPTION) {
-            state.setConnected(false);
-            updateConnectionButtonsState(false);
+            state.updateConnectionState(ConnectionState.DISCONNECTED);
+            bottomInfobarController.stopConnectionTimer();
 
             // TODO: disconnect from session
 
@@ -52,8 +55,10 @@ abstract class AbstractMenuActionController extends AbstractController {
 
     public void startRecording() {
         final ClientState state = clientWindow.getClientState();
-        state.setRecording(true);
-        updateRecordingButtonsState(true, state.isConnected());
+        final BottomInfobarController bottomInfobarController = clientWindow.getBottomInfobarController();
+
+        state.updateRecordingState(RecordingState.RECORDING);
+        bottomInfobarController.startRecordingTimer();
 
         // TODO: start recording session
 
@@ -62,8 +67,10 @@ abstract class AbstractMenuActionController extends AbstractController {
 
     public void stopRecording() {
         final ClientState state = clientWindow.getClientState();
-        state.setRecording(false);
-        updateRecordingButtonsState(false, state.isConnected());
+        final BottomInfobarController bottomInfobarController = clientWindow.getBottomInfobarController();
+
+        state.updateRecordingState(RecordingState.IDLE);
+        bottomInfobarController.stopRecordingTimer();
 
         // TODO: stop recording session
 

@@ -5,17 +5,17 @@
 package pl.polsl.screensharing.client.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import pl.polsl.screensharing.client.dto.ConnDetailsDto;
-import pl.polsl.screensharing.client.dto.SavedConnDetailsDto;
+import pl.polsl.screensharing.client.model.ConnectionDetails;
+import pl.polsl.screensharing.client.model.SavedConnection;
 import pl.polsl.screensharing.client.state.ClientState;
 import pl.polsl.screensharing.client.view.ClientWindow;
 import pl.polsl.screensharing.client.view.dialog.LastConnectionsWindow;
 import pl.polsl.screensharing.client.view.popup.PasswordPopup;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.beans.PropertyChangeEvent;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -29,13 +29,13 @@ public class LastConnectionsController extends AbstractPopupDialogController {
     }
 
     @Override
-    protected ConnDetailsDto createConnectionParameters() {
+    protected ConnectionDetails createConnectionParameters() {
         final PasswordPopup passwordPopup = new PasswordPopup(lastConnectionsWindow);
         final String password = passwordPopup.showPopupAndWaitForInput();
         if (password == null) {
             return null;
         }
-        return ConnDetailsDto.builder()
+        return ConnectionDetails.builder()
             .ipAddress(getTableValue(0))
             .port(Integer.parseInt(getTableValue(1)))
             .username(getTableValue(2))
@@ -44,12 +44,12 @@ public class LastConnectionsController extends AbstractPopupDialogController {
     }
 
     @Override
-    protected void onSuccessConnect(ConnDetailsDto detailsDto) {
+    protected void onSuccessConnect(ConnectionDetails connectionDetails) {
     }
 
     public void removeSelectedRow() {
         final JTable table = lastConnectionsWindow.getTable();
-        final ClientState state = clientWindow.getClientState();
+        final ClientState clientState = clientWindow.getClientState();
 
         final int selectedRow = table.getSelectedRow();
 
@@ -60,15 +60,35 @@ public class LastConnectionsController extends AbstractPopupDialogController {
             String.format("Are you sure to remove saved connection: %s:%s?", ip, port),
             "Please confirm", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 
-        if (result == JOptionPane.YES_OPTION) {
-            ((DefaultTableModel) table.getModel()).removeRow(selectedRow);
-            state.removeConnDetailsByIndex(selectedRow);
+        if (result != JOptionPane.YES_OPTION) {
+            return;
         }
+        final SortedSet<SavedConnection> lastSavedConnections = clientState.getLastEmittedSavedConnections();
+        if (selectedRow < 0 || selectedRow >= lastSavedConnections.size()) {
+            return;
+        }
+        final Optional<SavedConnection> removedOptional = lastSavedConnections.stream()
+            .filter(details -> details.getId() == selectedRow)
+            .findFirst();
+        if (!removedOptional.isPresent()) {
+            return;
+        }
+        final SavedConnection removed = removedOptional.get();
+        lastSavedConnections.remove(removed);
+
+        int i = 0;
+        for (final SavedConnection notRemovable : lastSavedConnections) {
+            notRemovable.setId(i++);
+        }
+        log.info("Removed last connection: {}.", removed);
+        log.info("Reorganized rows: {}.", lastSavedConnections);
+
+        clientState.updateSavedConnections(lastSavedConnections);
+        clientState.getPersistedStateLoader().persistSavedConnDetails();
     }
 
     public void removeAllRows() {
-        final JTable table = lastConnectionsWindow.getTable();
-        final ClientState state = clientWindow.getClientState();
+        final ClientState clientState = clientWindow.getClientState();
 
         final int result = JOptionPane.showConfirmDialog(lastConnectionsWindow,
             "Are you sure to remove all saved connections?",
@@ -77,31 +97,33 @@ public class LastConnectionsController extends AbstractPopupDialogController {
         if (result != JOptionPane.YES_OPTION) {
             return;
         }
-        for (int i = table.getRowCount() - 1; i >= 0; i--) {
-            ((DefaultTableModel) table.getModel()).removeRow(i);
-        }
-        state.removeAllSavedConnDetails();
+        clientState.updateSavedConnections(new TreeSet<>());
+        clientState.getPersistedStateLoader().persistSavedConnDetails();
+        log.info("Removed all saved last connections.");
     }
 
     public void updateLastConnectionsData(PropertyChangeEvent evt) {
-        final SortedSet<SavedConnDetailsDto> rows = new TreeSet<>();
-        final ClientState state = clientWindow.getClientState();
+        final SortedSet<SavedConnection> savedConnections = new TreeSet<>();
+        final ClientState clientState = clientWindow.getClientState();
         final JTable table = lastConnectionsWindow.getTable();
 
         if (!Objects.equals("tableCellEditor", evt.getPropertyName())) {
             return;
         }
         for (int i = 0; i < table.getRowCount(); i++) {
-            final SavedConnDetailsDto detailsDto = SavedConnDetailsDto.builder()
+            final SavedConnection savedConnection = SavedConnection.builder()
                 .id(i)
                 .ipAddress((String) table.getValueAt(i, 0))
                 .port(Integer.parseInt(String.valueOf(table.getValueAt(i, 1))))
                 .username((String) table.getValueAt(i, 2))
                 .description((String) table.getValueAt(i, 3))
                 .build();
-            rows.add(detailsDto);
+            savedConnections.add(savedConnection);
         }
-        state.copyAndPushSavedConnDetails(rows);
+        clientState.updateSavedConnections(new TreeSet<>());
+        clientState.updateSavedConnections(savedConnections);
+        clientState.getPersistedStateLoader().persistSavedConnDetails();
+        log.info("Update last connections table rows. Updated table: {}.", savedConnections);
     }
 
     public void markupSelectedRow() {

@@ -12,8 +12,8 @@ import javax.swing.text.AbstractDocument;
 public class JAppTextArea extends JTextArea {
     private final int maxCharacters;
 
-    public JAppTextArea(String text, int columns, int rows, int maxCharacters) {
-        super(text, columns, rows);
+    public JAppTextArea(int rows, int columns, int maxCharacters) {
+        super(rows, columns);
         this.maxCharacters = maxCharacters;
         setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
         setDocumentValidator();

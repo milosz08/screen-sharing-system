@@ -5,13 +5,16 @@
 package pl.polsl.screensharing.client.view;
 
 import lombok.Getter;
+import pl.polsl.screensharing.client.controller.BottomInfobarController;
 import pl.polsl.screensharing.client.state.ClientState;
 import pl.polsl.screensharing.client.view.dialog.AboutDialogWindow;
 import pl.polsl.screensharing.client.view.dialog.ConnectWindow;
 import pl.polsl.screensharing.client.view.dialog.LastConnectionsWindow;
 import pl.polsl.screensharing.client.view.dialog.LicenseDialogWindow;
+import pl.polsl.screensharing.client.view.fragment.BottomInfobar;
 import pl.polsl.screensharing.client.view.fragment.TopMenuBar;
 import pl.polsl.screensharing.client.view.fragment.TopToolbar;
+import pl.polsl.screensharing.client.view.tabbed.TabbedPaneWindow;
 import pl.polsl.screensharing.lib.AppType;
 import pl.polsl.screensharing.lib.gui.AbstractRootFrame;
 
@@ -24,6 +27,8 @@ public class ClientWindow extends AbstractRootFrame {
 
     private final TopMenuBar topMenuBar;
     private final TopToolbar topToolbar;
+    private final TabbedPaneWindow tabbedPaneWindow;
+    private final BottomInfobar bottomInfobar;
 
     private final ConnectWindow connectWindow;
     private final LastConnectionsWindow lastConnectionsWindow;
@@ -31,11 +36,13 @@ public class ClientWindow extends AbstractRootFrame {
     private final LicenseDialogWindow licenseDialogWindow;
 
     public ClientWindow(ClientState clientState) {
-        super(AppType.CLIENT, ClientWindow.class);
+        super(AppType.CLIENT, clientState, ClientWindow.class);
         this.clientState = clientState;
 
         this.topMenuBar = new TopMenuBar(this);
         this.topToolbar = new TopToolbar(this);
+        this.tabbedPaneWindow = new TabbedPaneWindow();
+        this.bottomInfobar = new BottomInfobar(this);
 
         this.connectWindow = new ConnectWindow(this);
         this.lastConnectionsWindow = new LastConnectionsWindow(this);
@@ -47,5 +54,11 @@ public class ClientWindow extends AbstractRootFrame {
     protected void extendsFrame(JFrame frame, JPanel rootPanel) {
         frame.setJMenuBar(topMenuBar);
         frame.add(topToolbar, BorderLayout.NORTH);
+        frame.add(tabbedPaneWindow, BorderLayout.CENTER);
+        frame.add(bottomInfobar, BorderLayout.SOUTH);
+    }
+
+    public BottomInfobarController getBottomInfobarController() {
+        return bottomInfobar.getBottomInfobarController();
     }
 }
