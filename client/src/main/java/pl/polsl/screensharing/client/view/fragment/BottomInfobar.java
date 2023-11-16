@@ -44,16 +44,16 @@ public class BottomInfobar extends AbstractBottomInfobar {
 
         connectionStatusLabel.setForeground(Color.GRAY);
 
-        stateCompound.add(connectionStatusTextLabel);
-        stateCompound.add(connectionStatusLabel);
+        stateCompoundPanel.add(connectionStatusTextLabel);
+        stateCompoundPanel.add(connectionStatusLabel);
 
-        leftPanel.add(stateCompound);
-        leftPanel.add(connectionTimeLabel);
+        leftCompoundPanel.add(stateCompoundPanel);
+        leftCompoundPanel.add(connectionTimeLabel);
 
-        rightPanel.add(recordingRectInfo);
-        rightPanel.add(recordingTimeLabel);
-        rightPanel.add(memoryUsageLabel);
-        rightPanel.add(recvBytesPerSecLabel);
+        rightCompoundPanel.add(recordingRectInfo);
+        rightCompoundPanel.add(recordingTimeLabel);
+        rightCompoundPanel.add(memoryUsageLabel);
+        rightCompoundPanel.add(recvBytesPerSecLabel);
 
         addPanels();
     }

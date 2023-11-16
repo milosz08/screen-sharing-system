@@ -12,9 +12,9 @@ import javax.swing.border.Border;
 import java.awt.*;
 
 public abstract class AbstractBottomInfobar extends JPanel {
-    protected final JPanel leftPanel;
-    protected final JPanel rightPanel;
-    protected final JPanel stateCompound;
+    protected final JPanel leftCompoundPanel;
+    protected final JPanel rightCompoundPanel;
+    protected final JPanel stateCompoundPanel;
 
     @Getter
     protected final JLabel memoryUsageLabel;
@@ -25,24 +25,24 @@ public abstract class AbstractBottomInfobar extends JPanel {
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
 
-        this.leftPanel = new JPanel();
-        this.rightPanel = new JPanel();
-        this.stateCompound = new JPanel();
+        this.leftCompoundPanel = new JPanel();
+        this.rightCompoundPanel = new JPanel();
+        this.stateCompoundPanel = new JPanel();
 
         this.marginRight = BorderFactory.createEmptyBorder(0, 0, 0, 20);
 
         this.memoryUsageLabel = new JLabel(Parser.parseBytes(0, "Memory", false));
 
-        leftPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        rightPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-        stateCompound.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        leftCompoundPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        rightCompoundPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        stateCompoundPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
 
-        stateCompound.setBorder(marginRight);
+        stateCompoundPanel.setBorder(marginRight);
         memoryUsageLabel.setBorder(marginRight);
     }
 
     protected void addPanels() {
-        add(leftPanel);
-        add(rightPanel);
+        add(leftCompoundPanel);
+        add(rightCompoundPanel);
     }
 }

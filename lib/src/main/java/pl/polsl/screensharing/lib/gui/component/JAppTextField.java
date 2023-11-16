@@ -15,8 +15,8 @@ public class JAppTextField extends JTextField {
     private final int maxCharacters;
     private final String regex;
 
-    public JAppTextField(String text, int columns, int maxCharacters, String regex) {
-        super(text, columns);
+    public JAppTextField(int columns, int maxCharacters, String regex) {
+        super(columns);
         this.maxCharacters = maxCharacters;
         this.regex = regex;
         setComponentProperties();

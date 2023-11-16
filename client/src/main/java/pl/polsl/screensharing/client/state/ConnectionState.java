@@ -12,7 +12,7 @@ import java.awt.*;
 
 @Getter
 @RequiredArgsConstructor
-public enum ConnectState implements ColoredLabelState {
+public enum ConnectionState implements ColoredLabelState {
     CONNECTED("Connected", Color.BLUE),
     CONNECTING("Connecting", Color.ORANGE),
     DISCONNECTED("Disconnected", Color.GRAY),

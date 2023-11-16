@@ -5,9 +5,9 @@
 package pl.polsl.screensharing.client.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import pl.polsl.screensharing.client.dto.ConnDetailsDto;
-import pl.polsl.screensharing.client.dto.FastConnDetailsDto;
-import pl.polsl.screensharing.client.dto.SavedConnDetailsDto;
+import pl.polsl.screensharing.client.model.ConnectionDetails;
+import pl.polsl.screensharing.client.model.FastConnectionDetails;
+import pl.polsl.screensharing.client.model.SavedConnection;
 import pl.polsl.screensharing.client.state.ClientState;
 import pl.polsl.screensharing.client.view.ClientWindow;
 import pl.polsl.screensharing.client.view.dialog.ConnectWindow;
@@ -27,12 +27,12 @@ public class ConnectController extends AbstractPopupDialogController {
     }
 
     @Override
-    protected ConnDetailsDto createConnectionParameters() {
+    protected ConnectionDetails createConnectionParameters() {
         final String ipAddress = connectionWindow.getIpAddressTextField().getText();
         final int port = Integer.parseInt(connectionWindow.getPortTextField().getText());
         final String username = connectionWindow.getUsernameTextField().getText();
 
-        return ConnDetailsDto.builder()
+        return ConnectionDetails.builder()
             .ipAddress(ipAddress)
             .port(port)
             .username(username)
@@ -64,7 +64,7 @@ public class ConnectController extends AbstractPopupDialogController {
         final ClientState state = clientWindow.getClientState();
         final JButton saveDetailsButton = (JButton) event.getSource();
 
-        final FastConnDetailsDto savedConnDetailsDto = FastConnDetailsDto.builder()
+        final FastConnectionDetails savedConnDetails = FastConnectionDetails.builder()
             .ipAddress(connectionWindow.getIpAddressTextField().getText())
             .port(Integer.parseInt(connectionWindow.getPortTextField().getText()))
             .username(connectionWindow.getUsernameTextField().getText())

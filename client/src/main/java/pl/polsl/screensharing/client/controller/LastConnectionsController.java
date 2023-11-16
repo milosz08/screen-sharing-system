@@ -5,8 +5,8 @@
 package pl.polsl.screensharing.client.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import pl.polsl.screensharing.client.dto.ConnDetailsDto;
-import pl.polsl.screensharing.client.dto.SavedConnDetailsDto;
+import pl.polsl.screensharing.client.model.ConnectionDetails;
+import pl.polsl.screensharing.client.model.SavedConnection;
 import pl.polsl.screensharing.client.state.ClientState;
 import pl.polsl.screensharing.client.view.ClientWindow;
 import pl.polsl.screensharing.client.view.dialog.LastConnectionsWindow;
@@ -29,13 +29,13 @@ public class LastConnectionsController extends AbstractPopupDialogController {
     }
 
     @Override
-    protected ConnDetailsDto createConnectionParameters() {
+    protected ConnectionDetails createConnectionParameters() {
         final PasswordPopup passwordPopup = new PasswordPopup(lastConnectionsWindow);
         final String password = passwordPopup.showPopupAndWaitForInput();
         if (password == null) {
             return null;
         }
-        return ConnDetailsDto.builder()
+        return ConnectionDetails.builder()
             .ipAddress(getTableValue(0))
             .port(Integer.parseInt(getTableValue(1)))
             .username(getTableValue(2))
@@ -44,12 +44,12 @@ public class LastConnectionsController extends AbstractPopupDialogController {
     }
 
     @Override
-    protected void onSuccessConnect(ConnDetailsDto detailsDto) {
+    protected void onSuccessConnect(ConnectionDetails connectionDetails) {
     }
 
     public void removeSelectedRow() {
         final JTable table = lastConnectionsWindow.getTable();
-        final ClientState state = clientWindow.getClientState();
+        final ClientState clientState = clientWindow.getClientState();
 
         final int selectedRow = table.getSelectedRow();
 
@@ -67,8 +67,7 @@ public class LastConnectionsController extends AbstractPopupDialogController {
     }
 
     public void removeAllRows() {
-        final JTable table = lastConnectionsWindow.getTable();
-        final ClientState state = clientWindow.getClientState();
+        final ClientState clientState = clientWindow.getClientState();
 
         final int result = JOptionPane.showConfirmDialog(lastConnectionsWindow,
             "Are you sure to remove all saved connections?",

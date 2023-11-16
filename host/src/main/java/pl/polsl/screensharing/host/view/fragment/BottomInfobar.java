@@ -46,17 +46,17 @@ public class BottomInfobar extends AbstractBottomInfobar {
 
         sessionStatusLabel.setForeground(Color.GRAY);
 
-        stateCompound.add(sessionStatusTextLabel);
-        stateCompound.add(sessionStatusLabel);
+        stateCompoundPanel.add(sessionStatusTextLabel);
+        stateCompoundPanel.add(sessionStatusLabel);
 
-        leftPanel.add(stateCompound);
-        leftPanel.add(sessionTimeLabel);
+        leftCompoundPanel.add(stateCompoundPanel);
+        leftCompoundPanel.add(sessionTimeLabel);
 
-        rightPanel.add(streamingRectInfo);
-        rightPanel.add(streamingTimeLabel);
-        rightPanel.add(memoryUsageLabel);
-        rightPanel.add(fpsInfoLabel);
-        rightPanel.add(sendBytesPerSecLabel);
+        rightCompoundPanel.add(streamingRectInfo);
+        rightCompoundPanel.add(streamingTimeLabel);
+        rightCompoundPanel.add(memoryUsageLabel);
+        rightCompoundPanel.add(fpsInfoLabel);
+        rightCompoundPanel.add(sendBytesPerSecLabel);
 
         addPanels();
     }

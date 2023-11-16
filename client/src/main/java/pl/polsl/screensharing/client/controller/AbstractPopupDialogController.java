@@ -31,8 +31,8 @@ abstract class AbstractPopupDialogController extends AbstractController {
 
         log.info("Started connecting...");
 
-        final ConnDetailsDto connDetails = createConnectionParameters();
-        if (connDetails == null) {
+        final ConnectionDetails connectionDetails = createConnectionParameters();
+        if (connectionDetails == null) {
             return;
         }
 
@@ -53,7 +53,7 @@ abstract class AbstractPopupDialogController extends AbstractController {
             log.info("Unable to connect with connection details: {}", connDetails);
 
             final String message = String.format("Cannot connect with %s:%s. Check connection parameters.",
-                connDetails.getIpAddress(), connDetails.getPort());
+                connectionDetails.getIpAddress(), connectionDetails.getPort());
             JOptionPane.showMessageDialog(dialog, message, "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -63,6 +63,6 @@ abstract class AbstractPopupDialogController extends AbstractController {
         dialog.dispose();
     }
 
-    protected abstract ConnDetailsDto createConnectionParameters();
-    protected abstract void onSuccessConnect(ConnDetailsDto detailsDto);
+    protected abstract ConnectionDetails createConnectionParameters();
+    protected abstract void onSuccessConnect(ConnectionDetails connectionDetails);
 }
