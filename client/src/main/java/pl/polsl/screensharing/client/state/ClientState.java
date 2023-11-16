@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import pl.polsl.screensharing.client.dto.FastConnDetailsDto;
 import pl.polsl.screensharing.client.dto.SavedConnDetailsDto;
+import pl.polsl.screensharing.lib.state.IntegrityProvider;
 
 import java.util.Optional;
 import java.util.SortedSet;
@@ -16,10 +17,12 @@ import java.util.SortedSet;
 @Slf4j
 @Getter
 @Setter
-public class ClientState {
+public class ClientState implements IntegrityProvider {
     private boolean isRecording;
-    private boolean isConnecting;
-    private boolean isConnected;
+    private ConnectState connectionState;
+    private long connectionTime;
+    private long recordingTime;
+    private long recvBytesPerSec;
     private FastConnDetailsDto fastConnDetails;
     private SortedSet<SavedConnDetailsDto> savedConnDetails;
     private final PersistedStateLoader persistedStateLoader;
@@ -28,6 +31,7 @@ public class ClientState {
         this.persistedStateLoader = new PersistedStateLoader(this);
         this.persistedStateLoader.initPersistor(new PersistedState());
         this.persistedStateLoader.loadApplicationSavedState();
+        this.connectionState = ConnectState.DISCONNECTED;
     }
 
     public boolean addNewSavedConn(SavedConnDetailsDto detailsDto) {
@@ -83,5 +87,22 @@ public class ClientState {
         fastConnDetails.setFastConnDetailsDto(detailsDto);
         log.info("Update fast connection details: {}.", detailsDto);
         persistedStateLoader.persistFastConnDetails();
+    }
+
+    public boolean isConnected() {
+        return connectionState.equals(ConnectState.CONNECTED);
+    }
+
+    public void increaseConnectionTime() {
+        connectionTime++;
+    }
+
+    public void increaseRecordingTime() {
+        recordingTime++;
+    }
+
+    @Override
+    public boolean isIntegrityStateTrue() {
+        return isRecording;
     }
 }

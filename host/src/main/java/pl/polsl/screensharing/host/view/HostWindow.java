@@ -9,6 +9,7 @@ import pl.polsl.screensharing.host.state.HostState;
 import pl.polsl.screensharing.host.view.dialog.AboutDialogWindow;
 import pl.polsl.screensharing.host.view.dialog.ConnectionSettingsWindow;
 import pl.polsl.screensharing.host.view.dialog.LicenseDialogWindow;
+import pl.polsl.screensharing.host.view.fragment.BottomInfobar;
 import pl.polsl.screensharing.host.view.fragment.TopMenuBar;
 import pl.polsl.screensharing.host.view.fragment.TopToolbar;
 import pl.polsl.screensharing.lib.AppType;
@@ -25,6 +26,7 @@ public class HostWindow extends AbstractRootFrame {
     private final LicenseDialogWindow licenseDialogWindow;
     private final TopMenuBar topMenuBar;
     private final TopToolbar topToolbar;
+    private final BottomInfobar bottomInfobar;
 
     private final ConnectionSettingsWindow connectionSettingsWindow;
 
@@ -34,6 +36,7 @@ public class HostWindow extends AbstractRootFrame {
 
         this.topMenuBar = new TopMenuBar(this);
         this.topToolbar = new TopToolbar(this);
+        this.bottomInfobar = new BottomInfobar(this);
 
         this.aboutDialogWindow = new AboutDialogWindow(this);
         this.licenseDialogWindow = new LicenseDialogWindow(this);
@@ -44,5 +47,10 @@ public class HostWindow extends AbstractRootFrame {
     protected void extendsFrame(JFrame frame, JPanel rootPanel) {
         frame.setJMenuBar(topMenuBar);
         frame.add(topToolbar, BorderLayout.NORTH);
+        frame.add(bottomInfobar, BorderLayout.SOUTH);
+    }
+
+    public BottomInfobarController getBottomInfobarController() {
+        return bottomInfobar.getBottomInfobarController();
     }
 }

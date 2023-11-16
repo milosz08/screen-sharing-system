@@ -6,6 +6,7 @@ package pl.polsl.screensharing.client.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import pl.polsl.screensharing.client.state.ClientState;
+import pl.polsl.screensharing.client.state.ConnectState;
 import pl.polsl.screensharing.client.view.ClientWindow;
 import pl.polsl.screensharing.client.view.dialog.ConnectWindow;
 import pl.polsl.screensharing.client.view.dialog.LastConnectionsWindow;
@@ -30,12 +31,15 @@ abstract class AbstractMenuActionController extends AbstractController {
 
     public void disconnectFromSession() {
         final ClientState state = clientWindow.getClientState();
+        final BottomInfobarController bottomInfobarController = clientWindow.getBottomInfobarController();
 
         final int result = JOptionPane.showConfirmDialog(clientWindow, "Are you sure to end up connection?",
             "Please confirm", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 
         if (result == JOptionPane.YES_OPTION) {
-            state.setConnected(false);
+            state.setConnectionState(ConnectState.DISCONNECTED);
+            bottomInfobarController.stopConnectionTimer();
+            bottomInfobarController.updateConnectionStateUi();
             updateConnectionButtonsState(false);
 
             // TODO: disconnect from session
@@ -52,7 +56,10 @@ abstract class AbstractMenuActionController extends AbstractController {
 
     public void startRecording() {
         final ClientState state = clientWindow.getClientState();
+        final BottomInfobarController bottomInfobarController = clientWindow.getBottomInfobarController();
+
         state.setRecording(true);
+        bottomInfobarController.startRecordingTimer();
         updateRecordingButtonsState(true, state.isConnected());
 
         // TODO: start recording session
@@ -62,7 +69,10 @@ abstract class AbstractMenuActionController extends AbstractController {
 
     public void stopRecording() {
         final ClientState state = clientWindow.getClientState();
+        final BottomInfobarController bottomInfobarController = clientWindow.getBottomInfobarController();
+
         state.setRecording(false);
+        bottomInfobarController.stopRecordingTimer();
         updateRecordingButtonsState(false, state.isConnected());
 
         // TODO: stop recording session

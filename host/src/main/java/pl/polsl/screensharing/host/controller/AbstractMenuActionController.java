@@ -7,6 +7,8 @@ package pl.polsl.screensharing.host.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import pl.polsl.screensharing.host.state.HostState;
+import pl.polsl.screensharing.host.state.SessionState;
+import pl.polsl.screensharing.host.state.StreamingState;
 import pl.polsl.screensharing.host.view.HostWindow;
 import pl.polsl.screensharing.host.view.dialog.ConnectionSettingsWindow;
 import pl.polsl.screensharing.host.view.fragment.TopMenuBar;
@@ -26,9 +28,12 @@ abstract class AbstractMenuActionController {
 
     public void createSession() {
         final HostState state = hostWindow.getHostState();
+        final BottomInfobarController bottomInfoBarController = hostWindow.getBottomInfobarController();
 
-        state.setSessionCreated(true);
+        state.setSessionState(SessionState.CREATED);
         updateSessionButtonsState(true);
+        bottomInfoBarController.updateSessionStateUi();
+        bottomInfoBarController.startSessionTimer();
 
         // TODO: creating session
 
@@ -40,14 +45,18 @@ abstract class AbstractMenuActionController {
 
     public void removeSession() {
         final HostState state = hostWindow.getHostState();
+        final BottomInfobarController bottomInfoBarController = hostWindow.getBottomInfobarController();
 
         final int result = JOptionPane.showConfirmDialog(hostWindow, "Are you sure to remove current session?",
             "Please confirm", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 
         if (result == JOptionPane.YES_OPTION) {
-            state.setSessionCreated(false);
-            state.setVideoStreaming(false);
+            state.setSessionState(SessionState.INACTIVE);
+            state.setStreamingState(StreamingState.STOPPED);
+
             updateSessionButtonsState(false);
+            bottomInfoBarController.updateSessionStateUi();
+            bottomInfoBarController.stopSessionTimer();
 
             // TODO: removing session
 
@@ -57,13 +66,16 @@ abstract class AbstractMenuActionController {
 
     public void startVideoStreaming() {
         final HostState state = hostWindow.getHostState();
+        final BottomInfobarController bottomInfoBarController = hostWindow.getBottomInfobarController();
 
         final int result = JOptionPane.showConfirmDialog(hostWindow, "Are you sure to start streaming your screen?",
             "Please confirm", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 
         if (result == JOptionPane.YES_OPTION) {
-            state.setVideoStreaming(true);
+            state.setStreamingState(StreamingState.STREAMING);
+
             updateVideoStreamButtonsState(true, state.isSessionCreated());
+            bottomInfoBarController.startStreamingTimer();
 
             // TODO: starting screen sharing
 
@@ -73,8 +85,12 @@ abstract class AbstractMenuActionController {
 
     public void stopVideoStreaming() {
         final HostState state = hostWindow.getHostState();
-        state.setVideoStreaming(false);
+        final BottomInfobarController bottomInfoBarController = hostWindow.getBottomInfobarController();
+
+        state.setStreamingState(StreamingState.STOPPED);
+
         updateVideoStreamButtonsState(false, state.isSessionCreated());
+        bottomInfoBarController.stopStreamingTimer();
 
         // TODO: stopping screen sharing
 
