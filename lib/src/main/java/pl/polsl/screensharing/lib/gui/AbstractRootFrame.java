@@ -5,6 +5,7 @@
 package pl.polsl.screensharing.lib.gui;
 
 import pl.polsl.screensharing.lib.AppType;
+import pl.polsl.screensharing.lib.state.AbstractDisposableProvider;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,15 +13,18 @@ import java.util.Optional;
 
 public abstract class AbstractRootFrame extends JFrame {
     private final AppType appType;
+    private final AbstractDisposableProvider disposableProvider;
     private final Dimension size;
     private final JPanel rootPanel;
     private final Optional<Image> imageIconOptional;
 
     protected AbstractRootFrame(
         AppType appType,
+        AbstractDisposableProvider disposableProvider,
         Class<?> frameClazz
     ) {
         this.rootPanel = new JPanel();
+        this.disposableProvider = disposableProvider;
         this.appType = appType;
         this.imageIconOptional = appType.getIconPath(frameClazz);
         this.size = appType.getRootWindowSize();
@@ -34,7 +38,7 @@ public abstract class AbstractRootFrame extends JFrame {
         setMinimumSize(size);
         setLocation(getMotherScreenCenter());
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        addWindowListener(new GuiWindowAdapter(this));
+        addWindowListener(new GuiWindowAdapter(this, disposableProvider));
         setTitle(appType.getRootWindowTitle());
         setLayout(new BorderLayout());
         add(rootPanel, BorderLayout.CENTER);

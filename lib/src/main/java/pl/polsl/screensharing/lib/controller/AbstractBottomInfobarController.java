@@ -6,7 +6,6 @@ package pl.polsl.screensharing.lib.controller;
 
 import pl.polsl.screensharing.lib.Parser;
 import pl.polsl.screensharing.lib.gui.AbstractBottomInfobar;
-import pl.polsl.screensharing.lib.state.ColoredLabelState;
 
 import javax.swing.*;
 import java.util.function.Consumer;
@@ -22,10 +21,5 @@ public abstract class AbstractBottomInfobarController {
     protected AbstractBottomInfobarController(AbstractBottomInfobar bottomInfobar) {
         this.jvmMeasurementsTimer = new Timer(5000, e -> jvmMeasurementsListener.accept(bottomInfobar));
         this.jvmMeasurementsTimer.start();
-    }
-
-    protected void updatePrimaryStateUi(ColoredLabelState state, JLabel updatingLabel) {
-        updatingLabel.setForeground(state.getColor());
-        updatingLabel.setText(state.getState());
     }
 }
