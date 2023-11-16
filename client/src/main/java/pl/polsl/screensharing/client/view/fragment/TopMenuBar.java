@@ -55,7 +55,7 @@ public class TopMenuBar extends JMenuBar {
         this.disconnectMenuItem = new JAppMenuIconItem("Disconnect", ClientIcon.DISCONNECT, false);
         this.lastConnectionsMenuItem = new JAppMenuIconItem("Last connections", LibIcon.CHECK_BOX_LIST);
 
-        this.takeScreenshotMenuItem = new JAppMenuIconItem("Take screenshot", ClientIcon.SCREENSHOT, false);
+        this.takeScreenshotMenuItem = new JAppMenuIconItem("Take screenshot", ClientIcon.TAKE_SNAPSHOT, false);
         this.startRecordingMenuItem = new JAppMenuIconItem("Start recording", ClientIcon.RECORD, false);
         this.stopRecordingMenuItem = new JAppMenuIconItem("Stop recording", ClientIcon.STOP, false);
 

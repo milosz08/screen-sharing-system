@@ -15,7 +15,7 @@ public enum ClientIcon implements AppIcon {
     CONNECT_TO_REMOTE_SERVER("ConnectToRemoteServer"),
     DISCONNECT("Disconnect"),
     RECORD("Record"),
-    SCREENSHOT("Screenshot"),
+    TAKE_SNAPSHOT("TakeSnapshot"),
     STOP("Stop"),
     ;
 

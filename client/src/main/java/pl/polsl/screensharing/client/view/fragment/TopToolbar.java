@@ -39,7 +39,7 @@ public class TopToolbar extends JToolBar {
         this.disconnectButton = new JAppIconButton("Disconnect", ClientIcon.DISCONNECT, true, false);
         this.lastConnectionsButton = new JAppIconButton("Last connections", LibIcon.CHECK_BOX_LIST, true);
 
-        this.takeScreenshotButton = new JAppIconButton("Take screenshot", ClientIcon.SCREENSHOT, true, false);
+        this.takeScreenshotButton = new JAppIconButton("Take screenshot", ClientIcon.TAKE_SNAPSHOT, true, false);
         this.startRecordingButton = new JAppIconButton("Start recording", ClientIcon.RECORD, true, false);
         this.stopRecordingButton = new JAppIconButton("Stop recording", ClientIcon.STOP, true, false);
 
