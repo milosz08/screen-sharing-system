@@ -14,4 +14,14 @@ public class ConnectionDetails {
     private int port;
     private String username;
     private String password;
+
+    @Override
+    public String toString() {
+        return "{" +
+            "ipAddress=" + ipAddress +
+            ", port=" + port +
+            ", username=" + username +
+            ", password=******" +
+            '}';
+    }
 }

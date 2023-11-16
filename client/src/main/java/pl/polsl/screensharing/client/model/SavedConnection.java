@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Objects;
 
@@ -43,5 +44,16 @@ public class SavedConnection implements Comparable<SavedConnection> {
     @Override
     public int hashCode() {
         return ipAddress.hashCode() * port * username.hashCode() * description.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "{" +
+            "id=" + id +
+            ", ipAddress=" + ipAddress +
+            ", port=" + port +
+            ", username=" + username +
+            ", description=" + description.replaceAll("\n", StringUtils.SPACE) +
+            '}';
     }
 }

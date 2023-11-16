@@ -43,11 +43,11 @@ public class FastConnectionDetails {
 
     @Override
     public String toString() {
-        return "FastConnectionDetails{" +
-            "ipAddress='" + ipAddress + '\'' +
+        return "{" +
+            "ipAddress=" + ipAddress +
             ", port=" + port +
-            ", username='" + username + '\'' +
-            ", description='" + description.replace("\n", StringUtils.SPACE) + '\'' +
+            ", username=" + username +
+            ", description=" + description.replaceAll("\n", StringUtils.SPACE) +
             '}';
     }
 }
