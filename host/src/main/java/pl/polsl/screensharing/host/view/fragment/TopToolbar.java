@@ -16,7 +16,6 @@ import pl.polsl.screensharing.host.view.HostWindow;
 import pl.polsl.screensharing.lib.gui.component.JAppIconButton;
 
 import javax.swing.*;
-import java.awt.*;
 
 @Getter
 public class TopToolbar extends JToolBar {
@@ -30,7 +29,6 @@ public class TopToolbar extends JToolBar {
     private final JAppIconButton stopVideoStreamingButton;
 
     private final TopToolbarController controller;
-    private final JToolBar.Separator separator;
 
     public TopToolbar(HostWindow hostWindow) {
         this.controller = new TopToolbarController(hostWindow);
@@ -44,9 +42,6 @@ public class TopToolbar extends JToolBar {
         this.stopVideoStreamingButton = new JAppIconButton("Stop streaming", HostIcon.APPLICATION_ERROR, true, false);
 
         initObservables();
-
-        this.separator = new JToolBar.Separator();
-        separator.setBackground(Color.GRAY);
 
         this.sessionParamsButton.addActionListener(e -> controller.openSessionParamsWindow());
         this.createSessionButton.addActionListener(e -> controller.createSession());
