@@ -4,30 +4,27 @@
  */
 package pl.polsl.screensharing.client.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import pl.polsl.screensharing.client.dto.ConnDetailsDto;
+import pl.polsl.screensharing.client.model.ConnectionDetails;
 import pl.polsl.screensharing.client.state.ClientState;
-import pl.polsl.screensharing.client.state.ConnectState;
+import pl.polsl.screensharing.client.state.ConnectionState;
 import pl.polsl.screensharing.client.view.ClientWindow;
 import pl.polsl.screensharing.lib.gui.AbstractPopupDialog;
 
 import javax.swing.*;
 
 @Slf4j
-abstract class AbstractPopupDialogController extends AbstractController {
-    private final AbstractPopupDialog dialog;
-
-    AbstractPopupDialogController(ClientWindow clientWindow, AbstractPopupDialog dialog) {
-        super(clientWindow);
-        this.dialog = dialog;
-    }
+@RequiredArgsConstructor
+abstract class AbstractPopupDialogController {
+    protected final ClientWindow clientWindow;
+    protected final AbstractPopupDialog dialog;
 
     public void createConnection() {
         final ClientState state = clientWindow.getClientState();
         final BottomInfobarController bottomInfobarController = clientWindow.getBottomInfobarController();
 
-        state.setConnectionState(ConnectState.CONNECTING);
-        bottomInfobarController.updateConnectionStateUi();
+        state.updateConnectionState(ConnectionState.CONNECTING);
 
         log.info("Started connecting...");
 
@@ -36,21 +33,21 @@ abstract class AbstractPopupDialogController extends AbstractController {
             return;
         }
 
-        state.setConnectionState(ConnectState.CONNECTED);
+        // TODO: connecting with host via TCP/IP Socket
 
-        if (state.isConnected()) {
+        state.updateConnectionState(ConnectionState.CONNECTED);
+        boolean isConnected = true;
+
+        if (isConnected) {
             bottomInfobarController.startConnectionTimer();
-            bottomInfobarController.updateConnectionStateUi();
-            updateConnectionButtonsState(true);
-            onSuccessConnect(connDetails);
+            onSuccessConnect(connectionDetails);
             closeWindow();
-            log.info("Connection estabilished with connection details: {}", connDetails);
+            log.info("Connection estabilished with connection details: {}", connectionDetails);
         } else {
-            state.setConnectionState(ConnectState.DISCONNECTED);
+            state.updateConnectionState(ConnectionState.DISCONNECTED);
             bottomInfobarController.stopConnectionTimer();
-            bottomInfobarController.updateConnectionStateUi();
-            
-            log.info("Unable to connect with connection details: {}", connDetails);
+
+            log.info("Unable to connect with connection details: {}", connectionDetails);
 
             final String message = String.format("Cannot connect with %s:%s. Check connection parameters.",
                 connectionDetails.getIpAddress(), connectionDetails.getPort());

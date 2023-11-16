@@ -6,7 +6,7 @@ package pl.polsl.screensharing.client.view.dialog;
 
 import lombok.Getter;
 import pl.polsl.screensharing.client.controller.ConnectController;
-import pl.polsl.screensharing.client.dto.FastConnDetailsDto;
+import pl.polsl.screensharing.client.state.ClientState;
 import pl.polsl.screensharing.client.view.ClientIcon;
 import pl.polsl.screensharing.client.view.ClientWindow;
 import pl.polsl.screensharing.lib.AppType;
@@ -28,6 +28,8 @@ import java.awt.*;
 
 @Getter
 public class ConnectWindow extends AbstractPopupDialog {
+    private final ClientState clientState;
+
     private final JPanel formPanel;
     private final JPanel rightPanel;
     private final JPanel addtlDataPanel;
@@ -68,14 +70,13 @@ public class ConnectWindow extends AbstractPopupDialog {
 
     private final ConnectController controller;
     private final SimpleDocumentListener documentListener;
-    private final FastConnDetailsDto fastConnDetails;
 
     public ConnectWindow(ClientWindow clientWindow) {
         super(AppType.HOST, 480, 210, "Connect", clientWindow, ConnectWindow.class);
+        this.clientState = clientWindow.getClientState();
 
         this.controller = new ConnectController(clientWindow, this);
         this.documentListener = new SimpleDocumentListener(controller::resetSaveButtonState);
-        this.fastConnDetails = clientWindow.getClientState().getFastConnDetails();
 
         this.formPanel = new JPanel();
         this.rightPanel = new JPanel(new GridLayout(8, 1, 5, 5));
@@ -93,13 +94,13 @@ public class ConnectWindow extends AbstractPopupDialog {
         this.gridInset = new Insets(3, 3, 3, 3);
 
         this.ipAddressLabel = new JLabel("IP address");
-        this.ipAddressTextField = new JAppTextField(fastConnDetails.getIpAddress(), 10, 15, SharedConstants.IPV4_REGEX);
+        this.ipAddressTextField = new JAppTextField(10, 15, SharedConstants.IPV4_REGEX);
 
         this.portLabel = new JLabel("Connection port (optional)");
-        this.portTextField = new JAppTextField(fastConnDetails.getPortAsStr(), 10, 6, SharedConstants.PORT_REGEX);
+        this.portTextField = new JAppTextField(10, 6, SharedConstants.PORT_REGEX);
 
         this.usernameLabel = new JLabel("Username (optional)");
-        this.usernameTextField = new JAppTextField(fastConnDetails.getUsername(), 10, 50, SharedConstants.USERNAME_REGEX);
+        this.usernameTextField = new JAppTextField(10, 50, SharedConstants.USERNAME_REGEX);
 
         this.passwordPanel = new JPanel();
         this.passwordLabel = new JLabel("Password");
@@ -112,8 +113,10 @@ public class ConnectWindow extends AbstractPopupDialog {
         this.addToListCheckbox = new JCheckBox("Add to list", true);
 
         this.descriptionLabel = new JLabel("Connection description (optional)");
-        this.descriptionTextArea = new JAppTextArea(fastConnDetails.getDescription(), 3, 30, 100);
+        this.descriptionTextArea = new JAppTextArea(3, 30, 100);
         this.descriptionScrollPane = new JScrollPane(descriptionTextArea);
+
+        initObservables();
 
         this.ipAddressTextField.getDocument().addDocumentListener(this.documentListener);
         this.portTextField.getDocument().addDocumentListener(this.documentListener);
@@ -167,5 +170,14 @@ public class ConnectWindow extends AbstractPopupDialog {
 
         rootPanel.add(formPanel, BorderLayout.CENTER);
         rootPanel.add(rightPanel, BorderLayout.EAST);
+    }
+
+    private void initObservables() {
+        clientState.wrapAsDisposable(clientState.getFastConnectionDetails$(), fastConnectionsDetails -> {
+            ipAddressTextField.setText(fastConnectionsDetails.getIpAddress());
+            portTextField.setText(fastConnectionsDetails.getPortAsStr());
+            usernameTextField.setText(fastConnectionsDetails.getUsername());
+            descriptionTextArea.setText(fastConnectionsDetails.getDescription());
+        });
     }
 }

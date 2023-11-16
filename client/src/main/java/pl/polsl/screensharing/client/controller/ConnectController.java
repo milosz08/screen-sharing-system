@@ -11,11 +11,11 @@ import pl.polsl.screensharing.client.model.SavedConnection;
 import pl.polsl.screensharing.client.state.ClientState;
 import pl.polsl.screensharing.client.view.ClientWindow;
 import pl.polsl.screensharing.client.view.dialog.ConnectWindow;
-import pl.polsl.screensharing.client.view.dialog.LastConnectionsWindow;
 import pl.polsl.screensharing.lib.gui.component.JAppPasswordTextField;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
+import java.util.SortedSet;
 
 @Slf4j
 public class ConnectController extends AbstractPopupDialogController {
@@ -41,23 +41,33 @@ public class ConnectController extends AbstractPopupDialogController {
     }
 
     @Override
-    protected void onSuccessConnect(ConnDetailsDto detailsDto) {
-        final ClientState state = clientWindow.getClientState();
+    protected void onSuccessConnect(ConnectionDetails connectionDetails) {
+        final ClientState clientState = clientWindow.getClientState();
         final boolean isSaving = connectionWindow.getAddToListCheckbox().isSelected();
-        if (isSaving) {
-            final SavedConnDetailsDto savedConnDetailsDto = SavedConnDetailsDto.builder()
-                .ipAddress(detailsDto.getIpAddress())
-                .port(detailsDto.getPort())
-                .username(detailsDto.getUsername())
-                .description(connectionWindow.getDescriptionTextArea().getText())
-                .build();
-
-            final boolean isNew = state.addNewSavedConn(savedConnDetailsDto);
-            if (isNew) {
-                final LastConnectionsWindow lastConnectionsWindow = clientWindow.getLastConnectionsWindow();
-                lastConnectionsWindow.mapNewConnectionToTableModel(savedConnDetailsDto);
-            }
+        if (!isSaving) {
+            return;
         }
+        final SavedConnection savedConnection = SavedConnection.builder()
+            .ipAddress(connectionDetails.getIpAddress())
+            .port(connectionDetails.getPort())
+            .username(connectionDetails.getUsername())
+            .description(connectionWindow.getDescriptionTextArea().getText())
+            .build();
+
+        final SortedSet<SavedConnection> lastEmittedConnections = clientState.getLastEmittedSavedConnections();
+        savedConnection.setId(lastEmittedConnections.size());
+
+        final boolean isNew = lastEmittedConnections.stream()
+            .noneMatch(connection -> connection.equals(savedConnection));
+
+        if (!isNew) {
+            log.info("Saved connection {} already exist. Skipping.", connectionDetails);
+            return;
+        }
+        lastEmittedConnections.add(savedConnection);
+        clientState.updateSavedConnections(lastEmittedConnections);
+        clientState.getPersistedStateLoader().persistSavedConnDetails();
+        log.info("Add new saved connection: {}.", savedConnection);
     }
 
     public void saveConnectionDetails(ActionEvent event) {
@@ -71,7 +81,10 @@ public class ConnectController extends AbstractPopupDialogController {
             .description(connectionWindow.getDescriptionTextArea().getText())
             .build();
 
-        state.persistFastConnDetails(savedConnDetailsDto);
+        state.updateFastConnectionDetails(savedConnDetails);
+        state.getPersistedStateLoader().persistFastConnDetails();
+        log.info("Updated fast connection details: {}", savedConnDetails);
+
         saveDetailsButton.setEnabled(false);
 
         JOptionPane.showConfirmDialog(connectionWindow, "Your connection details was successfully saved.",

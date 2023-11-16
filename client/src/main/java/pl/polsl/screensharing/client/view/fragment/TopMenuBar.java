@@ -4,8 +4,13 @@
  */
 package pl.polsl.screensharing.client.view.fragment;
 
+import io.reactivex.rxjava3.core.Observable;
 import lombok.Getter;
+import pl.polsl.screensharing.client.aggregator.ConnectionRecordingAggregator;
 import pl.polsl.screensharing.client.controller.TopMenuBarController;
+import pl.polsl.screensharing.client.state.ClientState;
+import pl.polsl.screensharing.client.state.ConnectionState;
+import pl.polsl.screensharing.client.state.RecordingState;
 import pl.polsl.screensharing.client.view.ClientIcon;
 import pl.polsl.screensharing.client.view.ClientWindow;
 import pl.polsl.screensharing.lib.gui.component.JAppMenuIconItem;
@@ -15,7 +20,7 @@ import javax.swing.*;
 
 @Getter
 public class TopMenuBar extends JMenuBar {
-    private final TopMenuBarController controller;
+    private final ClientState clientState;
 
     private final JMenu connectMenu;
     private final JMenu interactionMenu;
@@ -36,7 +41,10 @@ public class TopMenuBar extends JMenuBar {
     private final JAppMenuIconItem[] interactionMenuItems;
     private final JAppMenuIconItem[] helpMenuItems;
 
+    private final TopMenuBarController controller;
+
     public TopMenuBar(ClientWindow clientWindow) {
+        this.clientState = clientWindow.getClientState();
         this.controller = new TopMenuBarController(clientWindow);
 
         this.connectMenu = new JMenu("Connect");
@@ -53,6 +61,8 @@ public class TopMenuBar extends JMenuBar {
 
         this.aboutMenuItem = new JAppMenuIconItem("About", LibIcon.HELP_TABLE_OF_CONTENTS);
         this.licenseMenuItem = new JAppMenuIconItem("License", LibIcon.CODE_INFORMATION_RULE);
+
+        initObservables();
 
         this.connectMenuItems = new JAppMenuIconItem[]{
             createConnectionMenuItem,
@@ -95,5 +105,27 @@ public class TopMenuBar extends JMenuBar {
         for (final JMenuItem item : items) {
             menu.add(item);
         }
+    }
+
+    private void initObservables() {
+        clientState.wrapAsDisposable(clientState.getConnectionState$(), state -> {
+            final boolean isConnected = state.equals(ConnectionState.CONNECTED);
+            createConnectionMenuItem.setEnabled(!isConnected);
+            lastConnectionsMenuItem.setEnabled(!isConnected);
+            disconnectMenuItem.setEnabled(isConnected);
+            takeScreenshotMenuItem.setEnabled(isConnected);
+        });
+
+        final Observable<ConnectionRecordingAggregator> aggregator = Observable.combineLatest(
+            clientState.getConnectionState$(),
+            clientState.getRecordingState$(),
+            ConnectionRecordingAggregator::new);
+
+        clientState.wrapAsDisposable(aggregator, aggregated -> {
+            final boolean isConnected = aggregated.getConnectionState().equals(ConnectionState.CONNECTED);
+            final boolean isRecording = aggregated.getRecordingState().equals(RecordingState.RECORDING);
+            startRecordingMenuItem.setEnabled(!isRecording && isConnected);
+            stopRecordingMenuItem.setEnabled(isRecording && isConnected);
+        });
     }
 }

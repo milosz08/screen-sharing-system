@@ -34,7 +34,7 @@ public class ClientWindow extends AbstractRootFrame {
     private final LicenseDialogWindow licenseDialogWindow;
 
     public ClientWindow(ClientState clientState) {
-        super(AppType.CLIENT, ClientWindow.class);
+        super(AppType.CLIENT, clientState, ClientWindow.class);
         this.clientState = clientState;
 
         this.topMenuBar = new TopMenuBar(this);
