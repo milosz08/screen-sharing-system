@@ -36,4 +36,18 @@ public class GridBagDrawer {
             gridBag.gridy++;
         }
     }
+
+    public void prepareForVertical() {
+        gridBag.gridx = 0;
+        gridBag.gridy = 0;
+        gridBag.weightx = 1;
+        gridBag.fill = GridBagConstraints.HORIZONTAL;
+        gridBag.anchor = GridBagConstraints.NORTHEAST;
+    }
+
+    public void addVertical(JComponent component) {
+        gridBag.insets = insets;
+        panel.add(component, gridBag);
+        gridBag.gridy++;
+    }
 }

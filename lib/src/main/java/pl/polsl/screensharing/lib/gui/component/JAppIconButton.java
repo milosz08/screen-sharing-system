@@ -14,18 +14,17 @@ public class JAppIconButton extends JButton {
         this(text, iconName, false);
     }
 
-    public JAppIconButton(String text, AppIcon iconName, boolean setDesciption) {
-        if (setDesciption) {
+    public JAppIconButton(String text, AppIcon iconName, boolean setDescription) {
+        if (setDescription) {
             setToolTipText(text);
         } else {
             setText(text);
         }
-        setFocusable(false);
         FileUtils.getImageIconFromResources(getClass(), iconName).ifPresent(this::setIcon);
     }
 
-    public JAppIconButton(String text, AppIcon iconName, boolean setDesciption, boolean isEnabled) {
-        this(text, iconName, setDesciption);
+    public JAppIconButton(String text, AppIcon iconName, boolean setDescription, boolean isEnabled) {
+        this(text, iconName, setDescription);
         setEnabled(isEnabled);
     }
 }
