@@ -8,8 +8,9 @@ import lombok.Getter;
 import pl.polsl.screensharing.host.controller.BottomInfobarController;
 import pl.polsl.screensharing.host.state.HostState;
 import pl.polsl.screensharing.host.view.dialog.AboutDialogWindow;
-import pl.polsl.screensharing.host.view.dialog.ConnectionSettingsWindow;
+import pl.polsl.screensharing.host.view.dialog.ConnectionSettingsDialogWindow;
 import pl.polsl.screensharing.host.view.dialog.LicenseDialogWindow;
+import pl.polsl.screensharing.host.view.dialog.ParticipantsDialogWindow;
 import pl.polsl.screensharing.host.view.fragment.BottomInfobar;
 import pl.polsl.screensharing.host.view.fragment.TopMenuBar;
 import pl.polsl.screensharing.host.view.fragment.TopToolbar;
@@ -31,7 +32,8 @@ public class HostWindow extends AbstractRootFrame {
 
     private final AboutDialogWindow aboutDialogWindow;
     private final LicenseDialogWindow licenseDialogWindow;
-    private final ConnectionSettingsWindow connectionSettingsWindow;
+    private final ConnectionSettingsDialogWindow connectionSettingsDialogWindow;
+    private final ParticipantsDialogWindow participantsDialogWindow;
 
     public HostWindow(HostState hostState) {
         super(AppType.HOST, hostState, HostWindow.class);
@@ -44,7 +46,8 @@ public class HostWindow extends AbstractRootFrame {
 
         this.aboutDialogWindow = new AboutDialogWindow(this);
         this.licenseDialogWindow = new LicenseDialogWindow(this);
-        this.connectionSettingsWindow = new ConnectionSettingsWindow(this);
+        this.connectionSettingsDialogWindow = new ConnectionSettingsDialogWindow(this);
+        this.participantsDialogWindow = new ParticipantsDialogWindow(this);
     }
 
     @Override
