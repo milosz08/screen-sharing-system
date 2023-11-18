@@ -13,6 +13,7 @@ public enum LibIcon implements AppIcon {
     CANCEL("Cancel"),
     CHECK_BOX_LIST("CheckBoxList"),
     CODE_INFORMATION_RULE("CodeInformationRule"),
+    CURSOR("Cursor"),
     DELETE("Delete"),
     DELETE_CLAUSE("DeleteClause"),
     DELETE_TABLE("DeleteTable"),
