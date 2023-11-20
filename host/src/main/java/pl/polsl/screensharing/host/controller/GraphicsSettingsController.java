@@ -19,7 +19,7 @@ public class GraphicsSettingsController {
     private final GraphicsSettingsPanel graphicsSettingsPanel;
 
     @Getter
-    private final Integer[] fpsValues = { 5, 10, 15, 25, 30, 50, 60 };
+    private final Integer[] fpsValues = { 5, 10, 15, 25, 30 };
 
     public void updateFpsValue() {
         final HostState hostState = hostWindow.getHostState();
@@ -30,7 +30,8 @@ public class GraphicsSettingsController {
             return;
         }
         hostState.updateStreamingFps(fps);
-        log.info("Updated streaming fps value to {}", fps);
+        hostState.updateRealFpsBuffer(fps);
+        log.info("Updated streaming fps and real fps buffer value to {}", fps);
     }
 
     public void updateStreamingQuality() {
