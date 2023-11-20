@@ -5,6 +5,7 @@
 package pl.polsl.screensharing.client.view.tabbed;
 
 import lombok.Getter;
+import pl.polsl.screensharing.client.view.ClientWindow;
 import pl.polsl.screensharing.lib.AppType;
 import pl.polsl.screensharing.lib.gui.fragment.JAppTabbedLogsPanel;
 
@@ -15,8 +16,8 @@ public class TabbedPaneWindow extends JTabbedPane {
     private final TabbedVideoStreamPanel tabbedVideoStreamPanel;
     private final JAppTabbedLogsPanel tabbedLogsPanel;
 
-    public TabbedPaneWindow() {
-        this.tabbedVideoStreamPanel = new TabbedVideoStreamPanel();
+    public TabbedPaneWindow(ClientWindow clientWindow) {
+        this.tabbedVideoStreamPanel = new TabbedVideoStreamPanel(clientWindow);
         this.tabbedLogsPanel = new JAppTabbedLogsPanel(AppType.CLIENT);
 
         addTab("Video stream", tabbedVideoStreamPanel);

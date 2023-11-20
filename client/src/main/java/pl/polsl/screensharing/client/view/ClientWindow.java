@@ -41,7 +41,7 @@ public class ClientWindow extends AbstractRootFrame {
 
         this.topMenuBar = new TopMenuBar(this);
         this.topToolbar = new TopToolbar(this);
-        this.tabbedPaneWindow = new TabbedPaneWindow();
+        this.tabbedPaneWindow = new TabbedPaneWindow(this);
         this.bottomInfobar = new BottomInfobar(this);
 
         this.connectWindow = new ConnectWindow(this);
