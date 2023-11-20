@@ -78,6 +78,9 @@ public class VideoCanvasController extends AbstractPerTickRunner {
 
     @Override
     public void onTickUpdate() {
+        if (!videoCanvas.getIsScreenShowingForParticipants().get()) {
+            return;
+        }
         final GraphicsDevice graphicsDevice = videoCanvas.getGraphicsDevice();
         final int width = videoCanvas.getWidth();
         final int height = videoCanvas.getHeight();

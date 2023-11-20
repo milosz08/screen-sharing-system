@@ -7,8 +7,8 @@ package pl.polsl.screensharing.lib.thread;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class AbstractPerTickRunner implements Runnable {
-    private static final int MILION = 1_000_000;
     private static final int BILION = 1_000_000_000;
+    private static final double MAX_FPS = 60.0;
 
     private final Thread thread;
     private final AtomicInteger maxFps;
