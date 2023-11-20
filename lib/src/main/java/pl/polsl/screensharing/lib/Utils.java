@@ -50,4 +50,22 @@ public class Utils {
         }
         return new Dimension(width, height);
     }
+
+    public static Dimension calcHeightBaseWidthAndAR(int width, Rectangle bounds) {
+        final double aspectRatio = bounds.getWidth() / bounds.getHeight();
+        final int height = (int) (width / aspectRatio);
+        return new Dimension(width, height);
+    }
+
+    public static boolean checkIfSizeNotExact(Rectangle first, Rectangle second) {
+        return first.width != second.width || first.height != second.height;
+    }
+
+    public static Rectangle scaleElementUp(int width, int height, Rectangle bounds, Rectangle scale) {
+        final double xS = ((double) scale.x / width) * bounds.getWidth();
+        final double yS = ((double) scale.y / height) * (int) bounds.getHeight();
+        final double widthS = ((double) scale.width / width) * (int) bounds.getWidth();
+        final double heightS = ((double) scale.height / height) * (int) bounds.getHeight();
+        return new Rectangle((int) xS, (int) yS, (int) widthS, (int) heightS);
+    }
 }

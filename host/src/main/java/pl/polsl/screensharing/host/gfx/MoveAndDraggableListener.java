@@ -16,17 +16,26 @@ public class MoveAndDraggableListener extends MouseAdapter {
     private final JComponent parent;
     private final Point mouseCoords;
     private final Point screenCoords;
-    private final Dimension minSize;
 
+    private Dimension minSize;
     private boolean resizing;
     private boolean dragging;
+    private boolean isDisabledResizing;
 
-    public MoveAndDraggableListener(JComponent root, JComponent parent, Dimension minSize) {
+    public MoveAndDraggableListener(JComponent root, JComponent parent) {
         this.root = root;
         this.parent = parent;
-        this.minSize = minSize;
         mouseCoords = new Point();
         screenCoords = new Point();
+        isDisabledResizing = false;
+    }
+
+    public void toogleActionResizingCapability(boolean isDisabledResizing) {
+        this.isDisabledResizing = isDisabledResizing;
+    }
+
+    public void setMinSize(Dimension minSize) {
+        this.minSize = minSize;
     }
 
     @Override
@@ -50,7 +59,7 @@ public class MoveAndDraggableListener extends MouseAdapter {
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        if (resizing) {
+        if (resizing && !isDisabledResizing) {
             int deltaX = e.getX() - mouseCoords.x;
             int deltaY = e.getY() - mouseCoords.y;
 
@@ -101,7 +110,8 @@ public class MoveAndDraggableListener extends MouseAdapter {
     }
 
     private boolean isInResizeArea(MouseEvent e) {
-        return e.getX() > root.getWidth() - BORDER_SIZE && e.getY() > root.getHeight() - BORDER_SIZE;
+        return e.getX() > root.getWidth() - BORDER_SIZE
+            && e.getY() > root.getHeight() - BORDER_SIZE && !isDisabledResizing;
     }
 
     private boolean isInDragArea(MouseEvent e) {

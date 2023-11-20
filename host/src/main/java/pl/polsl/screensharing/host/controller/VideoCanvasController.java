@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.imgscalr.Scalr;
 import pl.polsl.screensharing.host.gfx.ScreenCapturer;
+import pl.polsl.screensharing.host.state.CaptureMode;
 import pl.polsl.screensharing.host.state.HostState;
 import pl.polsl.screensharing.host.view.HostIcon;
 import pl.polsl.screensharing.host.view.HostWindow;
@@ -33,12 +34,12 @@ public class VideoCanvasController extends AbstractPerTickRunner {
 
     @Getter
     private BufferedImage rawImage;
+    private BufferedImage grabbedImage;
     private BufferedImage renderImage;
 
     public VideoCanvasController(
         HostWindow hostWindow, VideoCanvas videoCanvas, TabbedScreenFramePanel tabbedScreenFramePanel
     ) {
-        super(30);
         hostState = hostWindow.getHostState();
         this.videoCanvas = videoCanvas;
         this.tabbedScreenFramePanel = tabbedScreenFramePanel;
@@ -82,13 +83,24 @@ public class VideoCanvasController extends AbstractPerTickRunner {
             return;
         }
         final GraphicsDevice graphicsDevice = videoCanvas.getGraphicsDevice();
+        final Rectangle screenBounds = graphicsDevice.getDefaultConfiguration().getBounds();
         final int width = videoCanvas.getWidth();
         final int height = videoCanvas.getHeight();
 
         cursorPos.setLocation(screenCapturer.getCurrentCursorPosForDevice(graphicsDevice));
-        rawImage = grabAndDrawCursor(graphicsDevice);
-        renderImage = Scalr.resize(rawImage, width, height);
+        grabbedImage = grabAndDrawCursor(graphicsDevice);
 
+        if (hostState.getLastEmittedCapturedMode().equals(CaptureMode.AREA)) {
+            final Rectangle bounds = videoCanvas.getFrameSelectorPanel().getBounds();
+            final Rectangle scaled = Utils.scaleElementUp(width, height, screenBounds, bounds);
+            rawImage = grabbedImage.getSubimage(scaled.x, scaled.y, scaled.width, scaled.height);
+        } else {
+            rawImage = grabbedImage;
+        }
+        // błąd przy przełączeniu rozdzielczości ekranu w trakcie ładowania
+        if (width >= 0 && height >= 0) {
+            renderImage = Scalr.resize(grabbedImage, width, height);
+        }
         videoCanvas.repaint();
     }
 

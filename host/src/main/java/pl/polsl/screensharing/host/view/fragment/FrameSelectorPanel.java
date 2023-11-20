@@ -10,23 +10,24 @@ import pl.polsl.screensharing.host.gfx.MoveAndDraggableListener;
 import pl.polsl.screensharing.host.state.HostState;
 import pl.polsl.screensharing.host.state.StreamingState;
 import pl.polsl.screensharing.host.view.HostWindow;
+import pl.polsl.screensharing.lib.Utils;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class FrameSelectorPanel extends JPanel {
+    private static final int DEFAULT_WIDTH = 300;
+
     private final HostState hostState;
-    private final Dimension size;
     private final MoveAndDraggableListener moveAndDraggableListener;
 
     private Color frameColor;
+    private Rectangle previousGraphicsDevice;
 
     public FrameSelectorPanel(HostWindow hostWindow, VideoCanvas videoCanvas) {
         hostState = hostWindow.getHostState();
-        size = new Dimension(400, 250);
-        moveAndDraggableListener = new MoveAndDraggableListener(this, videoCanvas, size);
+        moveAndDraggableListener = new MoveAndDraggableListener(this, videoCanvas);
 
-        setBounds(0, 0, size.width, size.height);
         setLayout(null);
         setOpaque(false);
 
@@ -42,7 +43,6 @@ public class FrameSelectorPanel extends JPanel {
             g.setColor(frameColor);
             g.fillRect(0, 0, getWidth(), getHeight());
         }
-        super.paintComponent(g);
     }
 
     private void initObservables() {
@@ -52,15 +52,23 @@ public class FrameSelectorPanel extends JPanel {
             StreamingStateFrameModeAggregator::new);
 
         hostState.wrapAsDisposable(aggregator, state -> {
-            if (state.isFrameVisible()) {
-                final StreamingState streamingState = state.getStreamingState();
-                setBorder(streamingState.equals(StreamingState.STREAMING)
-                    ? BorderFactory.createLineBorder(streamingState.getColor(), 3) : null);
-            }
+            final StreamingState streamingState = state.getStreamingState();
+            setBorder(streamingState.equals(StreamingState.STREAMING)
+                ? BorderFactory.createLineBorder(streamingState.getColor(), 2) : null);
+            moveAndDraggableListener.toogleActionResizingCapability(streamingState.equals(StreamingState.STREAMING));
         });
         hostState.wrapAsDisposable(hostState.isFrameSelectorShowing$(), this::setVisible);
         hostState.wrapAsDisposable(hostState.getFrameColor$(), color -> {
             frameColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), 80);
+        });
+        hostState.wrapAsDisposable(hostState.getSelectedGraphicsDevice$(), graphicsDevice -> {
+            final Rectangle bounds = graphicsDevice.getDefaultConfiguration().getBounds();
+            final Dimension size = Utils.calcHeightBaseWidthAndAR(DEFAULT_WIDTH, bounds);
+            if (previousGraphicsDevice == null || Utils.checkIfSizeNotExact(bounds, previousGraphicsDevice)) {
+                setSize(size);
+                moveAndDraggableListener.setMinSize(size);
+                previousGraphicsDevice = bounds;
+            }
         });
     }
 }

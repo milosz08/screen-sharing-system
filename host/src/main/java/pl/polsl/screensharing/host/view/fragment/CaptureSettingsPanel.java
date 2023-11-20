@@ -85,6 +85,13 @@ public class CaptureSettingsPanel extends AbstractScreenCaptureRightPanel {
             fullScreenCaptureModeRadio.setSelected(captureMode.equals(CaptureMode.FULL_FRAME));
             areaCaptureModeRadio.setSelected(captureMode.equals(CaptureMode.AREA));
         });
+        hostState.wrapAsDisposable(hostState.getStreamingState$(), streamingState -> {
+            final boolean isStreaming = streamingState.equals(StreamingState.STREAMING);
+            fullScreenCaptureModeRadio.setEnabled(!isStreaming);
+            areaCaptureModeRadio.setEnabled(!isStreaming);
+        });
+        hostState.wrapAsDisposable(hostState.getSelectedGraphicsDevice$(), selectedScreenComboBox::setSelectedItem);
+        hostState.wrapAsDisposable(hostState.isCursorShowing$(), showCursorCheckbox::setSelected);
     }
 
     private static class GraphicsDeviceCellRenderer extends DefaultListCellRenderer {

@@ -79,10 +79,12 @@ public class VideoCanvas extends JPanel {
         });
         hostState.wrapAsDisposable(hostState.getSelectedGraphicsDevice$(), graphicsDevice -> {
             this.graphicsDevice = graphicsDevice;
-            controller.startThread();
+            if (!controller.isAlive()) {
+                controller.start();
+            }
+            controller.onResizeWithAspectRatio();
             repaint();
         });
-        hostState.wrapAsDisposable(hostState.getStreamingFps$(), controller::updateMaxFps);
         hostState.wrapAsDisposable(hostState.isScreenIsShowForParticipants$(), isShowing -> {
             isScreenShowingForParticipants.set(isShowing);
             setVisible(isShowing);
