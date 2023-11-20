@@ -9,15 +9,18 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.FastDateFormat;
 import pl.polsl.screensharing.lib.AppType;
 import pl.polsl.screensharing.lib.gui.icon.AppIcon;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Date;
 import java.util.Optional;
 import java.util.StringJoiner;
 
@@ -60,5 +63,19 @@ public class FileUtils {
         } catch (IOException ex) {
             throw new RuntimeException();
         }
+    }
+
+    public static Optional<File> promptAndSaveFile(String suffix) {
+        final FastDateFormat targetFormat = FastDateFormat.getInstance("MM-dd-yyyy-HH-mm-ss-SSS");
+        final String fileName = String.format("%s-%s", targetFormat.format(new Date()), suffix);
+
+        final JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setSelectedFile(new File(fileName));
+
+        final int result = fileChooser.showSaveDialog(null);
+        if (result != JFileChooser.APPROVE_OPTION) {
+            return Optional.empty();
+        }
+        return Optional.of(fileChooser.getSelectedFile());
     }
 }
