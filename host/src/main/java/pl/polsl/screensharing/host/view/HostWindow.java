@@ -48,6 +48,9 @@ public class HostWindow extends AbstractRootFrame {
         this.licenseDialogWindow = new LicenseDialogWindow(this);
         this.connectionSettingsDialogWindow = new ConnectionSettingsDialogWindow(this);
         this.participantsDialogWindow = new ParticipantsDialogWindow(this);
+
+        setResizable(false);
+        setMaximumSize(AppType.HOST.getRootWindowSize());
     }
 
     @Override

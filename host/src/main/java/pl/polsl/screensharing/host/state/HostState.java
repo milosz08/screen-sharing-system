@@ -34,7 +34,7 @@ public class HostState extends AbstractDisposableProvider {
         this.sendBytesPerSec$ = BehaviorSubject.createDefault(0L);
         this.selectedGraphicsDevice$ = BehaviorSubject.create();
         this.streamingQuality$ = BehaviorSubject.createDefault(QualityLevel.GOOD);
-        this.frameColor$ = BehaviorSubject.createDefault(Color.YELLOW);
+        this.frameColor$ = BehaviorSubject.createDefault(Color.RED);
         this.isScreenShowForParticipants$ = BehaviorSubject.createDefault(true);
         this.isShowingFrameSelector$ = BehaviorSubject.createDefault(false);
         this.isCursorShowing$ = BehaviorSubject.createDefault(true);
