@@ -20,11 +20,11 @@ public class Parser {
         } catch (IllegalArgumentException ex) {
             formattedBytes = "unknow";
         }
-        return String.format("%s: %s", prefix, formattedBytes.toLowerCase());
+        return String.format("%s: %s", prefix, formattedBytes);
     }
 
-    public static String parseBytesPerSecState(long bytes, String prefix) {
-        return Parser.parseBytes(bytes, prefix, true);
+    public static String parseBytesPerSecToMegaBytes(long bytes, String prefix) {
+        return String.format("%s: %.3f Mb/s", prefix, (double) bytes / (1024 * 1024));
     }
 
     public static String parseTime(long seconds, String prefix) {

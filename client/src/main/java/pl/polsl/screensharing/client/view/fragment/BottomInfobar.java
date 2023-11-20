@@ -72,7 +72,7 @@ public class BottomInfobar extends AbstractBottomInfobar {
             recordingTimeLabel.setText(Parser.parseTime(time, "Recording"));
         });
         clientState.wrapAsDisposable(clientState.getRecvBytesPerSec$(), bytes -> {
-            recvBytesPerSecLabel.setText(Parser.parseBytesPerSecState(bytes, "Received"));
+            recvBytesPerSecLabel.setText(Parser.parseBytesPerSecToMegaBytes(bytes, "Received"));
         });
     }
 }

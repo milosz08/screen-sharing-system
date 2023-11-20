@@ -74,11 +74,11 @@ public class BottomInfobar extends AbstractBottomInfobar {
         hostState.wrapAsDisposable(hostState.getStreamingTime$(), time -> {
             streamingTimeLabel.setText(Parser.parseTime(time, "Streaming"));
         });
-        hostState.wrapAsDisposable(hostState.getStreamingFps$(), fps -> {
-            fpsInfoLabel.setText(String.format("FPS: %s", fps));
+        hostState.wrapAsDisposable(hostState.getRealFpsBuffer$(), realFps -> {
+            fpsInfoLabel.setText(String.format("FPS: %s", realFps));
         });
         hostState.wrapAsDisposable(hostState.getSendBytesPerSec$(), bytes -> {
-            sendBytesPerSecLabel.setText(Parser.parseBytesPerSecState(bytes, "Send"));
+            sendBytesPerSecLabel.setText(Parser.parseBytesPerSecToMegaBytes(bytes, "Send"));
         });
     }
 }

@@ -33,7 +33,7 @@ public class HostState extends AbstractDisposableProvider {
         this.streamingFps$ = BehaviorSubject.createDefault(30);
         this.sendBytesPerSec$ = BehaviorSubject.createDefault(0L);
         this.selectedGraphicsDevice$ = BehaviorSubject.create();
-        this.streamingQuality$ = BehaviorSubject.createDefault(QualityLevel.BEST);
+        this.streamingQuality$ = BehaviorSubject.createDefault(QualityLevel.GOOD);
         this.frameColor$ = BehaviorSubject.createDefault(Color.YELLOW);
         this.isScreenShowForParticipants$ = BehaviorSubject.createDefault(true);
         this.isShowingFrameSelector$ = BehaviorSubject.createDefault(false);
@@ -45,7 +45,7 @@ public class HostState extends AbstractDisposableProvider {
         streamingState$.onNext(streamingState);
     }
 
-    public void updateStreamingTime(Long seconds) {
+    public void updateStreamingTime(long seconds) {
         streamingTime$.onNext(seconds);
     }
 
@@ -53,11 +53,11 @@ public class HostState extends AbstractDisposableProvider {
         sessionState$.onNext(sessionState);
     }
 
-    public void updateSessionTime(Long seconds) {
+    public void updateSessionTime(long seconds) {
         sessionTime$.onNext(seconds);
     }
 
-    public void updateStreamingFps(Integer fps) {
+    public void updateStreamingFps(int fps) {
         streamingFps$.onNext(fps);
     }
 
