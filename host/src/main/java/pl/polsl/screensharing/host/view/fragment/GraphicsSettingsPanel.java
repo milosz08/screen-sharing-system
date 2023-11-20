@@ -18,9 +18,6 @@ public class GraphicsSettingsPanel extends AbstractScreenCaptureRightPanel {
     private final JLabel selectedQualityLabel;
     private final JComboBox<QualityLevel> qualityLevelComboBox;
 
-    private final JLabel selectedFpsLabel;
-    private final JComboBox<Integer> selectedFpsComboBox;
-
     protected GraphicsSettingsPanel(HostWindow hostWindow) {
         super(hostWindow, "Graptics settings");
         controller = new GraphicsSettingsController(hostWindow, this);
@@ -28,18 +25,12 @@ public class GraphicsSettingsPanel extends AbstractScreenCaptureRightPanel {
         selectedQualityLabel = new JLabel("Select quality");
         qualityLevelComboBox = new JComboBox<>(new DefaultComboBoxModel<>(QualityLevel.values()));
 
-        selectedFpsLabel = new JLabel("Select FPS");
-        selectedFpsComboBox = new JComboBox<>(new DefaultComboBoxModel<>(controller.getFpsValues()));
-
         initObservables();
 
         qualityLevelComboBox.addActionListener(e -> controller.updateStreamingQuality());
-        selectedFpsComboBox.addActionListener(e -> controller.updateFpsValue());
 
         drawToGridbag(selectedQualityLabel);
         drawToGridbag(qualityLevelComboBox);
-        drawToGridbag(selectedFpsLabel);
-        drawToGridbag(selectedFpsComboBox);
 
         add(mainPanel);
     }
@@ -47,9 +38,6 @@ public class GraphicsSettingsPanel extends AbstractScreenCaptureRightPanel {
     private void initObservables() {
         hostState.wrapAsDisposable(hostState.getStreamingQualityLevel$(), qualityLevel -> {
             this.getQualityLevelComboBox().setSelectedItem(qualityLevel);
-        });
-        hostState.wrapAsDisposable(hostState.getStreamingFps$(), streamingFps -> {
-            this.getSelectedFpsComboBox().setSelectedItem(streamingFps);
         });
     }
 }
