@@ -112,6 +112,8 @@ public class ServerDatagramSocket extends Thread {
                     compressedData = null;
                     chunkOffset = 0;
                 }
+                // opóźnij przesyłanie pakietów (UDP przy zbyt szybkim wysyłaniu
+                // ignoruje pakiety i po stronie klienta pojawiają się artefakty w obrazie
                 Thread.sleep(5);
 
             } catch (Exception ignored) {
