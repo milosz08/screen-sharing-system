@@ -26,19 +26,9 @@ public class VideoCanvasController {
 
     public void onResizeWithAspectRatio(double aspectRatio) {
         final JPanel videoFrameHolder = tabbedVideoStreamPanel.getVideoStreamHolder();
-        int containerWidth = videoFrameHolder.getWidth() - 10;
-        int containerHeight = videoFrameHolder.getHeight() - 10;
-
-        int width, height;
-
-        if ((double) containerWidth / containerHeight > aspectRatio) {
-            height = containerHeight;
-            width = (int) (height * aspectRatio);
-        } else {
-            width = containerWidth;
-            height = (int) (width / aspectRatio);
-        }
-        tabbedVideoStreamPanel.getVideoCanvas().setPreferredSize(new Dimension(width, height));
+        final Dimension size = Utils
+            .calcSizeBaseAspectRatio(videoFrameHolder, aspectRatio);
+        tabbedVideoStreamPanel.getVideoCanvas().setPreferredSize(size);
         videoFrameHolder.revalidate();
     }
 

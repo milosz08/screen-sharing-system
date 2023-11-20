@@ -8,7 +8,7 @@ import lombok.Getter;
 import pl.polsl.screensharing.client.controller.BottomInfobarController;
 import pl.polsl.screensharing.client.state.ClientState;
 import pl.polsl.screensharing.client.view.ClientWindow;
-import pl.polsl.screensharing.lib.Parser;
+import pl.polsl.screensharing.lib.Utils;
 import pl.polsl.screensharing.lib.gui.AbstractBottomInfobar;
 import pl.polsl.screensharing.lib.gui.fragment.JAppActionRectInfo;
 
@@ -66,13 +66,13 @@ public class BottomInfobar extends AbstractBottomInfobar {
             connectionStatusLabel.setText(state.getState());
         });
         clientState.wrapAsDisposable(clientState.getConnectionTime$(), time -> {
-            connectionTimeLabel.setText(Parser.parseTime(time, "Connection"));
+            connectionTimeLabel.setText(Utils.parseTime(time, "Connection"));
         });
         clientState.wrapAsDisposable(clientState.getRecordingTime$(), time -> {
-            recordingTimeLabel.setText(Parser.parseTime(time, "Recording"));
+            recordingTimeLabel.setText(Utils.parseTime(time, "Recording"));
         });
         clientState.wrapAsDisposable(clientState.getRecvBytesPerSec$(), bytes -> {
-            recvBytesPerSecLabel.setText(Parser.parseBytesPerSecToMegaBytes(bytes, "Received"));
+            recvBytesPerSecLabel.setText(Utils.parseBytesPerSecToMegaBytes(bytes, "Received"));
         });
     }
 }

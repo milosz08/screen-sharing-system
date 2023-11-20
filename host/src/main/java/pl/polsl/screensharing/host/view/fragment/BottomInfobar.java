@@ -8,7 +8,7 @@ import lombok.Getter;
 import pl.polsl.screensharing.host.controller.BottomInfobarController;
 import pl.polsl.screensharing.host.state.HostState;
 import pl.polsl.screensharing.host.view.HostWindow;
-import pl.polsl.screensharing.lib.Parser;
+import pl.polsl.screensharing.lib.Utils;
 import pl.polsl.screensharing.lib.gui.AbstractBottomInfobar;
 import pl.polsl.screensharing.lib.gui.fragment.JAppActionRectInfo;
 
@@ -69,16 +69,16 @@ public class BottomInfobar extends AbstractBottomInfobar {
             sessionStatusLabel.setText(state.getState());
         });
         hostState.wrapAsDisposable(hostState.getSessionTime$(), time -> {
-            sessionTimeLabel.setText(Parser.parseTime(time, "Session"));
+            sessionTimeLabel.setText(Utils.parseTime(time, "Session"));
         });
         hostState.wrapAsDisposable(hostState.getStreamingTime$(), time -> {
-            streamingTimeLabel.setText(Parser.parseTime(time, "Streaming"));
+            streamingTimeLabel.setText(Utils.parseTime(time, "Streaming"));
         });
         hostState.wrapAsDisposable(hostState.getRealFpsBuffer$(), realFps -> {
             fpsInfoLabel.setText(String.format("FPS: %s", realFps));
         });
         hostState.wrapAsDisposable(hostState.getSendBytesPerSec$(), bytes -> {
-            sendBytesPerSecLabel.setText(Parser.parseBytesPerSecToMegaBytes(bytes, "Send"));
+            sendBytesPerSecLabel.setText(Utils.parseBytesPerSecToMegaBytes(bytes, "Send"));
         });
     }
 }

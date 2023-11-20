@@ -4,7 +4,7 @@
  */
 package pl.polsl.screensharing.lib.controller;
 
-import pl.polsl.screensharing.lib.Parser;
+import pl.polsl.screensharing.lib.Utils;
 import pl.polsl.screensharing.lib.gui.AbstractBottomInfobar;
 
 import javax.swing.*;
@@ -15,7 +15,7 @@ public abstract class AbstractBottomInfobarController {
 
     private final Consumer<AbstractBottomInfobar> jvmMeasurementsListener = bottomInfobar -> {
         final long memory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-        bottomInfobar.getMemoryUsageLabel().setText(Parser.parseBytes(memory, "Memory", false));
+        bottomInfobar.getMemoryUsageLabel().setText(Utils.parseBytes(memory, "Memory", false));
     };
 
     protected AbstractBottomInfobarController(AbstractBottomInfobar bottomInfobar) {

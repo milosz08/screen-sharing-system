@@ -18,21 +18,11 @@ public class VideoCanvasController {
 
     public void onResizeWithAspectRatio() {
         final JPanel videoFrameHolder = tabbedScreenFramePanel.getVideoFrameHolder();
-        int containerWidth = videoFrameHolder.getWidth();
-        int containerHeight = videoFrameHolder.getHeight();
-
-        final double aspectRatio = 16.0 / 9.0;
-        int width;
-        int height;
-
-        if ((double) containerWidth / containerHeight > aspectRatio) {
-            height = containerHeight;
-            width = (int) (height * aspectRatio);
-        } else {
-            width = containerWidth;
-            height = (int) (width / aspectRatio);
-        }
-        tabbedScreenFramePanel.getVideoCanvas().setPreferredSize(new Dimension(width, height));
+        final Rectangle screenSize = videoCanvas.getGraphicsDevice().getDefaultConfiguration().getBounds();
+        final Dimension size = Utils
+            .calcSizeBaseAspectRatio(videoFrameHolder, screenSize.getWidth() / screenSize.getHeight());
+        tabbedScreenFramePanel.getVideoCanvas().setPreferredSize(size);
+        tabbedScreenFramePanel.getDisableScreenPanel().setPreferredSize(size);
         videoFrameHolder.revalidate();
     }
 }

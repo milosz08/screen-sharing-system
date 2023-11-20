@@ -5,7 +5,7 @@
 package pl.polsl.screensharing.lib.gui;
 
 import lombok.Getter;
-import pl.polsl.screensharing.lib.Parser;
+import pl.polsl.screensharing.lib.Utils;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -31,7 +31,7 @@ public abstract class AbstractBottomInfobar extends JPanel {
 
         this.marginRight = BorderFactory.createEmptyBorder(0, 0, 0, 20);
 
-        this.memoryUsageLabel = new JLabel(Parser.parseBytes(0, "Memory", false));
+        this.memoryUsageLabel = new JLabel(Utils.parseBytes(0, "Memory", false));
 
         leftCompoundPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
         rightCompoundPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
