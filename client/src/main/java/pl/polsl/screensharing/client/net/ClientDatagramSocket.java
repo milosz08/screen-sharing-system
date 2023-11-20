@@ -87,7 +87,9 @@ public class ClientDatagramSocket extends Thread {
             }
             videoCanvas.repaint();
             if (logTimer >= MILION * 6L) {
-                log.info("Client datagram socket processed {} bytes", recvBytes);
+                if (recvBytes > 0) {
+                    log.info("Client datagram socket processed {} bytes", recvBytes);
+                }
                 logTimer = 0;
             }
             if (timer >= MILION) {

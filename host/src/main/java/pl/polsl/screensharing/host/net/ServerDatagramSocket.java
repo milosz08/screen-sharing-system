@@ -117,7 +117,9 @@ public class ServerDatagramSocket extends Thread {
             } catch (Exception ignored) {
             }
             if (logTimer >= MILION * 6L) {
-                log.info("Host datagram socket processed {} bytes", sendBytes);
+                if (sendBytes > 0) {
+                    log.info("Host datagram socket processed {} bytes", sendBytes);
+                }
                 logTimer = 0;
             }
             if (timer >= MILION) {
