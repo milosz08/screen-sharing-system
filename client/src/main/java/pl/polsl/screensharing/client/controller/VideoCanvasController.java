@@ -7,6 +7,7 @@ package pl.polsl.screensharing.client.controller;
 import lombok.extern.slf4j.Slf4j;
 import pl.polsl.screensharing.client.view.fragment.VideoCanvas;
 import pl.polsl.screensharing.client.view.tabbed.TabbedVideoStreamPanel;
+import pl.polsl.screensharing.lib.Utils;
 
 import javax.swing.*;
 import java.awt.*;
