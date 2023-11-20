@@ -16,6 +16,7 @@ public class HostState extends AbstractDisposableProvider {
     private final BehaviorSubject<SessionState> sessionState$;
     private final BehaviorSubject<Long> sessionTime$;
     private final BehaviorSubject<Integer> streamingFps$;
+    private final BehaviorSubject<Integer> realFpsBuffer$;
     private final BehaviorSubject<Long> sendBytesPerSec$;
     private final BehaviorSubject<GraphicsDevice> selectedGraphicsDevice$;
     private final BehaviorSubject<QualityLevel> streamingQuality$;
@@ -31,6 +32,7 @@ public class HostState extends AbstractDisposableProvider {
         this.sessionState$ = BehaviorSubject.createDefault(SessionState.INACTIVE);
         this.sessionTime$ = BehaviorSubject.createDefault(0L);
         this.streamingFps$ = BehaviorSubject.createDefault(30);
+        this.realFpsBuffer$ = BehaviorSubject.createDefault(30);
         this.sendBytesPerSec$ = BehaviorSubject.createDefault(0L);
         this.selectedGraphicsDevice$ = BehaviorSubject.create();
         this.streamingQuality$ = BehaviorSubject.createDefault(QualityLevel.GOOD);
@@ -59,6 +61,10 @@ public class HostState extends AbstractDisposableProvider {
 
     public void updateStreamingFps(int fps) {
         streamingFps$.onNext(fps);
+    }
+
+    public void updateRealFpsBuffer(Integer fps) {
+        realFpsBuffer$.onNext(fps);
     }
 
     public void updateSendBytesPerSec(Long bytesPerSec) {
@@ -111,6 +117,10 @@ public class HostState extends AbstractDisposableProvider {
 
     public Observable<Integer> getStreamingFps$() {
         return streamingFps$.hide();
+    }
+
+    public Observable<Integer> getRealFpsBuffer$() {
+        return realFpsBuffer$.hide();
     }
 
     public Observable<Long> getSendBytesPerSec$() {
