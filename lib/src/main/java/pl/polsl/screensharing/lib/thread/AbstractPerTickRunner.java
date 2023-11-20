@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class AbstractPerTickRunner implements Runnable {
     private static final int MILION = 1_000_000;
+    private static final int BILION = 1_000_000_000;
 
     private final Thread thread;
     private final AtomicInteger maxFps;
@@ -26,7 +27,7 @@ public abstract class AbstractPerTickRunner implements Runnable {
         int drawCount = 0;
 
         while (thread != null) {
-            final double drawInterval = MILION / (maxFps.get() * 1.0);
+            final double drawInterval = BILION / MAX_FPS;
             currentTime = System.nanoTime();
             delta += (currentTime - lastTime) / drawInterval;
             timer += (currentTime - lastTime);
@@ -36,7 +37,7 @@ public abstract class AbstractPerTickRunner implements Runnable {
                 delta--;
                 drawCount++;
             }
-            if (timer >= MILION) {
+            if (timer >= BILION) {
                 onUpdateFpsState(drawCount);
                 drawCount = 0;
                 timer = 0;

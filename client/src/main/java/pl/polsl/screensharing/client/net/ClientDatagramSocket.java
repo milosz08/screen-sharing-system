@@ -35,7 +35,7 @@ public class ClientDatagramSocket extends Thread {
     private Cipher cipher;
 
     private static final int PACKAGE_SIZE = 32_000;
-    private static final int MILION = 1_000_000_000;
+    private static final int BILION = 1_000_000_000;
     private static final String TERMINATE_PACKAGE = "$$END$$";
 
     private static final String SECRET_KEY = "ThisIsASecretKey";
@@ -86,13 +86,13 @@ public class ClientDatagramSocket extends Thread {
                 receivedDataBuffer.reset();
             }
             videoCanvas.repaint();
-            if (logTimer >= MILION * 6L) {
+            if (logTimer >= BILION * 6L) {
                 if (recvBytes > 0) {
                     log.info("Client datagram socket processed {} bytes", recvBytes);
                 }
                 logTimer = 0;
             }
-            if (timer >= MILION) {
+            if (timer >= BILION) {
                 clientState.updateRecvBytesPerSec(recvBytes);
                 log.debug("Client datagram socket processed {} bytes", recvBytes);
                 recvBytes = 0;

@@ -44,7 +44,7 @@ public class ServerDatagramSocket extends Thread {
     private final AtomicBoolean isScreenShowing;
 
     private static final int PACKAGE_SIZE = 32_000;
-    private static final int MILION = 1_000_000_000;
+    private static final int BILION = 1_000_000_000;
     private static final String TERMINATE_PACKAGE = "$$END$$";
 
     private static final String SECRET_KEY = "ThisIsASecretKey";
@@ -116,13 +116,13 @@ public class ServerDatagramSocket extends Thread {
 
             } catch (Exception ignored) {
             }
-            if (logTimer >= MILION * 6L) {
+            if (logTimer >= BILION * 6L) {
                 if (sendBytes > 0) {
                     log.info("Host datagram socket processed {} bytes", sendBytes);
                 }
                 logTimer = 0;
             }
-            if (timer >= MILION) {
+            if (timer >= BILION) {
                 hostState.updateSendBytesPerSec(sendBytes);
                 log.debug("Host datagram socket processed {} bytes", sendBytes);
                 sendBytes = 0;
