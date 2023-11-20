@@ -15,7 +15,6 @@ public class HostState extends AbstractDisposableProvider {
     private final BehaviorSubject<Long> streamingTime$;
     private final BehaviorSubject<SessionState> sessionState$;
     private final BehaviorSubject<Long> sessionTime$;
-    private final BehaviorSubject<Integer> streamingFps$;
     private final BehaviorSubject<Integer> realFpsBuffer$;
     private final BehaviorSubject<Long> sendBytesPerSec$;
     private final BehaviorSubject<GraphicsDevice> selectedGraphicsDevice$;
@@ -31,7 +30,6 @@ public class HostState extends AbstractDisposableProvider {
         this.streamingTime$ = BehaviorSubject.createDefault(0L);
         this.sessionState$ = BehaviorSubject.createDefault(SessionState.INACTIVE);
         this.sessionTime$ = BehaviorSubject.createDefault(0L);
-        this.streamingFps$ = BehaviorSubject.createDefault(30);
         this.realFpsBuffer$ = BehaviorSubject.createDefault(30);
         this.sendBytesPerSec$ = BehaviorSubject.createDefault(0L);
         this.selectedGraphicsDevice$ = BehaviorSubject.create();
@@ -57,10 +55,6 @@ public class HostState extends AbstractDisposableProvider {
 
     public void updateSessionTime(long seconds) {
         sessionTime$.onNext(seconds);
-    }
-
-    public void updateStreamingFps(int fps) {
-        streamingFps$.onNext(fps);
     }
 
     public void updateRealFpsBuffer(Integer fps) {
@@ -115,10 +109,6 @@ public class HostState extends AbstractDisposableProvider {
         return sessionTime$.hide();
     }
 
-    public Observable<Integer> getStreamingFps$() {
-        return streamingFps$.hide();
-    }
-
     public Observable<Integer> getRealFpsBuffer$() {
         return realFpsBuffer$.hide();
     }
@@ -157,5 +147,9 @@ public class HostState extends AbstractDisposableProvider {
 
     public Color getLastEmittedFrameColor() {
         return frameColor$.getValue();
+    }
+
+    public CaptureMode getLastEmittedCapturedMode() {
+        return captureMode$.getValue();
     }
 }

@@ -68,12 +68,6 @@ public class CaptureSettingsController {
         log.info("Updated screen capture mode to {}", captureMode);
     }
 
-    public void toggleShowingFrame(boolean isShowing) {
-        final HostState hostState = hostWindow.getHostState();
-        hostState.updateShowingFrameSelectorState(isShowing);
-        log.info("Helper resizable frame is {}", isShowing ? "on" : "off");
-    }
-
     public void updateFrameColorPicker() {
         final HostState hostState = hostWindow.getHostState();
         final Color selectedColor = JColorChooser.showDialog(captureSettingsPanel,
