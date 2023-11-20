@@ -20,13 +20,12 @@ public class TabbedScreenFramePanel extends AbstractTabbedPanel {
     private final VideoParametersPanel videoParametersPanel;
 
     public TabbedScreenFramePanel(HostWindow hostWindow) {
-        this.videoFrameHolder = new JPanel();
-        this.videoFrameHolder.setLayout(new FlowLayout());
+        videoFrameHolder = new JPanel();
 
-        this.videoCanvas = new VideoCanvas(hostWindow, this);
-        this.videoParametersPanel = new VideoParametersPanel(hostWindow);
+        videoCanvas = new VideoCanvas(hostWindow, this);
+        videoParametersPanel = new VideoParametersPanel(hostWindow);
 
-        this.videoFrameHolder.add(videoCanvas);
+        videoFrameHolder.add(videoCanvas);
 
         add(videoFrameHolder, BorderLayout.CENTER);
         add(videoParametersPanel, BorderLayout.EAST);

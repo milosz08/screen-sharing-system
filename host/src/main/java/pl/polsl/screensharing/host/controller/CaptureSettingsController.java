@@ -62,8 +62,8 @@ public class CaptureSettingsController {
         CaptureMode captureMode = CaptureMode.FULL_FRAME;
         if (isArea) {
             captureMode = CaptureMode.AREA;
-            hostState.updateShowingFrameSelectorState(true);
         }
+        hostState.updateShowingFrameSelectorState(isArea);
         hostState.updateCaptureMode(captureMode);
         log.info("Updated screen capture mode to {}", captureMode);
     }
