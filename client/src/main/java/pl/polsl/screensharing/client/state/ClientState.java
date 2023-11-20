@@ -20,6 +20,7 @@ public class ClientState extends AbstractDisposableProvider {
     private final BehaviorSubject<Long> recvBytesPerSec$;
     private final BehaviorSubject<FastConnectionDetails> fastConnectionDetails$;
     private final BehaviorSubject<SortedSet<SavedConnection>> savedConnections$;
+    private final BehaviorSubject<VisibilityState> visibilityState$;
 
     @Getter
     private final PersistedStateLoader persistedStateLoader;
@@ -33,6 +34,7 @@ public class ClientState extends AbstractDisposableProvider {
         this.recvBytesPerSec$ = BehaviorSubject.createDefault(0L);
         this.fastConnectionDetails$ = BehaviorSubject.createDefault(new FastConnectionDetails());
         this.savedConnections$ = BehaviorSubject.createDefault(new TreeSet<>());
+        this.visibilityState$ = BehaviorSubject.createDefault(VisibilityState.WAITING_FOR_CONNECTION);
 
         this.persistedStateLoader.loadApplicationSavedState();
     }
@@ -57,6 +59,10 @@ public class ClientState extends AbstractDisposableProvider {
         savedConnections$.onNext(savedConnectionSet);
     }
 
+    public void updateVisibilityState(VisibilityState visibilityState) {
+        visibilityState$.onNext(visibilityState);
+    }
+
     public Observable<ConnectionState> getConnectionState$() {
         return connectionState$.hide();
     }
@@ -75,6 +81,10 @@ public class ClientState extends AbstractDisposableProvider {
 
     public Observable<SortedSet<SavedConnection>> getSavedConnections$() {
         return savedConnections$.hide();
+    }
+
+    public Observable<VisibilityState> getVisibilityState$() {
+        return visibilityState$.hide();
     }
 
     public SortedSet<SavedConnection> getLastEmittedSavedConnections() {
