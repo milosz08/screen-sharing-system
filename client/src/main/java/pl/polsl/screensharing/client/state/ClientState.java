@@ -17,8 +17,6 @@ import java.util.TreeSet;
 public class ClientState extends AbstractDisposableProvider {
     private final BehaviorSubject<ConnectionState> connectionState$;
     private final BehaviorSubject<Long> connectionTime$;
-    private final BehaviorSubject<RecordingState> recordingState$;
-    private final BehaviorSubject<Long> recordingTime$;
     private final BehaviorSubject<Long> recvBytesPerSec$;
     private final BehaviorSubject<FastConnectionDetails> fastConnectionDetails$;
     private final BehaviorSubject<SortedSet<SavedConnection>> savedConnections$;
@@ -32,8 +30,6 @@ public class ClientState extends AbstractDisposableProvider {
 
         this.connectionState$ = BehaviorSubject.createDefault(ConnectionState.DISCONNECTED);
         this.connectionTime$ = BehaviorSubject.createDefault(0L);
-        this.recordingState$ = BehaviorSubject.createDefault(RecordingState.IDLE);
-        this.recordingTime$ = BehaviorSubject.createDefault(0L);
         this.recvBytesPerSec$ = BehaviorSubject.createDefault(0L);
         this.fastConnectionDetails$ = BehaviorSubject.createDefault(new FastConnectionDetails());
         this.savedConnections$ = BehaviorSubject.createDefault(new TreeSet<>());
@@ -47,14 +43,6 @@ public class ClientState extends AbstractDisposableProvider {
 
     public void updateConnectionTime(Long seconds) {
         connectionTime$.onNext(seconds);
-    }
-
-    public void updateRecordingState(RecordingState recordingState) {
-        recordingState$.onNext(recordingState);
-    }
-
-    public void updateRecordingTime(Long seconds) {
-        recordingTime$.onNext(seconds);
     }
 
     public void updateRecvBytesPerSec(Long bytesPerSec) {
@@ -75,14 +63,6 @@ public class ClientState extends AbstractDisposableProvider {
 
     public Observable<Long> getConnectionTime$() {
         return connectionTime$.hide();
-    }
-
-    public Observable<RecordingState> getRecordingState$() {
-        return recordingState$.hide();
-    }
-
-    public Observable<Long> getRecordingTime$() {
-        return recordingTime$.hide();
     }
 
     public Observable<Long> getRecvBytesPerSec$() {

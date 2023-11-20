@@ -13,18 +13,14 @@ import javax.swing.*;
 
 public class BottomInfobarController extends AbstractBottomInfobarController {
     private final ClientWindow clientWindow;
-
     private final Timer connectionTimer;
-    private final Timer recordingTimer;
 
     private long connectionTime;
-    private long recordingTime;
 
     public BottomInfobarController(ClientWindow clientWindow, BottomInfobar bottomInfobar) {
         super(bottomInfobar);
         this.clientWindow = clientWindow;
         this.connectionTimer = new Timer(1000, e -> clientWindow.getClientState().updateConnectionTime(++connectionTime));
-        this.recordingTimer = new Timer(1000, e -> clientWindow.getClientState().updateRecordingTime(++recordingTime));
     }
 
     public void startConnectionTimer() {
@@ -36,22 +32,7 @@ public class BottomInfobarController extends AbstractBottomInfobarController {
 
         final ClientState state = clientWindow.getClientState();
         state.updateConnectionTime(0L);
-        state.updateRecordingTime(0L);
 
         connectionTime = 0;
-        recordingTime = 0;
-    }
-
-    public void startRecordingTimer() {
-        recordingTimer.start();
-    }
-
-    public void stopRecordingTimer() {
-        recordingTimer.stop();
-
-        final ClientState state = clientWindow.getClientState();
-        state.updateRecordingTime(0L);
-
-        recordingTime = 0;
     }
 }

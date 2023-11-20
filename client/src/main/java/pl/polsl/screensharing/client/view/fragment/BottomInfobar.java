@@ -10,7 +10,6 @@ import pl.polsl.screensharing.client.state.ClientState;
 import pl.polsl.screensharing.client.view.ClientWindow;
 import pl.polsl.screensharing.lib.Utils;
 import pl.polsl.screensharing.lib.gui.AbstractBottomInfobar;
-import pl.polsl.screensharing.lib.gui.fragment.JAppActionRectInfo;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,8 +22,6 @@ public class BottomInfobar extends AbstractBottomInfobar {
     private final JLabel connectionStatusTextLabel;
     private final JLabel connectionStatusLabel;
     private final JLabel connectionTimeLabel;
-    private final JAppActionRectInfo recordingRectInfo;
-    private final JLabel recordingTimeLabel;
     private final JLabel recvBytesPerSecLabel;
 
     public BottomInfobar(ClientWindow clientWindow) {
@@ -34,15 +31,12 @@ public class BottomInfobar extends AbstractBottomInfobar {
         this.connectionStatusTextLabel = new JLabel("Connection state:");
         this.connectionStatusLabel = new JLabel();
         this.connectionTimeLabel = new JLabel();
-        this.recordingRectInfo = new JAppActionRectInfo(clientState.getRecordingState$(), clientState);
-        this.recordingTimeLabel = new JLabel();
         this.recvBytesPerSecLabel = new JLabel();
 
         initObservables();
 
         connectionStatusTextLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 3));
         connectionStatusLabel.setBorder(marginRight);
-        recordingTimeLabel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 20));
 
         connectionStatusLabel.setForeground(Color.GRAY);
 
@@ -52,8 +46,6 @@ public class BottomInfobar extends AbstractBottomInfobar {
         leftCompoundPanel.add(stateCompoundPanel);
         leftCompoundPanel.add(connectionTimeLabel);
 
-        rightCompoundPanel.add(recordingRectInfo);
-        rightCompoundPanel.add(recordingTimeLabel);
         rightCompoundPanel.add(memoryUsageLabel);
         rightCompoundPanel.add(recvBytesPerSecLabel);
 
@@ -67,9 +59,6 @@ public class BottomInfobar extends AbstractBottomInfobar {
         });
         clientState.wrapAsDisposable(clientState.getConnectionTime$(), time -> {
             connectionTimeLabel.setText(Utils.parseTime(time, "Connection"));
-        });
-        clientState.wrapAsDisposable(clientState.getRecordingTime$(), time -> {
-            recordingTimeLabel.setText(Utils.parseTime(time, "Recording"));
         });
         clientState.wrapAsDisposable(clientState.getRecvBytesPerSec$(), bytes -> {
             recvBytesPerSecLabel.setText(Utils.parseBytesPerSecToMegaBytes(bytes, "Received"));

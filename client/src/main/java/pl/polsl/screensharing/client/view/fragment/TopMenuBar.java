@@ -4,13 +4,10 @@
  */
 package pl.polsl.screensharing.client.view.fragment;
 
-import io.reactivex.rxjava3.core.Observable;
 import lombok.Getter;
-import pl.polsl.screensharing.client.aggregator.ConnectionRecordingAggregator;
 import pl.polsl.screensharing.client.controller.TopMenuBarController;
 import pl.polsl.screensharing.client.state.ClientState;
 import pl.polsl.screensharing.client.state.ConnectionState;
-import pl.polsl.screensharing.client.state.RecordingState;
 import pl.polsl.screensharing.client.view.ClientIcon;
 import pl.polsl.screensharing.client.view.ClientWindow;
 import pl.polsl.screensharing.lib.gui.component.JAppMenuIconItem;
@@ -31,8 +28,6 @@ public class TopMenuBar extends JMenuBar {
     private final JAppMenuIconItem lastConnectionsMenuItem;
 
     private final JAppMenuIconItem takeScreenshotMenuItem;
-    private final JAppMenuIconItem startRecordingMenuItem;
-    private final JAppMenuIconItem stopRecordingMenuItem;
 
     private final JAppMenuIconItem aboutMenuItem;
     private final JAppMenuIconItem licenseMenuItem;
@@ -56,8 +51,6 @@ public class TopMenuBar extends JMenuBar {
         this.lastConnectionsMenuItem = new JAppMenuIconItem("Last connections", LibIcon.CHECK_BOX_LIST);
 
         this.takeScreenshotMenuItem = new JAppMenuIconItem("Take screenshot", ClientIcon.TAKE_SNAPSHOT, false);
-        this.startRecordingMenuItem = new JAppMenuIconItem("Start recording", ClientIcon.RECORD, false);
-        this.stopRecordingMenuItem = new JAppMenuIconItem("Stop recording", ClientIcon.STOP, false);
 
         this.aboutMenuItem = new JAppMenuIconItem("About", LibIcon.HELP_TABLE_OF_CONTENTS);
         this.licenseMenuItem = new JAppMenuIconItem("License", LibIcon.CODE_INFORMATION_RULE);
@@ -72,8 +65,6 @@ public class TopMenuBar extends JMenuBar {
 
         this.interactionMenuItems = new JAppMenuIconItem[]{
             takeScreenshotMenuItem,
-            startRecordingMenuItem,
-            stopRecordingMenuItem
         };
 
         this.helpMenuItems = new JAppMenuIconItem[]{
@@ -86,8 +77,6 @@ public class TopMenuBar extends JMenuBar {
         this.lastConnectionsMenuItem.addActionListener(e -> controller.openLastConnectionsWindow());
 
         this.takeScreenshotMenuItem.addActionListener(e -> controller.takeScreenshot());
-        this.startRecordingMenuItem.addActionListener(e -> controller.startRecording());
-        this.stopRecordingMenuItem.addActionListener(e -> controller.stopRecording());
 
         this.aboutMenuItem.addActionListener(e -> controller.openAboutProgramSection());
         this.licenseMenuItem.addActionListener(e -> controller.openLicenseSection());
@@ -114,18 +103,6 @@ public class TopMenuBar extends JMenuBar {
             lastConnectionsMenuItem.setEnabled(!isConnected);
             disconnectMenuItem.setEnabled(isConnected);
             takeScreenshotMenuItem.setEnabled(isConnected);
-        });
-
-        final Observable<ConnectionRecordingAggregator> aggregator = Observable.combineLatest(
-            clientState.getConnectionState$(),
-            clientState.getRecordingState$(),
-            ConnectionRecordingAggregator::new);
-
-        clientState.wrapAsDisposable(aggregator, aggregated -> {
-            final boolean isConnected = aggregated.getConnectionState().equals(ConnectionState.CONNECTED);
-            final boolean isRecording = aggregated.getRecordingState().equals(RecordingState.RECORDING);
-            startRecordingMenuItem.setEnabled(!isRecording && isConnected);
-            stopRecordingMenuItem.setEnabled(isRecording && isConnected);
         });
     }
 }

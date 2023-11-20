@@ -4,13 +4,10 @@
  */
 package pl.polsl.screensharing.client.view.fragment;
 
-import io.reactivex.rxjava3.core.Observable;
 import lombok.Getter;
-import pl.polsl.screensharing.client.aggregator.ConnectionRecordingAggregator;
 import pl.polsl.screensharing.client.controller.TopToolbarController;
 import pl.polsl.screensharing.client.state.ClientState;
 import pl.polsl.screensharing.client.state.ConnectionState;
-import pl.polsl.screensharing.client.state.RecordingState;
 import pl.polsl.screensharing.client.view.ClientIcon;
 import pl.polsl.screensharing.client.view.ClientWindow;
 import pl.polsl.screensharing.lib.gui.component.JAppIconButton;
@@ -26,8 +23,6 @@ public class TopToolbar extends JToolBar {
     private final JAppIconButton disconnectButton;
     private final JAppIconButton lastConnectionsButton;
     private final JAppIconButton takeScreenshotButton;
-    private final JAppIconButton startRecordingButton;
-    private final JAppIconButton stopRecordingButton;
 
     private final TopToolbarController controller;
 
@@ -40,8 +35,6 @@ public class TopToolbar extends JToolBar {
         this.lastConnectionsButton = new JAppIconButton("Last connections", LibIcon.CHECK_BOX_LIST, true);
 
         this.takeScreenshotButton = new JAppIconButton("Take screenshot", ClientIcon.TAKE_SNAPSHOT, true, false);
-        this.startRecordingButton = new JAppIconButton("Start recording", ClientIcon.RECORD, true, false);
-        this.stopRecordingButton = new JAppIconButton("Stop recording", ClientIcon.STOP, true, false);
 
         initObservables();
 
@@ -50,16 +43,12 @@ public class TopToolbar extends JToolBar {
         this.lastConnectionsButton.addActionListener(e -> controller.openLastConnectionsWindow());
 
         this.takeScreenshotButton.addActionListener(e -> controller.takeScreenshot());
-        this.startRecordingButton.addActionListener(e -> controller.startRecording());
-        this.stopRecordingButton.addActionListener(e -> controller.stopRecording());
 
         addButtonWithSeparation(createConnectionButton);
         addButtonWithSeparation(disconnectButton);
         addButtonWithSeparation(lastConnectionsButton);
         addSeparator();
         addButtonWithSeparation(takeScreenshotButton);
-        addButtonWithSeparation(startRecordingButton);
-        addButtonWithSeparation(stopRecordingButton);
 
         setFloatable(false);
     }
@@ -76,18 +65,6 @@ public class TopToolbar extends JToolBar {
             lastConnectionsButton.setEnabled(!isConnected);
             disconnectButton.setEnabled(isConnected);
             takeScreenshotButton.setEnabled(isConnected);
-        });
-
-        final Observable<ConnectionRecordingAggregator> aggregator = Observable.combineLatest(
-            clientState.getConnectionState$(),
-            clientState.getRecordingState$(),
-            ConnectionRecordingAggregator::new);
-
-        clientState.wrapAsDisposable(aggregator, state -> {
-            final boolean isCreated = state.getConnectionState().equals(ConnectionState.CONNECTED);
-            final boolean isStreaming = state.getRecordingState().equals(RecordingState.RECORDING);
-            startRecordingButton.setEnabled(!isStreaming && isCreated);
-            stopRecordingButton.setEnabled(isStreaming && isCreated);
         });
     }
 }
