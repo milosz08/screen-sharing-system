@@ -35,6 +35,10 @@ public class FileUtils {
         return Optional.empty();
     }
 
+    public static Optional<Image> getImageFileFromResources(Class<?> invokingClazz, String resourcePath, Object... args) {
+        return getAssetFileFromResources(invokingClazz, resourcePath, args).map(url -> new ImageIcon(url).getImage());
+    }
+
     public static Optional<ImageIcon> getImageIconFromResources(Class<?> invokingClazz, AppIcon libIcon) {
         final Optional<URL> iconUrl = getAssetFileFromResources(invokingClazz, "icons/%s.png", libIcon.getName());
         return iconUrl.map(ImageIcon::new);

@@ -16,7 +16,7 @@ public abstract class AbstractRootFrame extends JFrame {
     private final AbstractDisposableProvider disposableProvider;
     private final Dimension size;
     private final JPanel rootPanel;
-    private final Optional<Image> imageIconOptional;
+    protected final Optional<Image> imageIconOptional;
 
     protected AbstractRootFrame(
         AppType appType,
