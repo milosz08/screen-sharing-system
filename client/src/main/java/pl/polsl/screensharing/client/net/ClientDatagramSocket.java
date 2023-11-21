@@ -37,9 +37,8 @@ public class ClientDatagramSocket extends Thread {
     private Cipher cipher;
     private boolean isFetchingData;
 
-    private static final int PACKAGE_SIZE = 32_000;
+    private static final int PACKAGE_SIZE = 32_768; // 32kb
     private static final int BILION = 1_000_000_000;
-    private static final String TERMINATE_PACKAGE = "$$END$$";
 
     private static final String SECRET_KEY = "ThisIsASecretKey";
     private static final String INIT_VECTOR = "RandomInitVector";
@@ -57,12 +56,29 @@ public class ClientDatagramSocket extends Thread {
     public void run() {
         log.info("Started datagram thread with TID {}", getName());
         final ByteArrayOutputStream receivedDataBuffer = new ByteArrayOutputStream();
-        byte[] receiveBuffer = new byte[PACKAGE_SIZE];
+
+        final int debugBytesLength = 3; // ilość bajtów debugujących
+        byte[] receiveBuffer = new byte[PACKAGE_SIZE]; // bufor na dane przychodzące (dane + bufor debugujący)
+        byte[] rawDataBuffer; // bufor na surowe dane JPEG
+        byte countOfPackages; // liczba pakietów uzyskana przez obiornik
+        byte packageIteration; // iterator pakietów uzyskany przez obiornik
+        byte realPackagesIteration = 1; // ilość przebiegów pętli po pakiety (rzeczywista pobrana ilość)
+        boolean isTerminated;
+        boolean isCorrupted = false;
+
+        // Wątek odbierający dane nadawane na kanał UDP przez hosta. Posiada prosty system korekcji błędów. Główna pętla
+        // co iteracje pobiera kolejne paczki nadsyłane przez hosta. Z paczek ~32kb pobierany jest 3 bajtowy ciąg
+        // debugujący oraz pozostałe bajty (strumień JPEG). Dane w ciągu debugującym weryfikują poprawność pod względem:
+        // - ilości paczek na jedną klatkę
+        // - kolejności paczek
+        // Jeśli zostanie wykryty problem z ilością paczek na jedną klatkę lub paczki będa w złej kolejności, bufor jest
+        // odrzucany a klatka nie jest renderowana.
 
         long lastTime = System.nanoTime();
         long currentTime;
         long timer = 0, logTimer = 0;
         long recvBytes = 0;
+        int corruptedFrames = 0;
 
         while (isFetchingData) {
             currentTime = System.nanoTime();
@@ -75,31 +91,60 @@ public class ClientDatagramSocket extends Thread {
                 datagramSocket.receive(receivePacket);
                 recvBytes += receivePacket.getLength();
 
-                if (new String(receivePacket.getData(), 0, receivePacket.getLength()).equals(TERMINATE_PACKAGE)) {
-                    final byte[] receivedData = receivedDataBuffer.toByteArray();
-                    final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(receivedData);
-                    final BufferedImage receivedImage = ImageIO.read(byteArrayInputStream);
-                    final BufferedImage renderedImage = Scalr.resize(receivedImage, size.width, size.height);
-                    videoCanvasController.setReceivedAndRenderedImage(receivedImage, renderedImage);
-                    byteArrayInputStream.close();
-                    receivedDataBuffer.reset();
-                } else {
-                    final byte[] decrypted = decrypt(Arrays.copyOf(receivePacket.getData(), receivePacket.getLength()));
-                    receivedDataBuffer.write(decrypted, 0, decrypted.length);
+                // odkodowanie danych przy użyciu klucza AES (UWAGA! Istotnia jest metoda Arrays.copyOf, ponieważ bez
+                // niej AES rozpoznawał ciąg bajtów jako nieprawidłowy ponieważ dodawał swoje dopełnienie do niepełnej
+                // klatki zamiast ustawić tam zera
+                final byte[] decrypted = decrypt(Arrays.copyOf(receivePacket.getData(), receivePacket.getLength()));
+                rawDataBuffer = new byte[decrypted.length - debugBytesLength];
+                countOfPackages = decrypted[0];
+                packageIteration = decrypted[1];
+                isTerminated = decrypted[2] == 1;
+
+                // kopiuj zawartość bez bajtów debugujących
+                System.arraycopy(decrypted, debugBytesLength, rawDataBuffer, 0, decrypted.length - debugBytesLength);
+                receivedDataBuffer.write(rawDataBuffer, 0, rawDataBuffer.length);
+
+                // jeśli wykryje, że klatki są w niewłaściwej kolejności, ustaw klatkę jako corrupted
+                if (realPackagesIteration < packageIteration - 1) {
+                    isCorrupted = true;
+                }
+                realPackagesIteration++;
+
+                if (isTerminated) {
+                    // poskładaj klatki i wygeneruj obraz jeśli przesłano wszystkie
+                    // fragmenty klatki oraz nie są one uszkodzone
+                    if (countOfPackages == packageIteration && !isCorrupted) {
+                        final byte[] receivedData = receivedDataBuffer.toByteArray();
+                        final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(receivedData);
+                        final BufferedImage receivedImage = ImageIO.read(byteArrayInputStream);
+                        final BufferedImage renderedImage = Scalr.resize(receivedImage, size.width, size.height);
+                        videoCanvasController.setReceivedAndRenderedImage(receivedImage, renderedImage);
+                        byteArrayInputStream.close();
+                        videoCanvas.repaint();
+                    }
+                    if (isCorrupted) {
+                        corruptedFrames++;
+                    }
+                    isCorrupted = false;
+                    receivedDataBuffer.reset(); // wyczyść bufor na fragmenty klatek
+                    realPackagesIteration = 0;
                 }
             } catch (Exception ex) {
+                isCorrupted = false;
+                realPackagesIteration = 0;
                 receivedDataBuffer.reset();
             }
-            videoCanvas.repaint();
             if (logTimer >= BILION * 6L) {
                 if (recvBytes > 0) {
-                    log.info("Client datagram socket processed {} bytes", recvBytes);
+                    log.info("Client datagram socket processed {} bytes. Lost frames: {}", recvBytes, corruptedFrames);
                 }
                 logTimer = 0;
             }
             if (timer >= BILION) {
                 clientState.updateRecvBytesPerSec(recvBytes);
                 log.debug("Client datagram socket processed {} bytes", recvBytes);
+                clientState.updateLostFramesCount(corruptedFrames);
+                corruptedFrames = 0;
                 recvBytes = 0;
                 timer = 0;
             }

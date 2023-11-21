@@ -22,6 +22,7 @@ public class BottomInfobar extends AbstractBottomInfobar {
     private final JLabel connectionStatusTextLabel;
     private final JLabel connectionStatusLabel;
     private final JLabel connectionTimeLabel;
+    private final JLabel lostFramesCountLabel;
     private final JLabel recvBytesPerSecLabel;
 
     public BottomInfobar(ClientWindow clientWindow) {
@@ -32,14 +33,15 @@ public class BottomInfobar extends AbstractBottomInfobar {
         connectionStatusLabel = new JLabel();
         connectionTimeLabel = new JLabel();
         recvBytesPerSecLabel = new JLabel();
+        lostFramesCountLabel = new JLabel("Lost frames: 0");
 
         initObservables();
 
         connectionStatusTextLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 3));
         connectionStatusLabel.setBorder(marginRight);
-
         connectionStatusLabel.setForeground(Color.GRAY);
-
+        lostFramesCountLabel.setBorder(marginRight);
+        
         stateCompoundPanel.add(connectionStatusTextLabel);
         stateCompoundPanel.add(connectionStatusLabel);
 
@@ -47,6 +49,7 @@ public class BottomInfobar extends AbstractBottomInfobar {
         leftCompoundPanel.add(connectionTimeLabel);
 
         rightCompoundPanel.add(memoryUsageLabel);
+        rightCompoundPanel.add(lostFramesCountLabel);
         rightCompoundPanel.add(recvBytesPerSecLabel);
 
         addPanels();
@@ -62,6 +65,9 @@ public class BottomInfobar extends AbstractBottomInfobar {
         });
         clientState.wrapAsDisposable(clientState.getRecvBytesPerSec$(), bytes -> {
             recvBytesPerSecLabel.setText(Utils.parseBytesPerSecToMegaBytes(bytes, "Received"));
+        });
+        clientState.wrapAsDisposable(clientState.getLostFramesCount$(), lostFramesCount -> {
+            lostFramesCountLabel.setText(String.format("Lost frames: %s", lostFramesCount));
         });
     }
 }

@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import pl.polsl.screensharing.host.controller.VideoCanvasController;
 import pl.polsl.screensharing.host.state.HostState;
 import pl.polsl.screensharing.host.state.QualityLevel;
+import pl.polsl.screensharing.host.state.StreamingState;
 import pl.polsl.screensharing.host.view.HostWindow;
 import pl.polsl.screensharing.lib.UnoperableException;
 
@@ -19,12 +20,10 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageOutputStream;
+import javax.swing.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
+import java.net.*;
 import java.nio.charset.StandardCharsets;
 
 @Slf4j
@@ -37,9 +36,8 @@ public class ServerDatagramSocket extends Thread {
     private Cipher cipher;
     private QualityLevel qualityLevel;
 
-    private static final int PACKAGE_SIZE = 32_000;
+    private static final int PACKAGE_SIZE = 32_768; // 32kb
     private static final int BILION = 1_000_000_000;
-    private static final String TERMINATE_PACKAGE = "$$END$$";
 
     private static final String SECRET_KEY = "ThisIsASecretKey";
     private static final String INIT_VECTOR = "RandomInitVector";
@@ -55,15 +53,23 @@ public class ServerDatagramSocket extends Thread {
 
     @Override
     public void run() {
-        byte[] chunk;
-        int chunkOffset = 0;
-        byte[] compressedData = null;
-        int unprocessedDataLength = 0;
+        byte[] chunk; // pakiet do przesłania
+        int chunkOffset = 0; // przesunięcie pakietowe
+        byte[] compressedData = null; // skompresowany strumień bajtów (klatka)
+        int unprocessedDataLength = 0; // długość nieprzetworzonych danych
+        byte countOfPackages = 0; // liczba przesłanych pakietów na jedną klatkę
+        byte packageIteration = 1; // iterator przesłanych pakietów
+        final int debugBytesLength = 3; // ilość bajtów debugujących
 
         long lastTime = System.nanoTime();
         long currentTime;
         long timer = 0, logTimer = 0;
         long sendBytes = 0;
+
+        // Wątek działa w pętli dopóki istnieje sesja UDP. Kolejne przebiegi pętli to wysyłanie kolejnych to fragmentów
+        // jednej klatki obrazu w formie pakietów po ~32kb + 3 bajty debugujące definiujące ilość fragmentów na jedną
+        // klatkę, indeks fragmentu oraz czy jest to fragment terminalny. Wartości te potrzebne są do korekcji błędów
+        // po stronie odbiorcy.
 
         log.info("Started datagram thread with TID {}", getName());
         while (isSendingData) {
@@ -75,32 +81,46 @@ public class ServerDatagramSocket extends Thread {
                 if (compressedData == null) {
                     compressedData = loadImage();
                     unprocessedDataLength = compressedData.length;
+                    countOfPackages = (byte) Math.ceil((double) compressedData.length / PACKAGE_SIZE);
                 }
-                if (unprocessedDataLength > PACKAGE_SIZE) {
-                    // prześlij tylko część
+                // przesyłaj pakiety dopóki ilość nieprzetworzonych bajtów będzie większa od rozmiaru ramki bez
+                // bajtów debugujących
+                if (unprocessedDataLength > PACKAGE_SIZE - debugBytesLength) {
+                    // prześlij fragment obrazu (jeden pakiet, rozmiar ramki ~32kb (plus bajty debugujące)
                     chunk = new byte[PACKAGE_SIZE];
-                    System.arraycopy(compressedData, chunkOffset, chunk, 0, PACKAGE_SIZE);
-
+                    chunk[0] = countOfPackages;
+                    chunk[1] = packageIteration;
+                    chunk[2] = 0; // fragment
+                    // kopiowanie strumienia bajtów JPEG do chunka z przesunięciem o już przetworzone pakiety oraz
+                    // 3 pakiety debugujące
+                    System.arraycopy(compressedData, chunkOffset, chunk, debugBytesLength,
+                        PACKAGE_SIZE - debugBytesLength);
                     final long encryptedChunkLength = sendEncryptedPackage(chunk);
 
                     sendBytes += encryptedChunkLength;
-                    unprocessedDataLength -= PACKAGE_SIZE;
-                    chunkOffset += PACKAGE_SIZE;
+                    unprocessedDataLength -= (PACKAGE_SIZE - debugBytesLength);
+                    chunkOffset += (PACKAGE_SIZE - debugBytesLength);
+                    packageIteration++;
                 } else {
                     // przeslij jeden pakiet (lub ostatni pakiet)
-                    chunk = new byte[unprocessedDataLength];
-                    System.arraycopy(compressedData, chunkOffset, chunk, 0, unprocessedDataLength);
+                    chunk = new byte[unprocessedDataLength + debugBytesLength];
+                    chunk[0] = countOfPackages;
+                    chunk[1] = packageIteration;
+                    chunk[2] = 1; // pakiet terminalny
 
+                    System.arraycopy(compressedData, chunkOffset, chunk, debugBytesLength, unprocessedDataLength);
                     final long encryptedChunkLength = sendEncryptedPackage(chunk);
-                    final long terminatePackageLength = sendPackage(TERMINATE_PACKAGE.getBytes());
 
-                    sendBytes += (encryptedChunkLength + terminatePackageLength);
+                    sendBytes += encryptedChunkLength;
                     compressedData = null;
                     chunkOffset = 0;
+                    packageIteration = 1;
                 }
-                // opóźnij przesyłanie pakietów (UDP przy zbyt szybkim wysyłaniu
-                // ignoruje pakiety i po stronie klienta pojawiają się artefakty w obrazie
-                sleep(5);
+                sleep(1);
+            } catch (SocketTimeoutException | PortUnreachableException ex) {
+                JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                log.error("Unexpected network error. Cause: {}", ex.getMessage());
+                break;
             } catch (Exception ignored) {
             }
             if (logTimer >= BILION * 6L) {
@@ -120,6 +140,7 @@ public class ServerDatagramSocket extends Thread {
         log.debug("Collected detatched thread with TID {} by GC", getName());
         datagramSocket.disconnect();
         datagramSocket.close();
+        hostState.updateStreamingState(StreamingState.STOPPED);
     }
 
     @Override
