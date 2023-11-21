@@ -26,17 +26,17 @@ public class ClientState extends AbstractDisposableProvider {
     private final PersistedStateLoader persistedStateLoader;
 
     public ClientState() {
-        this.persistedStateLoader = new PersistedStateLoader(this);
-        this.persistedStateLoader.initPersistor(new PersistedState());
+        persistedStateLoader = new PersistedStateLoader(this);
+        persistedStateLoader.initPersistor(new PersistedState());
 
-        this.connectionState$ = BehaviorSubject.createDefault(ConnectionState.DISCONNECTED);
-        this.connectionTime$ = BehaviorSubject.createDefault(0L);
-        this.recvBytesPerSec$ = BehaviorSubject.createDefault(0L);
-        this.fastConnectionDetails$ = BehaviorSubject.createDefault(new FastConnectionDetails());
-        this.savedConnections$ = BehaviorSubject.createDefault(new TreeSet<>());
-        this.visibilityState$ = BehaviorSubject.createDefault(VisibilityState.WAITING_FOR_CONNECTION);
+        connectionState$ = BehaviorSubject.createDefault(ConnectionState.DISCONNECTED);
+        connectionTime$ = BehaviorSubject.createDefault(0L);
+        recvBytesPerSec$ = BehaviorSubject.createDefault(0L);
+        fastConnectionDetails$ = BehaviorSubject.createDefault(new FastConnectionDetails());
+        savedConnections$ = BehaviorSubject.createDefault(new TreeSet<>());
+        visibilityState$ = BehaviorSubject.createDefault(VisibilityState.WAITING_FOR_CONNECTION);
 
-        this.persistedStateLoader.loadApplicationSavedState();
+        persistedStateLoader.loadApplicationSavedState();
     }
 
     public void updateConnectionState(ConnectionState connectionState) {

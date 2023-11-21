@@ -41,35 +41,35 @@ public class LastConnectionsWindow extends AbstractPopupDialog {
 
     public LastConnectionsWindow(ClientWindow clientWindow) {
         super(AppType.HOST, 650, 210, "Last connections", clientWindow, LastConnectionsWindow.class);
-        this.clientState = clientWindow.getClientState();
-        this.controller = new LastConnectionsController(clientWindow, this);
+        clientState = clientWindow.getClientState();
+        controller = new LastConnectionsController(clientWindow, this);
 
-        this.rightPanel = new JPanel(new GridLayout(5, 1, 5, 5));
+        rightPanel = new JPanel(new GridLayout(5, 1, 5, 5));
 
-        this.tableModel = new DefaultTableModel(new Object[][]{}, tableHeaders);
-        this.table = new JTable(tableModel);
+        tableModel = new DefaultTableModel(new Object[][]{}, tableHeaders);
+        table = new JTable(tableModel);
 
-        this.scrollPane = new JScrollPane(table);
+        scrollPane = new JScrollPane(table);
 
-        this.connectButton = new JAppIconButton("Connect", ClientIcon.CONNECT_TO_REMOTE_SERVER);
-        this.removeRowButton = new JAppIconButton("Remove", LibIcon.DELETE_CLAUSE);
-        this.removeAllRowsButton = new JAppIconButton("Remove all", LibIcon.DELETE_TABLE);
-        this.cancelButton = new JAppIconButton("Cancel", LibIcon.CANCEL);
+        connectButton = new JAppIconButton("Connect", ClientIcon.CONNECT_TO_REMOTE_SERVER);
+        removeRowButton = new JAppIconButton("Remove", LibIcon.DELETE_CLAUSE);
+        removeAllRowsButton = new JAppIconButton("Remove all", LibIcon.DELETE_TABLE);
+        cancelButton = new JAppIconButton("Cancel", LibIcon.CANCEL);
 
         initObservables();
 
-        this.connectButton.addActionListener(e -> controller.createConnection());
-        this.cancelButton.addActionListener(e -> closeWindow());
-        this.removeRowButton.addActionListener(e -> controller.removeSelectedRow());
-        this.removeAllRowsButton.addActionListener(e -> controller.removeAllRows());
+        connectButton.addActionListener(e -> controller.createConnection());
+        cancelButton.addActionListener(e -> closeWindow());
+        removeRowButton.addActionListener(e -> controller.removeSelectedRow());
+        removeAllRowsButton.addActionListener(e -> controller.removeAllRows());
 
         AppCellEditor.setCellEditor(0, 15, "^[0-9.]+$", table);
         AppCellEditor.setCellEditor(1, 6, "^[0-9]+$", table);
         AppCellEditor.setCellEditor(2, 40, "^[0-9a-zA-Z]+$", table);
         AppCellEditor.setCellEditor(3, 100, table);
 
-        this.table.getSelectionModel().addListSelectionListener(e -> controller.markupSelectedRow());
-        this.table.addPropertyChangeListener(controller::updateLastConnectionsData);
+        table.getSelectionModel().addListSelectionListener(e -> controller.markupSelectedRow());
+        table.addPropertyChangeListener(controller::updateLastConnectionsData);
 
         initDialogGui(false);
     }

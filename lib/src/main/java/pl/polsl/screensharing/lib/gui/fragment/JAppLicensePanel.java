@@ -20,8 +20,8 @@ public class JAppLicensePanel extends JPanel {
     private final JLabel label;
 
     public JAppLicensePanel() {
-        this.scrollPane = new JScrollPane(this);
-        this.label = new JLabel(loadHtmlLicenseContent());
+        scrollPane = new JScrollPane(this);
+        label = new JLabel(loadHtmlLicenseContent());
 
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);

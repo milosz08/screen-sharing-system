@@ -23,8 +23,8 @@ public class BottomInfobarController extends AbstractBottomInfobarController {
     public BottomInfobarController(HostWindow hostWindow, BottomInfobar bottomInfobar) {
         super(bottomInfobar);
         this.hostWindow = hostWindow;
-        this.sessionTimer = new Timer(1000, e -> hostWindow.getHostState().updateSessionTime(++sessionTime));
-        this.streamingTimer = new Timer(1000, e -> hostWindow.getHostState().updateStreamingTime(++streamingTime));
+        sessionTimer = new Timer(1000, e -> hostWindow.getHostState().updateSessionTime(++sessionTime));
+        streamingTimer = new Timer(1000, e -> hostWindow.getHostState().updateStreamingTime(++streamingTime));
     }
 
     public void startSessionTimer() {

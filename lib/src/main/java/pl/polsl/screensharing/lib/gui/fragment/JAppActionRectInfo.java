@@ -18,7 +18,7 @@ public class JAppActionRectInfo extends JPanel {
         Observable<? extends ColoredLabelState> state$,
         AbstractDisposableProvider disposableProvider
     ) {
-        this.selectedColor = Color.GRAY;
+        selectedColor = Color.GRAY;
         disposableProvider.wrapAsDisposable(state$, color -> {
             selectedColor = color.getColor();
             repaint();

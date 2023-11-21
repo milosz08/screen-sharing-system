@@ -27,22 +27,22 @@ public class TopToolbar extends JToolBar {
     private final TopToolbarController controller;
 
     public TopToolbar(ClientWindow clientWindow) {
-        this.clientState = clientWindow.getClientState();
-        this.controller = new TopToolbarController(clientWindow);
+        clientState = clientWindow.getClientState();
+        controller = new TopToolbarController(clientWindow);
 
-        this.createConnectionButton = new JAppIconButton("Connect", ClientIcon.ADD_CONNECTION, true);
-        this.disconnectButton = new JAppIconButton("Disconnect", ClientIcon.DISCONNECT, true, false);
-        this.lastConnectionsButton = new JAppIconButton("Last connections", LibIcon.CHECK_BOX_LIST, true);
+        createConnectionButton = new JAppIconButton("Connect", ClientIcon.ADD_CONNECTION, true);
+        disconnectButton = new JAppIconButton("Disconnect", ClientIcon.DISCONNECT, true, false);
+        lastConnectionsButton = new JAppIconButton("Last connections", LibIcon.CHECK_BOX_LIST, true);
 
-        this.takeScreenshotButton = new JAppIconButton("Take screenshot", ClientIcon.TAKE_SNAPSHOT, true, false);
+        takeScreenshotButton = new JAppIconButton("Take screenshot", ClientIcon.TAKE_SNAPSHOT, true, false);
 
         initObservables();
 
-        this.createConnectionButton.addActionListener(e -> controller.openMakeConnectionWindow());
-        this.disconnectButton.addActionListener(e -> controller.disconnectFromSession());
-        this.lastConnectionsButton.addActionListener(e -> controller.openLastConnectionsWindow());
+        createConnectionButton.addActionListener(e -> controller.openMakeConnectionWindow());
+        disconnectButton.addActionListener(e -> controller.disconnectFromSession());
+        lastConnectionsButton.addActionListener(e -> controller.openLastConnectionsWindow());
 
-        this.takeScreenshotButton.addActionListener(e -> controller.takeScreenshot());
+        takeScreenshotButton.addActionListener(e -> controller.takeScreenshot());
 
         addButtonWithSeparation(createConnectionButton);
         addButtonWithSeparation(disconnectButton);

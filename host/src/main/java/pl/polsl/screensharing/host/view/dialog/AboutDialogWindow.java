@@ -16,7 +16,7 @@ public class AboutDialogWindow extends AbstractPopupDialog {
 
     public AboutDialogWindow(HostWindow hostWindow) {
         super(AppType.HOST, 500, 200, "About", hostWindow, AboutDialogWindow.class);
-        this.appAboutPanel = new JAppAboutPanel(AppType.HOST);
+        appAboutPanel = new JAppAboutPanel(AppType.HOST);
         initDialogGui(true);
     }
 

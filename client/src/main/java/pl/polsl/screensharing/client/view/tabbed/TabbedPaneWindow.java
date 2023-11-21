@@ -17,8 +17,8 @@ public class TabbedPaneWindow extends JTabbedPane {
     private final JAppTabbedLogsPanel tabbedLogsPanel;
 
     public TabbedPaneWindow(ClientWindow clientWindow) {
-        this.tabbedVideoStreamPanel = new TabbedVideoStreamPanel(clientWindow);
-        this.tabbedLogsPanel = new JAppTabbedLogsPanel(AppType.CLIENT);
+        tabbedVideoStreamPanel = new TabbedVideoStreamPanel(clientWindow);
+        tabbedLogsPanel = new JAppTabbedLogsPanel(AppType.CLIENT);
 
         addTab("Video stream", tabbedVideoStreamPanel);
         addTab("Logs", tabbedLogsPanel);

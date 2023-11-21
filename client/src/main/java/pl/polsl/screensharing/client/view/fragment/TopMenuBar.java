@@ -39,47 +39,47 @@ public class TopMenuBar extends JMenuBar {
     private final TopMenuBarController controller;
 
     public TopMenuBar(ClientWindow clientWindow) {
-        this.clientState = clientWindow.getClientState();
-        this.controller = new TopMenuBarController(clientWindow);
+        clientState = clientWindow.getClientState();
+        controller = new TopMenuBarController(clientWindow);
 
-        this.connectMenu = new JMenu("Connect");
-        this.interactionMenu = new JMenu("Interaction");
-        this.helpMenu = new JMenu("Help");
+        connectMenu = new JMenu("Connect");
+        interactionMenu = new JMenu("Interaction");
+        helpMenu = new JMenu("Help");
 
-        this.createConnectionMenuItem = new JAppMenuIconItem("Connect", ClientIcon.ADD_CONNECTION);
-        this.disconnectMenuItem = new JAppMenuIconItem("Disconnect", ClientIcon.DISCONNECT, false);
-        this.lastConnectionsMenuItem = new JAppMenuIconItem("Last connections", LibIcon.CHECK_BOX_LIST);
+        createConnectionMenuItem = new JAppMenuIconItem("Connect", ClientIcon.ADD_CONNECTION);
+        disconnectMenuItem = new JAppMenuIconItem("Disconnect", ClientIcon.DISCONNECT, false);
+        lastConnectionsMenuItem = new JAppMenuIconItem("Last connections", LibIcon.CHECK_BOX_LIST);
 
-        this.takeScreenshotMenuItem = new JAppMenuIconItem("Take screenshot", ClientIcon.TAKE_SNAPSHOT, false);
+        takeScreenshotMenuItem = new JAppMenuIconItem("Take screenshot", ClientIcon.TAKE_SNAPSHOT, false);
 
-        this.aboutMenuItem = new JAppMenuIconItem("About", LibIcon.HELP_TABLE_OF_CONTENTS);
-        this.licenseMenuItem = new JAppMenuIconItem("License", LibIcon.CODE_INFORMATION_RULE);
+        aboutMenuItem = new JAppMenuIconItem("About", LibIcon.HELP_TABLE_OF_CONTENTS);
+        licenseMenuItem = new JAppMenuIconItem("License", LibIcon.CODE_INFORMATION_RULE);
 
         initObservables();
 
-        this.connectMenuItems = new JAppMenuIconItem[]{
+        connectMenuItems = new JAppMenuIconItem[]{
             createConnectionMenuItem,
             disconnectMenuItem,
             lastConnectionsMenuItem
         };
 
-        this.interactionMenuItems = new JAppMenuIconItem[]{
+        interactionMenuItems = new JAppMenuIconItem[]{
             takeScreenshotMenuItem,
         };
 
-        this.helpMenuItems = new JAppMenuIconItem[]{
+        helpMenuItems = new JAppMenuIconItem[]{
             aboutMenuItem,
             licenseMenuItem
         };
 
-        this.createConnectionMenuItem.addActionListener(e -> controller.openMakeConnectionWindow());
-        this.disconnectMenuItem.addActionListener(e -> controller.disconnectFromSession());
-        this.lastConnectionsMenuItem.addActionListener(e -> controller.openLastConnectionsWindow());
+        createConnectionMenuItem.addActionListener(e -> controller.openMakeConnectionWindow());
+        disconnectMenuItem.addActionListener(e -> controller.disconnectFromSession());
+        lastConnectionsMenuItem.addActionListener(e -> controller.openLastConnectionsWindow());
 
-        this.takeScreenshotMenuItem.addActionListener(e -> controller.takeScreenshot());
+        takeScreenshotMenuItem.addActionListener(e -> controller.takeScreenshot());
 
-        this.aboutMenuItem.addActionListener(e -> controller.openAboutProgramSection());
-        this.licenseMenuItem.addActionListener(e -> controller.openLicenseSection());
+        aboutMenuItem.addActionListener(e -> controller.openAboutProgramSection());
+        licenseMenuItem.addActionListener(e -> controller.openLicenseSection());
 
         addMenuItems(connectMenu, connectMenuItems);
         addMenuItems(interactionMenu, interactionMenuItems);

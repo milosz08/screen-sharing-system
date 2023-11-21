@@ -26,7 +26,7 @@ public class CaptureSettingsController {
     public CaptureSettingsController(HostWindow hostWindow, CaptureSettingsPanel captureSettingsPanel) {
         this.hostWindow = hostWindow;
         this.captureSettingsPanel = captureSettingsPanel;
-        this.userGraphicsDevices = new ArrayList<>();
+        userGraphicsDevices = new ArrayList<>();
     }
 
     public GraphicsDevice[] getAllGraphicsDevices() {

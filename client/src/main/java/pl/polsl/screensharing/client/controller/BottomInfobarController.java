@@ -20,7 +20,7 @@ public class BottomInfobarController extends AbstractBottomInfobarController {
     public BottomInfobarController(ClientWindow clientWindow, BottomInfobar bottomInfobar) {
         super(bottomInfobar);
         this.clientWindow = clientWindow;
-        this.connectionTimer = new Timer(1000, e -> clientWindow.getClientState().updateConnectionTime(++connectionTime));
+        connectionTimer = new Timer(1000, e -> clientWindow.getClientState().updateConnectionTime(++connectionTime));
     }
 
     public void startConnectionTimer() {

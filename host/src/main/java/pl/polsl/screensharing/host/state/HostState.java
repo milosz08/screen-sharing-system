@@ -26,19 +26,19 @@ public class HostState extends AbstractDisposableProvider {
     private final BehaviorSubject<CaptureMode> captureMode$;
 
     public HostState() {
-        this.streamingState$ = BehaviorSubject.createDefault(StreamingState.STOPPED);
-        this.streamingTime$ = BehaviorSubject.createDefault(0L);
-        this.sessionState$ = BehaviorSubject.createDefault(SessionState.INACTIVE);
-        this.sessionTime$ = BehaviorSubject.createDefault(0L);
-        this.realFpsBuffer$ = BehaviorSubject.createDefault(30);
-        this.sendBytesPerSec$ = BehaviorSubject.createDefault(0L);
-        this.selectedGraphicsDevice$ = BehaviorSubject.create();
-        this.streamingQuality$ = BehaviorSubject.createDefault(QualityLevel.GOOD);
-        this.frameColor$ = BehaviorSubject.createDefault(Color.RED);
-        this.isScreenShowForParticipants$ = BehaviorSubject.createDefault(true);
-        this.isShowingFrameSelector$ = BehaviorSubject.createDefault(false);
-        this.isCursorShowing$ = BehaviorSubject.createDefault(true);
-        this.captureMode$ = BehaviorSubject.createDefault(CaptureMode.FULL_FRAME);
+        streamingState$ = BehaviorSubject.createDefault(StreamingState.STOPPED);
+        streamingTime$ = BehaviorSubject.createDefault(0L);
+        sessionState$ = BehaviorSubject.createDefault(SessionState.INACTIVE);
+        sessionTime$ = BehaviorSubject.createDefault(0L);
+        realFpsBuffer$ = BehaviorSubject.createDefault(30);
+        sendBytesPerSec$ = BehaviorSubject.createDefault(0L);
+        selectedGraphicsDevice$ = BehaviorSubject.create();
+        streamingQuality$ = BehaviorSubject.createDefault(QualityLevel.GOOD);
+        frameColor$ = BehaviorSubject.createDefault(Color.RED);
+        isScreenShowForParticipants$ = BehaviorSubject.createDefault(true);
+        isShowingFrameSelector$ = BehaviorSubject.createDefault(false);
+        isCursorShowing$ = BehaviorSubject.createDefault(true);
+        captureMode$ = BehaviorSubject.createDefault(CaptureMode.FULL_FRAME);
     }
 
     public void updateStreamingState(StreamingState streamingState) {

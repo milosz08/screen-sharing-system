@@ -19,7 +19,7 @@ public abstract class AbstractDisposableProvider {
     private final ConcurrentMap<String, Disposable> subscriptionsPool;
 
     public AbstractDisposableProvider() {
-        this.subscriptionsPool = new ConcurrentHashMap<>();
+        subscriptionsPool = new ConcurrentHashMap<>();
     }
 
     public <T> void wrapAsDisposable(Observable<T> subject, Consumer<T> consumer) {

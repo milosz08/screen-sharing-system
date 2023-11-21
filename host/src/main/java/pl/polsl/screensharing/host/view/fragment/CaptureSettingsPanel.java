@@ -34,7 +34,7 @@ public class CaptureSettingsPanel extends AbstractScreenCaptureRightPanel {
 
     protected CaptureSettingsPanel(HostWindow hostWindow) {
         super(hostWindow, "Capture settings");
-        this.controller = new CaptureSettingsController(hostWindow, this);
+        controller = new CaptureSettingsController(hostWindow, this);
 
         selectedScreenLabel = new JLabel("Selected screen");
         selectedScreenComboBox = new JComboBox<>(new DefaultComboBoxModel<>(controller.getAllGraphicsDevices()));

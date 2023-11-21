@@ -39,15 +39,15 @@ public class ClientWindow extends AbstractRootFrame {
         super(AppType.CLIENT, clientState, ClientWindow.class);
         this.clientState = clientState;
 
-        this.topMenuBar = new TopMenuBar(this);
-        this.topToolbar = new TopToolbar(this);
-        this.tabbedPaneWindow = new TabbedPaneWindow(this);
-        this.bottomInfobar = new BottomInfobar(this);
+        topMenuBar = new TopMenuBar(this);
+        topToolbar = new TopToolbar(this);
+        tabbedPaneWindow = new TabbedPaneWindow(this);
+        bottomInfobar = new BottomInfobar(this);
 
-        this.connectWindow = new ConnectWindow(this);
-        this.lastConnectionsWindow = new LastConnectionsWindow(this);
-        this.aboutDialogWindow = new AboutDialogWindow(this);
-        this.licenseDialogWindow = new LicenseDialogWindow(this);
+        connectWindow = new ConnectWindow(this);
+        lastConnectionsWindow = new LastConnectionsWindow(this);
+        aboutDialogWindow = new AboutDialogWindow(this);
+        licenseDialogWindow = new LicenseDialogWindow(this);
     }
 
     @Override

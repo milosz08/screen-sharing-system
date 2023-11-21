@@ -16,7 +16,7 @@ public class LicenseDialogWindow extends AbstractPopupDialog {
 
     public LicenseDialogWindow(ClientWindow clientWindow) {
         super(AppType.CLIENT, 550, 400, "License", clientWindow, LicenseDialogWindow.class);
-        this.licensePanel = new JAppLicensePanel();
+        licensePanel = new JAppLicensePanel();
         initDialogGui(false);
     }
 

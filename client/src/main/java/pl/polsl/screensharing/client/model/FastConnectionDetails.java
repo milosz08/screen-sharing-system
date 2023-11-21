@@ -22,18 +22,18 @@ public class FastConnectionDetails {
     private String description;
 
     public FastConnectionDetails() {
-        this.ipAddress = SharedConstants.DEFAULT_HOST;
-        this.port = SharedConstants.DEFAULT_PORT;
-        this.username = SharedConstants.DEFAULT_USERNAME + RandomStringUtils.randomNumeric(4);
-        this.description = StringUtils.EMPTY;
+        ipAddress = SharedConstants.DEFAULT_HOST;
+        port = SharedConstants.DEFAULT_PORT;
+        username = SharedConstants.DEFAULT_USERNAME + RandomStringUtils.randomNumeric(4);
+        description = StringUtils.EMPTY;
     }
 
     @JsonIgnore
     public void setFastConnDetails(FastConnectionDetails o) {
-        this.ipAddress = o.ipAddress;
-        this.port = o.port;
-        this.username = o.username;
-        this.description = o.description;
+        ipAddress = o.ipAddress;
+        port = o.port;
+        username = o.username;
+        description = o.description;
     }
 
     @JsonIgnore

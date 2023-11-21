@@ -18,7 +18,7 @@ public class JAppLink extends JLabel {
     private final URI uri;
 
     public JAppLink(String link, String placeholder) {
-        this.uri = generateUri(link);
+        uri = generateUri(link);
         setText(String.format("<html><a href='%s'>%s</a></html>", link, placeholder));
         setForeground(Color.BLUE);
         setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));

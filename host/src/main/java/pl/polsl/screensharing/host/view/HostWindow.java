@@ -39,15 +39,15 @@ public class HostWindow extends AbstractRootFrame {
         super(AppType.HOST, hostState, HostWindow.class);
         this.hostState = hostState;
 
-        this.topMenuBar = new TopMenuBar(this);
-        this.topToolbar = new TopToolbar(this);
-        this.tabbedPaneWindow = new TabbedPaneWindow(this);
-        this.bottomInfobar = new BottomInfobar(this);
+        topMenuBar = new TopMenuBar(this);
+        topToolbar = new TopToolbar(this);
+        tabbedPaneWindow = new TabbedPaneWindow(this);
+        bottomInfobar = new BottomInfobar(this);
 
-        this.aboutDialogWindow = new AboutDialogWindow(this);
-        this.licenseDialogWindow = new LicenseDialogWindow(this);
-        this.connectionSettingsDialogWindow = new ConnectionSettingsDialogWindow(this);
-        this.participantsDialogWindow = new ParticipantsDialogWindow(this);
+        aboutDialogWindow = new AboutDialogWindow(this);
+        licenseDialogWindow = new LicenseDialogWindow(this);
+        connectionSettingsDialogWindow = new ConnectionSettingsDialogWindow(this);
+        participantsDialogWindow = new ParticipantsDialogWindow(this);
 
         setResizable(false);
         setMaximumSize(AppType.HOST.getRootWindowSize());

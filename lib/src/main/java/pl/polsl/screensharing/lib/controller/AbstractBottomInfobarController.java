@@ -19,7 +19,7 @@ public abstract class AbstractBottomInfobarController {
     };
 
     protected AbstractBottomInfobarController(AbstractBottomInfobar bottomInfobar) {
-        this.jvmMeasurementsTimer = new Timer(5000, e -> jvmMeasurementsListener.accept(bottomInfobar));
-        this.jvmMeasurementsTimer.start();
+        jvmMeasurementsTimer = new Timer(5000, e -> jvmMeasurementsListener.accept(bottomInfobar));
+        jvmMeasurementsTimer.start();
     }
 }

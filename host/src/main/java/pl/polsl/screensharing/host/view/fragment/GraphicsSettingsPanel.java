@@ -37,7 +37,7 @@ public class GraphicsSettingsPanel extends AbstractScreenCaptureRightPanel {
 
     private void initObservables() {
         hostState.wrapAsDisposable(hostState.getStreamingQualityLevel$(), qualityLevel -> {
-            this.getQualityLevelComboBox().setSelectedItem(qualityLevel);
+            getQualityLevelComboBox().setSelectedItem(qualityLevel);
         });
     }
 }

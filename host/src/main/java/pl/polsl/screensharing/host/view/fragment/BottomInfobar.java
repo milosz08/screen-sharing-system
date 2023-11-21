@@ -29,16 +29,16 @@ public class BottomInfobar extends AbstractBottomInfobar {
     private final JLabel sendBytesPerSecLabel;
 
     public BottomInfobar(HostWindow hostWindow) {
-        this.hostState = hostWindow.getHostState();
-        this.bottomInfobarController = new BottomInfobarController(hostWindow, this);
+        hostState = hostWindow.getHostState();
+        bottomInfobarController = new BottomInfobarController(hostWindow, this);
 
-        this.sessionStatusTextLabel = new JLabel("Session state:");
-        this.sessionStatusLabel = new JLabel();
-        this.streamingRectInfo = new JAppActionRectInfo(hostState.getStreamingState$(), hostState);
-        this.sessionTimeLabel = new JLabel();
-        this.streamingTimeLabel = new JLabel();
-        this.fpsInfoLabel = new JLabel();
-        this.sendBytesPerSecLabel = new JLabel();
+        sessionStatusTextLabel = new JLabel("Session state:");
+        sessionStatusLabel = new JLabel();
+        streamingRectInfo = new JAppActionRectInfo(hostState.getStreamingState$(), hostState);
+        sessionTimeLabel = new JLabel();
+        streamingTimeLabel = new JLabel();
+        fpsInfoLabel = new JLabel();
+        sendBytesPerSecLabel = new JLabel();
 
         initObservables();
 

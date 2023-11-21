@@ -17,7 +17,7 @@ class PersistedState {
     private final SortedSet<SavedConnection> savedConnections;
 
     PersistedState() {
-        this.fastConnection = new FastConnectionDetails();
-        this.savedConnections = new TreeSet<>();
+        fastConnection = new FastConnectionDetails();
+        savedConnections = new TreeSet<>();
     }
 }

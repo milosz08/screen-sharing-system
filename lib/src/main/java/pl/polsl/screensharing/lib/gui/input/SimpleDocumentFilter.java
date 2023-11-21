@@ -18,7 +18,7 @@ public class SimpleDocumentFilter extends DocumentFilter {
 
     public SimpleDocumentFilter(int maxCharacters) {
         this.maxCharacters = maxCharacters;
-        this.regex = null;
+        regex = null;
     }
 
     @Override

@@ -25,13 +25,13 @@ public abstract class AbstractBottomInfobar extends JPanel {
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
 
-        this.leftCompoundPanel = new JPanel();
-        this.rightCompoundPanel = new JPanel();
-        this.stateCompoundPanel = new JPanel();
+        leftCompoundPanel = new JPanel();
+        rightCompoundPanel = new JPanel();
+        stateCompoundPanel = new JPanel();
 
-        this.marginRight = BorderFactory.createEmptyBorder(0, 0, 0, 20);
+        marginRight = BorderFactory.createEmptyBorder(0, 0, 0, 20);
 
-        this.memoryUsageLabel = new JLabel(Utils.parseBytes(0, "Memory", false));
+        memoryUsageLabel = new JLabel(Utils.parseBytes(0, "Memory", false));
 
         leftCompoundPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
         rightCompoundPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));

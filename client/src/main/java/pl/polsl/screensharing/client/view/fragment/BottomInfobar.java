@@ -25,13 +25,13 @@ public class BottomInfobar extends AbstractBottomInfobar {
     private final JLabel recvBytesPerSecLabel;
 
     public BottomInfobar(ClientWindow clientWindow) {
-        this.clientState = clientWindow.getClientState();
-        this.bottomInfobarController = new BottomInfobarController(clientWindow, this);
+        clientState = clientWindow.getClientState();
+        bottomInfobarController = new BottomInfobarController(clientWindow, this);
 
-        this.connectionStatusTextLabel = new JLabel("Connection state:");
-        this.connectionStatusLabel = new JLabel();
-        this.connectionTimeLabel = new JLabel();
-        this.recvBytesPerSecLabel = new JLabel();
+        connectionStatusTextLabel = new JLabel("Connection state:");
+        connectionStatusLabel = new JLabel();
+        connectionTimeLabel = new JLabel();
+        recvBytesPerSecLabel = new JLabel();
 
         initObservables();
 

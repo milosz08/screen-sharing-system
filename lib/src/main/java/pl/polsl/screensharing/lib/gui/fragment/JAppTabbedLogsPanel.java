@@ -29,14 +29,14 @@ public class JAppTabbedLogsPanel extends JPanel {
 
     public JAppTabbedLogsPanel(AppType appType) {
         this.appType = appType;
-        this.tabbedLogsPanelController = new TabbedLogsPanelController(this);
+        tabbedLogsPanelController = new TabbedLogsPanelController(this);
 
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         textArea = new JTextArea();
-        this.scrollPane = new JScrollPane(textArea);
-        this.rightButtonsToolbar = new JToolBar();
+        scrollPane = new JScrollPane(textArea);
+        rightButtonsToolbar = new JToolBar();
 
         textArea.setEditable(false);
         textArea.setFont(new Font("monospaced", textArea.getFont().getStyle(), textArea.getFont().getSize()));
@@ -45,15 +45,15 @@ public class JAppTabbedLogsPanel extends JPanel {
         rightButtonsToolbar.setBorder(BorderFactory.createEmptyBorder(5, 1, 5, 5));
         rightButtonsToolbar.setFloatable(false);
 
-        this.moveToUpButton = new JAppIconButton("Move to up", LibIcon.UPLOAD, true);
-        this.moveToDownButton = new JAppIconButton("Move to down", LibIcon.DOWNLOAD, true);
-        this.clearButton = new JAppIconButton("Clear", LibIcon.DELETE, true);
-        this.printToFileButton = new JAppIconButton("Print to file", LibIcon.PRINT, true);
+        moveToUpButton = new JAppIconButton("Move to up", LibIcon.UPLOAD, true);
+        moveToDownButton = new JAppIconButton("Move to down", LibIcon.DOWNLOAD, true);
+        clearButton = new JAppIconButton("Clear", LibIcon.DELETE, true);
+        printToFileButton = new JAppIconButton("Print to file", LibIcon.PRINT, true);
 
-        this.moveToUpButton.addActionListener(e -> tabbedLogsPanelController.moveUp());
-        this.moveToDownButton.addActionListener(e -> tabbedLogsPanelController.moveDown());
-        this.clearButton.addActionListener(e -> tabbedLogsPanelController.clearText());
-        this.printToFileButton.addActionListener(e -> tabbedLogsPanelController.printToFile());
+        moveToUpButton.addActionListener(e -> tabbedLogsPanelController.moveUp());
+        moveToDownButton.addActionListener(e -> tabbedLogsPanelController.moveDown());
+        clearButton.addActionListener(e -> tabbedLogsPanelController.clearText());
+        printToFileButton.addActionListener(e -> tabbedLogsPanelController.printToFile());
 
         addButtonWithSeparation(moveToUpButton);
         addButtonWithSeparation(moveToDownButton);

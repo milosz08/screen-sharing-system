@@ -23,11 +23,11 @@ public abstract class AbstractRootFrame extends JFrame {
         AbstractDisposableProvider disposableProvider,
         Class<?> frameClazz
     ) {
-        this.rootPanel = new JPanel();
+        rootPanel = new JPanel();
         this.disposableProvider = disposableProvider;
         this.appType = appType;
-        this.imageIconOptional = appType.getIconPath(frameClazz);
-        this.size = appType.getRootWindowSize();
+        imageIconOptional = appType.getIconPath(frameClazz);
+        size = appType.getRootWindowSize();
     }
 
     public void guiInitAndShow() {

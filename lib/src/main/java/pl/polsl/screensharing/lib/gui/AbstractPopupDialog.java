@@ -25,11 +25,11 @@ public abstract class AbstractPopupDialog extends JDialog {
         AbstractRootFrame rootFrame,
         Class<?> frameClazz
     ) {
-        this.rootPanel = new JPanel();
-        this.size = new Dimension(width, height);
+        rootPanel = new JPanel();
+        size = new Dimension(width, height);
         this.rootFrame = rootFrame;
         this.title = title;
-        this.iconImageOptional = appType.getIconPath(frameClazz);
+        iconImageOptional = appType.getIconPath(frameClazz);
     }
 
     protected void initDialogGui(boolean fixedToContent) {
