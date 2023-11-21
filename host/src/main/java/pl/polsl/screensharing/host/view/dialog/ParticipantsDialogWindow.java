@@ -13,6 +13,7 @@ import javax.swing.*;
 public class ParticipantsDialogWindow extends AbstractPopupDialog {
     public ParticipantsDialogWindow(HostWindow hostWindow) {
         super(AppType.HOST, 430, 300, "Participants", hostWindow, ParticipantsDialogWindow.class);
+        initDialogGui(true);
     }
 
     @Override
