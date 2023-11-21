@@ -17,28 +17,26 @@ import java.util.TreeSet;
 public class ClientState extends AbstractDisposableProvider {
     private final BehaviorSubject<ConnectionState> connectionState$;
     private final BehaviorSubject<Long> connectionTime$;
-    private final BehaviorSubject<RecordingState> recordingState$;
-    private final BehaviorSubject<Long> recordingTime$;
     private final BehaviorSubject<Long> recvBytesPerSec$;
     private final BehaviorSubject<FastConnectionDetails> fastConnectionDetails$;
     private final BehaviorSubject<SortedSet<SavedConnection>> savedConnections$;
+    private final BehaviorSubject<VisibilityState> visibilityState$;
 
     @Getter
     private final PersistedStateLoader persistedStateLoader;
 
     public ClientState() {
-        this.persistedStateLoader = new PersistedStateLoader(this);
-        this.persistedStateLoader.initPersistor(new PersistedState());
+        persistedStateLoader = new PersistedStateLoader(this);
+        persistedStateLoader.initPersistor(new PersistedState());
 
-        this.connectionState$ = BehaviorSubject.createDefault(ConnectionState.DISCONNECTED);
-        this.connectionTime$ = BehaviorSubject.createDefault(0L);
-        this.recordingState$ = BehaviorSubject.createDefault(RecordingState.IDLE);
-        this.recordingTime$ = BehaviorSubject.createDefault(0L);
-        this.recvBytesPerSec$ = BehaviorSubject.createDefault(0L);
-        this.fastConnectionDetails$ = BehaviorSubject.createDefault(new FastConnectionDetails());
-        this.savedConnections$ = BehaviorSubject.createDefault(new TreeSet<>());
+        connectionState$ = BehaviorSubject.createDefault(ConnectionState.DISCONNECTED);
+        connectionTime$ = BehaviorSubject.createDefault(0L);
+        recvBytesPerSec$ = BehaviorSubject.createDefault(0L);
+        fastConnectionDetails$ = BehaviorSubject.createDefault(new FastConnectionDetails());
+        savedConnections$ = BehaviorSubject.createDefault(new TreeSet<>());
+        visibilityState$ = BehaviorSubject.createDefault(VisibilityState.WAITING_FOR_CONNECTION);
 
-        this.persistedStateLoader.loadApplicationSavedState();
+        persistedStateLoader.loadApplicationSavedState();
     }
 
     public void updateConnectionState(ConnectionState connectionState) {
@@ -47,14 +45,6 @@ public class ClientState extends AbstractDisposableProvider {
 
     public void updateConnectionTime(Long seconds) {
         connectionTime$.onNext(seconds);
-    }
-
-    public void updateRecordingState(RecordingState recordingState) {
-        recordingState$.onNext(recordingState);
-    }
-
-    public void updateRecordingTime(Long seconds) {
-        recordingTime$.onNext(seconds);
     }
 
     public void updateRecvBytesPerSec(Long bytesPerSec) {
@@ -69,20 +59,16 @@ public class ClientState extends AbstractDisposableProvider {
         savedConnections$.onNext(savedConnectionSet);
     }
 
+    public void updateVisibilityState(VisibilityState visibilityState) {
+        visibilityState$.onNext(visibilityState);
+    }
+
     public Observable<ConnectionState> getConnectionState$() {
         return connectionState$.hide();
     }
 
     public Observable<Long> getConnectionTime$() {
         return connectionTime$.hide();
-    }
-
-    public Observable<RecordingState> getRecordingState$() {
-        return recordingState$.hide();
-    }
-
-    public Observable<Long> getRecordingTime$() {
-        return recordingTime$.hide();
     }
 
     public Observable<Long> getRecvBytesPerSec$() {
@@ -95,6 +81,10 @@ public class ClientState extends AbstractDisposableProvider {
 
     public Observable<SortedSet<SavedConnection>> getSavedConnections$() {
         return savedConnections$.hide();
+    }
+
+    public Observable<VisibilityState> getVisibilityState$() {
+        return visibilityState$.hide();
     }
 
     public SortedSet<SavedConnection> getLastEmittedSavedConnections() {

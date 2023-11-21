@@ -35,15 +35,15 @@ public class JAppAboutPanel extends JPanel {
     public JAppAboutPanel(AppType appType) {
         this.appType = appType;
 
-        this.imageContent = new JPanel();
-        this.rightContent = new JPanel();
-        this.bottomContent = new JPanel();
+        imageContent = new JPanel();
+        rightContent = new JPanel();
+        bottomContent = new JPanel();
 
-        this.iconLabel = new JLabel(loadImageIcon());
-        this.titleLabel = new JLabel(appType.getRootWindowTitle());
-        this.aboutLabel = new JLabel(loadDescription());
-        this.repoLinkLabel = new JAppLink("https://github.com/Milosz08/screen-sharing-system", "Github Repo");
-        this.jvmProperties = new JLabel(generateJvmProperties());
+        iconLabel = new JLabel(loadImageIcon());
+        titleLabel = new JLabel(appType.getRootWindowTitle());
+        aboutLabel = new JLabel(loadDescription());
+        repoLinkLabel = new JAppLink("https://github.com/Milosz08/screen-sharing-system", "Github Repo");
+        jvmProperties = new JLabel(generateJvmProperties());
 
         titleLabel.setFont(new Font(titleLabel.getFont().getName(), Font.BOLD, 16));
         jvmProperties.setForeground(Color.GRAY);

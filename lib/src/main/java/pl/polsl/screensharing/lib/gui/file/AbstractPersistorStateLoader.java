@@ -21,11 +21,11 @@ public abstract class AbstractPersistorStateLoader<T> {
 
     public AbstractPersistorStateLoader(AppType type, T state) {
         this.state = state;
-        this.file = new File(type.getConfigFileName());
-        this.objectMapper = new ObjectMapper();
+        file = new File(type.getConfigFileName());
+        objectMapper = new ObjectMapper();
 
-        this.objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
-        this.objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+        objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+        objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
     }
 
     public <E> void initPersistor(E initStateWrapper) {

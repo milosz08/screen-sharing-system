@@ -20,10 +20,10 @@ public class PasswordPopup extends JPanel {
     public PasswordPopup(AbstractPopupDialog root) {
         this.root = root;
 
-        this.passwordTextField = new JAppPasswordTextField(10);
-        this.passwordTogglerCheckbox = new JCheckBox("Show password");
+        passwordTextField = new JAppPasswordTextField(10);
+        passwordTogglerCheckbox = new JCheckBox("Show password");
 
-        this.passwordTogglerCheckbox.addActionListener(this::togglePasswordField);
+        passwordTogglerCheckbox.addActionListener(this::togglePasswordField);
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         add(passwordTextField);

@@ -8,7 +8,7 @@
   <import class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy"/>
   <import class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy"/>
 
-  <property name="PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} > [%-5p] \(%-35.35logger{39}\) : %m%n"/>
+  <property name="PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} > [%-5p] {%thread} \(%-35.35logger{39}\) : %m%n"/>
   <property name="PATH" value=".logs"/>
 
   <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">

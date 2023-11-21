@@ -6,15 +6,13 @@ package pl.polsl.screensharing.lib.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.FastDateFormat;
+import pl.polsl.screensharing.lib.gui.file.FileUtils;
 import pl.polsl.screensharing.lib.gui.fragment.JAppTabbedLogsPanel;
 
 import javax.swing.*;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Date;
 
 @RequiredArgsConstructor
 public class TabbedLogsPanelController {
@@ -41,24 +39,14 @@ public class TabbedLogsPanelController {
     }
 
     public void printToFile() {
-        final FastDateFormat targetFormat = FastDateFormat.getInstance("MMddyyyyHHmmssSSS");
-        final String appName = tabbedLogsPanel.getAppType().getRootWindowName().toLowerCase();
-        final String logFileName = String.format("%s-%slog.txt", targetFormat.format(new Date()), appName);
-
-        final JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setSelectedFile(new File(logFileName));
-
-        final int result = fileChooser.showSaveDialog(null);
-        if (result != JFileChooser.APPROVE_OPTION) {
-            return;
-        }
-        final File fileToSave = fileChooser.getSelectedFile();
-        try (final BufferedWriter writer = new BufferedWriter(new FileWriter(fileToSave))) {
-            writer.write(JAppTabbedLogsPanel.textArea.getText());
-            JOptionPane.showMessageDialog(tabbedLogsPanel, "Logs saved to: " + fileToSave.getAbsolutePath());
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(tabbedLogsPanel, "An error occurred while saving logs to file!",
-                "Error", JOptionPane.ERROR_MESSAGE);
-        }
+        FileUtils.promptAndSaveFile("log.txt").ifPresent(file -> {
+            try (final BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+                writer.write(JAppTabbedLogsPanel.textArea.getText());
+                JOptionPane.showMessageDialog(tabbedLogsPanel, "Logs saved to: " + file.getAbsolutePath());
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(tabbedLogsPanel, "An error occurred while saving logs to file!",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
     }
 }

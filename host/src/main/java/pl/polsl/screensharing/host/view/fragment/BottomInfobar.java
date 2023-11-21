@@ -8,7 +8,7 @@ import lombok.Getter;
 import pl.polsl.screensharing.host.controller.BottomInfobarController;
 import pl.polsl.screensharing.host.state.HostState;
 import pl.polsl.screensharing.host.view.HostWindow;
-import pl.polsl.screensharing.lib.Parser;
+import pl.polsl.screensharing.lib.Utils;
 import pl.polsl.screensharing.lib.gui.AbstractBottomInfobar;
 import pl.polsl.screensharing.lib.gui.fragment.JAppActionRectInfo;
 
@@ -29,16 +29,16 @@ public class BottomInfobar extends AbstractBottomInfobar {
     private final JLabel sendBytesPerSecLabel;
 
     public BottomInfobar(HostWindow hostWindow) {
-        this.hostState = hostWindow.getHostState();
-        this.bottomInfobarController = new BottomInfobarController(hostWindow, this);
+        hostState = hostWindow.getHostState();
+        bottomInfobarController = new BottomInfobarController(hostWindow, this);
 
-        this.sessionStatusTextLabel = new JLabel("Session state:");
-        this.sessionStatusLabel = new JLabel();
-        this.streamingRectInfo = new JAppActionRectInfo(hostState.getStreamingState$(), hostState);
-        this.sessionTimeLabel = new JLabel();
-        this.streamingTimeLabel = new JLabel();
-        this.fpsInfoLabel = new JLabel();
-        this.sendBytesPerSecLabel = new JLabel();
+        sessionStatusTextLabel = new JLabel("Session state:");
+        sessionStatusLabel = new JLabel();
+        streamingRectInfo = new JAppActionRectInfo(hostState.getStreamingState$(), hostState);
+        sessionTimeLabel = new JLabel();
+        streamingTimeLabel = new JLabel();
+        fpsInfoLabel = new JLabel();
+        sendBytesPerSecLabel = new JLabel();
 
         initObservables();
 
@@ -69,16 +69,16 @@ public class BottomInfobar extends AbstractBottomInfobar {
             sessionStatusLabel.setText(state.getState());
         });
         hostState.wrapAsDisposable(hostState.getSessionTime$(), time -> {
-            sessionTimeLabel.setText(Parser.parseTime(time, "Session"));
+            sessionTimeLabel.setText(Utils.parseTime(time, "Session"));
         });
         hostState.wrapAsDisposable(hostState.getStreamingTime$(), time -> {
-            streamingTimeLabel.setText(Parser.parseTime(time, "Streaming"));
+            streamingTimeLabel.setText(Utils.parseTime(time, "Streaming"));
         });
-        hostState.wrapAsDisposable(hostState.getStreamingFps$(), fps -> {
-            fpsInfoLabel.setText(String.format("FPS: %s", fps));
+        hostState.wrapAsDisposable(hostState.getRealFpsBuffer$(), realFps -> {
+            fpsInfoLabel.setText(String.format("FPS: %s", realFps));
         });
         hostState.wrapAsDisposable(hostState.getSendBytesPerSec$(), bytes -> {
-            sendBytesPerSecLabel.setText(Parser.parseBytesPerSecState(bytes, "Send"));
+            sendBytesPerSecLabel.setText(Utils.parseBytesPerSecToMegaBytes(bytes, "Send"));
         });
     }
 }

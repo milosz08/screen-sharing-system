@@ -25,7 +25,7 @@ public class SavedConnection implements Comparable<SavedConnection> {
 
     @Override
     public int compareTo(SavedConnection o) {
-        return Integer.compare(this.id, o.id);
+        return Integer.compare(id, o.id);
     }
 
     @Override

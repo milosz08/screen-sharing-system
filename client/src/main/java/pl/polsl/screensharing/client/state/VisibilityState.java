@@ -6,17 +6,13 @@ package pl.polsl.screensharing.client.state;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import pl.polsl.screensharing.lib.state.ColoredLabelState;
-
-import java.awt.*;
 
 @Getter
 @RequiredArgsConstructor
-public enum RecordingState implements ColoredLabelState {
-    RECORDING("Recording", Color.RED),
-    IDLE("Idle", Color.GRAY),
-    ;
+public enum VisibilityState {
+    VISIBLE(null),
+    WAITING_FOR_CONNECTION("Waiting for connection with host"),
+    TEMPORARY_HIDDEN("Screen temporary hidden by host");
 
     private final String state;
-    private final Color color;
 }

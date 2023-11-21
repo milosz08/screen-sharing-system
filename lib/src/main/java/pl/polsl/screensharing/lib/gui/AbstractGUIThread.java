@@ -6,6 +6,7 @@ package pl.polsl.screensharing.lib.gui;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import pl.polsl.screensharing.lib.UnoperableException;
 
 import javax.swing.*;
 import javax.swing.plaf.metal.MetalLookAndFeel;
@@ -18,8 +19,13 @@ public abstract class AbstractGUIThread<T> implements Runnable {
     @Override
     public void run() {
         log.info("Starting GUI thread.");
-        createThreadSaveRootFrame(state);
-        log.info("Initialized application GUI.");
+        try {
+            createThreadSaveRootFrame(state);
+            log.info("Initialized application GUI.");
+        } catch (UnoperableException ex) {
+            log.error(ex.getMessage());
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     public void init() {

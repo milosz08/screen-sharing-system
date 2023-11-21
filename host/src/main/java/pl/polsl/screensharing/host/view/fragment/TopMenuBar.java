@@ -25,6 +25,7 @@ public class TopMenuBar extends JMenuBar {
 
     private final JMenu sessionMenu;
     private final JMenu videoStreamMenu;
+    private final JMenu screenMenu;
     private final JMenu helpMenu;
 
     private final JAppMenuIconItem sessionParamsMenuItem;
@@ -34,63 +35,80 @@ public class TopMenuBar extends JMenuBar {
     private final JAppMenuIconItem startVideoStreamingMenuItem;
     private final JAppMenuIconItem stopVideoStreamingMenuItem;
 
+    private final JAppMenuIconItem showScreenToParticipantsMenuItem;
+    private final JAppMenuIconItem hideScreenFromParticipantsMenuItem;
+
     private final JAppMenuIconItem aboutMenuItem;
     private final JAppMenuIconItem licenseMenuItem;
 
     private final JAppMenuIconItem[] sessionMenuItems;
     private final JAppMenuIconItem[] videoStreamMenuItems;
+    private final JAppMenuIconItem[] screenMenuItems;
     private final JAppMenuIconItem[] helpMenuItems;
 
     public TopMenuBar(HostWindow hostWindow) {
-        this.controller = new TopMenuBarController(hostWindow);
-        this.hostState = hostWindow.getHostState();
+        controller = new TopMenuBarController(hostWindow);
+        hostState = hostWindow.getHostState();
 
-        this.sessionMenu = new JMenu("Session");
-        this.videoStreamMenu = new JMenu("Video stream");
-        this.helpMenu = new JMenu("Help");
+        sessionMenu = new JMenu("Session");
+        videoStreamMenu = new JMenu("Video stream");
+        screenMenu = new JMenu("Screen");
+        helpMenu = new JMenu("Help");
 
-        this.sessionParamsMenuItem = new JAppMenuIconItem("Session settings", HostIcon.SERVER_SETTINGS);
-        this.createSessionMenuItem = new JAppMenuIconItem("Create session", HostIcon.ADD_LINK);
-        this.removeSessionMenuItem = new JAppMenuIconItem("Remove session", HostIcon.REMOVE_LINK, false);
+        sessionParamsMenuItem = new JAppMenuIconItem("Session settings", HostIcon.SERVER_SETTINGS);
+        createSessionMenuItem = new JAppMenuIconItem("Create session", HostIcon.ADD_LINK);
+        removeSessionMenuItem = new JAppMenuIconItem("Remove session", HostIcon.REMOVE_LINK, false);
 
-        this.startVideoStreamingMenuItem = new JAppMenuIconItem("Start streaming", HostIcon.DEBUG_INTERACTIVE_WINDOW, false);
-        this.stopVideoStreamingMenuItem = new JAppMenuIconItem("Stop streaming", HostIcon.APPLICATION_ERROR, false);
+        startVideoStreamingMenuItem = new JAppMenuIconItem("Start streaming", HostIcon.DEBUG_INTERACTIVE_WINDOW, false);
+        stopVideoStreamingMenuItem = new JAppMenuIconItem("Stop streaming", HostIcon.APPLICATION_ERROR, false);
 
-        this.aboutMenuItem = new JAppMenuIconItem("About", LibIcon.HELP_TABLE_OF_CONTENTS);
-        this.licenseMenuItem = new JAppMenuIconItem("License", LibIcon.CODE_INFORMATION_RULE);
+        showScreenToParticipantsMenuItem = new JAppMenuIconItem("Show screen", HostIcon.OPEN_QUERY, false);
+        hideScreenFromParticipantsMenuItem = new JAppMenuIconItem("Hide screen", HostIcon.STOP_QUERY, false);
+
+        aboutMenuItem = new JAppMenuIconItem("About", LibIcon.HELP_TABLE_OF_CONTENTS);
+        licenseMenuItem = new JAppMenuIconItem("License", LibIcon.CODE_INFORMATION_RULE);
 
         initObservables();
 
-        this.sessionMenuItems = new JAppMenuIconItem[]{
+        sessionMenuItems = new JAppMenuIconItem[]{
             sessionParamsMenuItem,
             createSessionMenuItem,
             removeSessionMenuItem,
         };
-        this.videoStreamMenuItems = new JAppMenuIconItem[]{
+        videoStreamMenuItems = new JAppMenuIconItem[]{
             startVideoStreamingMenuItem,
             stopVideoStreamingMenuItem,
         };
-        this.helpMenuItems = new JAppMenuIconItem[]{
+        screenMenuItems = new JAppMenuIconItem[]{
+            showScreenToParticipantsMenuItem,
+            hideScreenFromParticipantsMenuItem,
+        };
+        helpMenuItems = new JAppMenuIconItem[]{
             aboutMenuItem,
             licenseMenuItem,
         };
 
-        this.sessionParamsMenuItem.addActionListener(e -> controller.openSessionParamsWindow());
-        this.createSessionMenuItem.addActionListener(e -> controller.createSession());
-        this.removeSessionMenuItem.addActionListener(e -> controller.removeSession());
+        sessionParamsMenuItem.addActionListener(e -> controller.openSessionParamsWindow());
+        createSessionMenuItem.addActionListener(e -> controller.createSession());
+        removeSessionMenuItem.addActionListener(e -> controller.removeSession());
 
-        this.startVideoStreamingMenuItem.addActionListener(e -> controller.startVideoStreaming());
-        this.stopVideoStreamingMenuItem.addActionListener(e -> controller.stopVideoStreaming());
+        startVideoStreamingMenuItem.addActionListener(e -> controller.startVideoStreaming());
+        stopVideoStreamingMenuItem.addActionListener(e -> controller.stopVideoStreaming());
 
-        this.aboutMenuItem.addActionListener(e -> controller.openAboutProgramSection());
-        this.licenseMenuItem.addActionListener(e -> controller.openLicenseSection());
+        showScreenToParticipantsMenuItem.addActionListener(e -> controller.toggleScreenShowingForParticipants(true));
+        hideScreenFromParticipantsMenuItem.addActionListener(e -> controller.toggleScreenShowingForParticipants(false));
+
+        aboutMenuItem.addActionListener(e -> controller.openAboutProgramSection());
+        licenseMenuItem.addActionListener(e -> controller.openLicenseSection());
 
         addMenuItems(sessionMenu, sessionMenuItems);
         addMenuItems(videoStreamMenu, videoStreamMenuItems);
+        addMenuItems(screenMenu, screenMenuItems);
         addMenuItems(helpMenu, helpMenuItems);
 
         add(sessionMenu);
         add(videoStreamMenu);
+        add(screenMenu);
         add(helpMenu);
     }
 
@@ -118,6 +136,10 @@ public class TopMenuBar extends JMenuBar {
             final boolean isStreaming = aggregated.getStreamingState().equals(StreamingState.STREAMING);
             startVideoStreamingMenuItem.setEnabled(!isStreaming && isCreated);
             stopVideoStreamingMenuItem.setEnabled(isStreaming && isCreated);
+        });
+        hostState.wrapAsDisposable(hostState.isScreenIsShowForParticipants$(), isShowing -> {
+            showScreenToParticipantsMenuItem.setEnabled(!isShowing);
+            hideScreenFromParticipantsMenuItem.setEnabled(isShowing);
         });
     }
 }

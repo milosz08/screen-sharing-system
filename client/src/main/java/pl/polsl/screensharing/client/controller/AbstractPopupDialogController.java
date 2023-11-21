@@ -7,9 +7,12 @@ package pl.polsl.screensharing.client.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import pl.polsl.screensharing.client.model.ConnectionDetails;
+import pl.polsl.screensharing.client.net.ClientDatagramSocket;
 import pl.polsl.screensharing.client.state.ClientState;
 import pl.polsl.screensharing.client.state.ConnectionState;
+import pl.polsl.screensharing.client.state.VisibilityState;
 import pl.polsl.screensharing.client.view.ClientWindow;
+import pl.polsl.screensharing.client.view.fragment.VideoCanvas;
 import pl.polsl.screensharing.lib.gui.AbstractPopupDialog;
 
 import javax.swing.*;
@@ -34,19 +37,24 @@ abstract class AbstractPopupDialogController {
         }
 
         // TODO: connecting with host via TCP/IP Socket
-
-        state.updateConnectionState(ConnectionState.CONNECTED);
         boolean isConnected = true;
 
         if (isConnected) {
+            state.updateConnectionState(ConnectionState.CONNECTED);
             bottomInfobarController.startConnectionTimer();
             onSuccessConnect(connectionDetails);
             closeWindow();
             log.info("Connection estabilished with connection details: {}", connectionDetails);
+
+            final VideoCanvas videoCanvas = clientWindow.getVideoCanvas();
+            final ClientDatagramSocket clientDatagramSocket = new ClientDatagramSocket(clientWindow, videoCanvas,
+                videoCanvas.getController());
+            clientWindow.setClientDatagramSocket(clientDatagramSocket);
+            // uruchomienie wątku grabbera UDP transmisji danych z hosta
+            clientDatagramSocket.start();
+            state.updateVisibilityState(VisibilityState.VISIBLE);
         } else {
             state.updateConnectionState(ConnectionState.DISCONNECTED);
-            bottomInfobarController.stopConnectionTimer();
-
             log.info("Unable to connect with connection details: {}", connectionDetails);
 
             final String message = String.format("Cannot connect with %s:%s. Check connection parameters.",

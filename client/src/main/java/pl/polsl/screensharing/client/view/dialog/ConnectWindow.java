@@ -73,61 +73,61 @@ public class ConnectWindow extends AbstractPopupDialog {
 
     public ConnectWindow(ClientWindow clientWindow) {
         super(AppType.HOST, 480, 210, "Connect", clientWindow, ConnectWindow.class);
-        this.clientState = clientWindow.getClientState();
+        clientState = clientWindow.getClientState();
 
-        this.controller = new ConnectController(clientWindow, this);
-        this.documentListener = new SimpleDocumentListener(controller::resetSaveButtonState);
+        controller = new ConnectController(clientWindow, this);
+        documentListener = new SimpleDocumentListener(controller::resetSaveButtonState);
 
-        this.formPanel = new JPanel();
-        this.rightPanel = new JPanel(new GridLayout(8, 1, 5, 5));
-        this.addtlDataPanel = new JPanel(new GridBagLayout());
+        formPanel = new JPanel();
+        rightPanel = new JPanel(new GridLayout(8, 1, 5, 5));
+        addtlDataPanel = new JPanel(new GridBagLayout());
 
-        this.basicInfoPanel = new JPanel(new GridBagLayout());
-        this.basicInfoTitledBorder = new TitledBorder("Connection parameters");
-        this.basicInfoGridBag = new GridBagConstraints();
+        basicInfoPanel = new JPanel(new GridBagLayout());
+        basicInfoTitledBorder = new TitledBorder("Connection parameters");
+        basicInfoGridBag = new GridBagConstraints();
 
-        this.additlnInfoPanel = new JPanel(new GridBagLayout());
-        this.additionalInfoTitledBorder = new TitledBorder("Additional parameters");
-        this.addtlnInfoGridBag = new GridBagConstraints();
+        additlnInfoPanel = new JPanel(new GridBagLayout());
+        additionalInfoTitledBorder = new TitledBorder("Additional parameters");
+        addtlnInfoGridBag = new GridBagConstraints();
 
-        this.margin = new EmptyBorder(10, 10, 10, 10);
-        this.gridInset = new Insets(3, 3, 3, 3);
+        margin = new EmptyBorder(10, 10, 10, 10);
+        gridInset = new Insets(3, 3, 3, 3);
 
-        this.ipAddressLabel = new JLabel("IP address");
-        this.ipAddressTextField = new JAppTextField(10, 15, SharedConstants.IPV4_REGEX);
+        ipAddressLabel = new JLabel("IP address");
+        ipAddressTextField = new JAppTextField(10, 15, SharedConstants.IPV4_REGEX);
 
-        this.portLabel = new JLabel("Connection port (optional)");
-        this.portTextField = new JAppTextField(10, 6, SharedConstants.PORT_REGEX);
+        portLabel = new JLabel("Connection port (optional)");
+        portTextField = new JAppTextField(10, 6, SharedConstants.PORT_REGEX);
 
-        this.usernameLabel = new JLabel("Username (optional)");
-        this.usernameTextField = new JAppTextField(10, 50, SharedConstants.USERNAME_REGEX);
+        usernameLabel = new JLabel("Username (optional)");
+        usernameTextField = new JAppTextField(10, 50, SharedConstants.USERNAME_REGEX);
 
-        this.passwordPanel = new JPanel();
-        this.passwordLabel = new JLabel("Password");
-        this.passwordTextField = new JAppPasswordTextField(10);
-        this.passwordTogglerCheckbox = new JCheckBox("Show password");
+        passwordPanel = new JPanel();
+        passwordLabel = new JLabel("Password");
+        passwordTextField = new JAppPasswordTextField(10);
+        passwordTogglerCheckbox = new JCheckBox("Show password");
 
-        this.connectButton = new JAppIconButton("Connect", ClientIcon.CONNECT_TO_REMOTE_SERVER);
-        this.cancelButton = new JAppIconButton("Cancel", LibIcon.CANCEL);
-        this.saveDetailsButton = new JAppIconButton("Save", LibIcon.SAVE);
-        this.addToListCheckbox = new JCheckBox("Add to list", true);
+        connectButton = new JAppIconButton("Connect", ClientIcon.CONNECT_TO_REMOTE_SERVER);
+        cancelButton = new JAppIconButton("Cancel", LibIcon.CANCEL);
+        saveDetailsButton = new JAppIconButton("Save", LibIcon.SAVE);
+        addToListCheckbox = new JCheckBox("Add to list", true);
 
-        this.descriptionLabel = new JLabel("Connection description (optional)");
-        this.descriptionTextArea = new JAppTextArea(3, 30, 100);
-        this.descriptionScrollPane = new JScrollPane(descriptionTextArea);
+        descriptionLabel = new JLabel("Connection description (optional)");
+        descriptionTextArea = new JAppTextArea(3, 30, 100);
+        descriptionScrollPane = new JScrollPane(descriptionTextArea);
 
         initObservables();
 
-        this.ipAddressTextField.getDocument().addDocumentListener(this.documentListener);
-        this.portTextField.getDocument().addDocumentListener(this.documentListener);
-        this.usernameTextField.getDocument().addDocumentListener(this.documentListener);
-        this.descriptionTextArea.getDocument().addDocumentListener(this.documentListener);
+        ipAddressTextField.getDocument().addDocumentListener(documentListener);
+        portTextField.getDocument().addDocumentListener(documentListener);
+        usernameTextField.getDocument().addDocumentListener(documentListener);
+        descriptionTextArea.getDocument().addDocumentListener(documentListener);
 
-        this.passwordTogglerCheckbox.addActionListener(controller::togglePasswordField);
+        passwordTogglerCheckbox.addActionListener(controller::togglePasswordField);
 
-        this.connectButton.addActionListener(e -> controller.createConnection());
-        this.cancelButton.addActionListener(e -> controller.closeWindow());
-        this.saveDetailsButton.addActionListener(controller::saveConnectionDetails);
+        connectButton.addActionListener(e -> controller.createConnection());
+        cancelButton.addActionListener(e -> controller.closeWindow());
+        saveDetailsButton.addActionListener(controller::saveConnectionDetails);
 
         initDialogGui(true);
     }
@@ -137,7 +137,7 @@ public class ConnectWindow extends AbstractPopupDialog {
         basicInfoPanel.setBorder(new CompoundBorder(basicInfoTitledBorder, margin));
         additlnInfoPanel.setBorder(new CompoundBorder(additionalInfoTitledBorder, margin));
 
-        passwordPanel.setLayout(new BoxLayout(this.passwordPanel, BoxLayout.Y_AXIS));
+        passwordPanel.setLayout(new BoxLayout(passwordPanel, BoxLayout.Y_AXIS));
         passwordPanel.add(passwordTextField);
         passwordPanel.add(passwordTogglerCheckbox);
 
@@ -154,7 +154,7 @@ public class ConnectWindow extends AbstractPopupDialog {
         final GridBagDrawer textareaDrawer = new GridBagDrawer(additlnInfoPanel, addtlnInfoGridBag, new Insets(0, 0, 3, 0));
         textareaDrawer.drawGridBagLabels(addtlDataPanel, descriptionLabel, descriptionScrollPane);
 
-        formPanel.setLayout(new BoxLayout(this.formPanel, BoxLayout.Y_AXIS));
+        formPanel.setLayout(new BoxLayout(formPanel, BoxLayout.Y_AXIS));
         formPanel.add(basicInfoPanel);
         formPanel.add(additlnInfoPanel);
 

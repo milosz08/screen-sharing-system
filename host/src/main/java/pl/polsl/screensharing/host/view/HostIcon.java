@@ -13,9 +13,15 @@ import pl.polsl.screensharing.lib.gui.icon.AppIcon;
 public enum HostIcon implements AppIcon {
     ADD_LINK("AddLink"),
     APPLICATION_ERROR("ApplicationError"),
+    CLOAK_OR_HIDE("CloakOrHide"),
+    CURSOR("Cursor"),
     DEBUG_INTERACTIVE_WINDOW("DebugInteractiveWindow"),
+    LOOKUP_GROUP_MEMBERS("LookupGroupMembers"),
+    OPEN_QUERY("OpenQuery"),
     REMOVE_LINK("RemoveLink"),
     SERVER_SETTINGS("ServerSettings"),
+    STOP_QUERY("StopQuery"),
+    VISIBLE("Visible"),
     ;
 
     private final String name;

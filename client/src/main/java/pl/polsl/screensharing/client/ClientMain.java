@@ -5,9 +5,9 @@
 package pl.polsl.screensharing.client;
 
 import lombok.extern.slf4j.Slf4j;
-import pl.polsl.screensharing.client.net.StartNet;
 import pl.polsl.screensharing.client.state.ClientState;
 import pl.polsl.screensharing.client.view.ClientWindow;
+import pl.polsl.screensharing.lib.UnoperableException;
 import pl.polsl.screensharing.lib.gui.AbstractGUIThread;
 import pl.polsl.screensharing.lib.gui.AbstractRootFrame;
 
@@ -18,13 +18,13 @@ public class ClientMain extends AbstractGUIThread<ClientState> {
     }
 
     public static void main(String[] args) {
-        final ClientState state = new ClientState();
-        final ClientMain clientMain = new ClientMain(state);
-        clientMain.init();
-
-        // wątek klienta, do testów
-        final Thread thread = new Thread(new StartNet());
-        thread.start();
+        try {
+            final ClientState state = new ClientState();
+            final ClientMain clientMain = new ClientMain(state);
+            clientMain.init();
+        } catch (UnoperableException ex) {
+            log.error(ex.getMessage());
+        }
     }
 
     @Override

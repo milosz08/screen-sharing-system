@@ -17,8 +17,8 @@ public class TabbedPaneWindow extends JTabbedPane {
     private final JAppTabbedLogsPanel tabbedLogsPanel;
 
     public TabbedPaneWindow(HostWindow hostWindow) {
-        this.tabbedScreenFramePanel = new TabbedScreenFramePanel(hostWindow);
-        this.tabbedLogsPanel = new JAppTabbedLogsPanel(AppType.HOST);
+        tabbedScreenFramePanel = new TabbedScreenFramePanel(hostWindow);
+        tabbedLogsPanel = new JAppTabbedLogsPanel(AppType.HOST);
 
         addTab("Screen capture", tabbedScreenFramePanel);
         addTab("Logs", tabbedLogsPanel);

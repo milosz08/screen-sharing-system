@@ -13,9 +13,9 @@ public class AppCellEditor extends DefaultCellEditor {
 
     public AppCellEditor(int charactersNumber, String regex) {
         super(new JTextField());
-        this.textField = (JTextField) getComponent();
-        this.textField.setDocument(new PlainDocument());
-        ((AbstractDocument) this.textField.getDocument())
+        textField = (JTextField) getComponent();
+        textField.setDocument(new PlainDocument());
+        ((AbstractDocument) textField.getDocument())
             .setDocumentFilter(new SimpleDocumentFilter(charactersNumber, regex));
     }
 
