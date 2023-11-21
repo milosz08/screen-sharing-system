@@ -128,6 +128,7 @@ public class ServerDatagramSocket extends Thread {
         initAES();
         isSendingData = true;
         if (!isAlive()) {
+            setName("Thread-UDP-" + getId());
             super.start();
         }
     }

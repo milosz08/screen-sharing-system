@@ -116,6 +116,7 @@ public class ClientDatagramSocket extends Thread {
         createDatagramSocket();
         initAES();
         if (!isAlive()) {
+            setName("Thread-UDP-" + getId());
             super.start();
         }
     }
