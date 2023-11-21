@@ -8,9 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import pl.polsl.screensharing.host.controller.VideoCanvasController;
 import pl.polsl.screensharing.host.state.HostState;
 import pl.polsl.screensharing.host.state.QualityLevel;
-import pl.polsl.screensharing.host.state.StreamingState;
 import pl.polsl.screensharing.host.view.HostWindow;
-import pl.polsl.screensharing.host.view.fragment.VideoCanvas;
 import pl.polsl.screensharing.lib.UnoperableException;
 
 import javax.crypto.Cipher;
@@ -28,20 +26,16 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 @Slf4j
 public class ServerDatagramSocket extends Thread {
     private final HostState hostState;
-    private final VideoCanvas videoCanvas;
     private final VideoCanvasController videoCanvasController;
 
+    private boolean isSendingData;
     private DatagramSocket datagramSocket;
     private Cipher cipher;
-    private StreamingState streamingState;
     private QualityLevel qualityLevel;
-    private final AtomicBoolean isScreenShowing;
 
     private static final int PACKAGE_SIZE = 32_000;
     private static final int BILION = 1_000_000_000;
@@ -51,13 +45,10 @@ public class ServerDatagramSocket extends Thread {
     private static final String INIT_VECTOR = "RandomInitVector";
 
     public ServerDatagramSocket(
-        HostWindow hostWindow, VideoCanvas videoCanvas, VideoCanvasController videoCanvasController
+        HostWindow hostWindow, VideoCanvasController videoCanvasController
     ) {
         hostState = hostWindow.getHostState();
-        this.videoCanvas = videoCanvas;
         this.videoCanvasController = videoCanvasController;
-        isScreenShowing = new AtomicBoolean(true);
-        streamingState = StreamingState.STOPPED;
         qualityLevel = QualityLevel.GOOD;
         initObservables();
     }
@@ -74,18 +65,13 @@ public class ServerDatagramSocket extends Thread {
         long timer = 0, logTimer = 0;
         long sendBytes = 0;
 
-        while (true) {
+        log.info("Started datagram thread with TID {}", getName());
+        while (isSendingData) {
             currentTime = System.nanoTime();
             timer += (currentTime - lastTime);
             logTimer += (currentTime - lastTime);
             lastTime = currentTime;
             try {
-                if (videoCanvas == null
-                    || !isScreenShowing.get()
-                    || Objects.equals(streamingState, StreamingState.STOPPED)
-                    || videoCanvasController.getRawImage() == null) {
-                    continue;
-                }
                 if (compressedData == null) {
                     compressedData = loadImage();
                     unprocessedDataLength = compressedData.length;
@@ -114,8 +100,7 @@ public class ServerDatagramSocket extends Thread {
                 }
                 // opóźnij przesyłanie pakietów (UDP przy zbyt szybkim wysyłaniu
                 // ignoruje pakiety i po stronie klienta pojawiają się artefakty w obrazie
-                Thread.sleep(5);
-
+                sleep(5);
             } catch (Exception ignored) {
             }
             if (logTimer >= BILION * 6L) {
@@ -131,6 +116,24 @@ public class ServerDatagramSocket extends Thread {
                 timer = 0;
             }
         }
+        log.info("Stopping datagram thread with TID {}", getName());
+        log.debug("Collected detatched thread with TID {} by GC", getName());
+        datagramSocket.disconnect();
+        datagramSocket.close();
+    }
+
+    @Override
+    public synchronized void start() {
+        createDatagramSocket();
+        initAES();
+        isSendingData = true;
+        if (!isAlive()) {
+            super.start();
+        }
+    }
+
+    public void stopAndClear() {
+        isSendingData = false;
     }
 
     private long sendPackage(byte[] chunk) throws Exception {
@@ -179,9 +182,9 @@ public class ServerDatagramSocket extends Thread {
         // tryb AES, CTR - counter mode pozwala na zaszyfrowanie danych o dowolnej długości, bez dopełnienia
         // potrzebne dla UDP, bo każda ramka musi zostać zaszyfrowana oddzielnie
         try {
+            final SecretKeySpec secretKeySpec = new SecretKeySpec(SECRET_KEY.getBytes(StandardCharsets.UTF_8), "AES");
+            final IvParameterSpec ivParameterSpec = new IvParameterSpec(INIT_VECTOR.getBytes(StandardCharsets.UTF_8));
             cipher = Cipher.getInstance("AES/CTR/NoPadding");
-            SecretKeySpec secretKeySpec = new SecretKeySpec(SECRET_KEY.getBytes(StandardCharsets.UTF_8), "AES");
-            IvParameterSpec ivParameterSpec = new IvParameterSpec(INIT_VECTOR.getBytes(StandardCharsets.UTF_8));
             cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, ivParameterSpec);
         } catch (Exception ex) {
             throw new UnoperableException(ex);
@@ -189,10 +192,6 @@ public class ServerDatagramSocket extends Thread {
     }
 
     private void initObservables() {
-        hostState.wrapAsDisposable(hostState.isScreenIsShowForParticipants$(), isScreenShowing::set);
-        hostState.wrapAsDisposable(hostState.getStreamingState$(), streamingState -> {
-            this.streamingState = streamingState;
-        });
         hostState.wrapAsDisposable(hostState.getStreamingQualityLevel$(), qualityLevel -> {
             this.qualityLevel = qualityLevel;
         });

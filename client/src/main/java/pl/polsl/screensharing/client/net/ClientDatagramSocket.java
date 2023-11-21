@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.imgscalr.Scalr;
 import pl.polsl.screensharing.client.controller.VideoCanvasController;
 import pl.polsl.screensharing.client.state.ClientState;
+import pl.polsl.screensharing.client.state.VisibilityState;
 import pl.polsl.screensharing.client.view.ClientWindow;
 import pl.polsl.screensharing.client.view.fragment.VideoCanvas;
 import pl.polsl.screensharing.lib.UnoperableException;
@@ -17,6 +18,7 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.net.DatagramPacket;
@@ -33,6 +35,7 @@ public class ClientDatagramSocket extends Thread {
 
     private DatagramSocket datagramSocket;
     private Cipher cipher;
+    private boolean isFetchingData;
 
     private static final int PACKAGE_SIZE = 32_000;
     private static final int BILION = 1_000_000_000;
@@ -41,14 +44,18 @@ public class ClientDatagramSocket extends Thread {
     private static final String SECRET_KEY = "ThisIsASecretKey";
     private static final String INIT_VECTOR = "RandomInitVector";
 
-    public ClientDatagramSocket(ClientWindow clientWindow, VideoCanvas videoCanvas, VideoCanvasController videoCanvasController) {
-        this.clientState = clientWindow.getClientState();
+    public ClientDatagramSocket(
+        ClientWindow clientWindow, VideoCanvas videoCanvas, VideoCanvasController videoCanvasController
+    ) {
+        clientState = clientWindow.getClientState();
         this.videoCanvas = videoCanvas;
         this.videoCanvasController = videoCanvasController;
+        initObservables();
     }
 
     @Override
     public void run() {
+        log.info("Started datagram thread with TID {}", getName());
         final ByteArrayOutputStream receivedDataBuffer = new ByteArrayOutputStream();
         byte[] receiveBuffer = new byte[PACKAGE_SIZE];
 
@@ -57,15 +64,12 @@ public class ClientDatagramSocket extends Thread {
         long timer = 0, logTimer = 0;
         long recvBytes = 0;
 
-        while (true) {
+        while (isFetchingData) {
             currentTime = System.nanoTime();
             timer += (currentTime - lastTime);
             logTimer += (currentTime - lastTime);
             lastTime = currentTime;
             try {
-                if (videoCanvas == null) {
-                    continue;
-                }
                 final Dimension size = videoCanvas.getSize();
                 DatagramPacket receivePacket = new DatagramPacket(receiveBuffer, receiveBuffer.length);
                 datagramSocket.receive(receivePacket);
@@ -74,8 +78,9 @@ public class ClientDatagramSocket extends Thread {
                 if (new String(receivePacket.getData(), 0, receivePacket.getLength()).equals(TERMINATE_PACKAGE)) {
                     final byte[] receivedData = receivedDataBuffer.toByteArray();
                     final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(receivedData);
-                    videoCanvasController.setReceivedImage(Scalr.resize(ImageIO.read(byteArrayInputStream),
-                        size.width, size.height));
+                    final BufferedImage receivedImage = ImageIO.read(byteArrayInputStream);
+                    final BufferedImage renderedImage = Scalr.resize(receivedImage, size.width, size.height);
+                    videoCanvasController.setReceivedAndRenderedImage(receivedImage, renderedImage);
                     byteArrayInputStream.close();
                     receivedDataBuffer.reset();
                 } else {
@@ -99,6 +104,24 @@ public class ClientDatagramSocket extends Thread {
                 timer = 0;
             }
         }
+        log.info("Stopping datagram thread with TID {}", getName());
+        log.debug("Collected detatched thread with TID {} by GC", getName());
+        datagramSocket.disconnect();
+        datagramSocket.close();
+    }
+
+    @Override
+    public synchronized void start() {
+        isFetchingData = true;
+        createDatagramSocket();
+        initAES();
+        if (!isAlive()) {
+            super.start();
+        }
+    }
+
+    public void stopAndClear() {
+        isFetchingData = false;
     }
 
     private byte[] decrypt(byte[] encryptedData) throws Exception {
@@ -116,12 +139,18 @@ public class ClientDatagramSocket extends Thread {
 
     public void initAES() {
         try {
+            final SecretKeySpec secretKeySpec = new SecretKeySpec(SECRET_KEY.getBytes(StandardCharsets.UTF_8), "AES");
+            final IvParameterSpec ivParameterSpec = new IvParameterSpec(INIT_VECTOR.getBytes(StandardCharsets.UTF_8));
             cipher = Cipher.getInstance("AES/CTR/NoPadding");
-            SecretKeySpec secretKeySpec = new SecretKeySpec(SECRET_KEY.getBytes(StandardCharsets.UTF_8), "AES");
-            IvParameterSpec ivParameterSpec = new IvParameterSpec(INIT_VECTOR.getBytes(StandardCharsets.UTF_8));
             cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, ivParameterSpec);
         } catch (Exception ex) {
             throw new UnoperableException(ex);
         }
+    }
+
+    private void initObservables() {
+        clientState.wrapAsDisposable(clientState.getVisibilityState$(), visibilityState -> {
+            isFetchingData = visibilityState.equals(VisibilityState.VISIBLE);
+        });
     }
 }

@@ -5,7 +5,9 @@
 package pl.polsl.screensharing.host.view;
 
 import lombok.Getter;
+import lombok.Setter;
 import pl.polsl.screensharing.host.controller.BottomInfobarController;
+import pl.polsl.screensharing.host.net.ServerDatagramSocket;
 import pl.polsl.screensharing.host.state.HostState;
 import pl.polsl.screensharing.host.view.dialog.AboutDialogWindow;
 import pl.polsl.screensharing.host.view.dialog.ConnectionSettingsDialogWindow;
@@ -14,6 +16,7 @@ import pl.polsl.screensharing.host.view.dialog.ParticipantsDialogWindow;
 import pl.polsl.screensharing.host.view.fragment.BottomInfobar;
 import pl.polsl.screensharing.host.view.fragment.TopMenuBar;
 import pl.polsl.screensharing.host.view.fragment.TopToolbar;
+import pl.polsl.screensharing.host.view.fragment.VideoCanvas;
 import pl.polsl.screensharing.host.view.tabbed.TabbedPaneWindow;
 import pl.polsl.screensharing.lib.AppType;
 import pl.polsl.screensharing.lib.gui.AbstractRootFrame;
@@ -34,6 +37,9 @@ public class HostWindow extends AbstractRootFrame {
     private final LicenseDialogWindow licenseDialogWindow;
     private final ConnectionSettingsDialogWindow connectionSettingsDialogWindow;
     private final ParticipantsDialogWindow participantsDialogWindow;
+
+    @Setter
+    private ServerDatagramSocket serverDatagramSocket;
 
     public HostWindow(HostState hostState) {
         super(AppType.HOST, hostState, HostWindow.class);
@@ -63,5 +69,9 @@ public class HostWindow extends AbstractRootFrame {
 
     public BottomInfobarController getBottomInfobarController() {
         return bottomInfobar.getBottomInfobarController();
+    }
+
+    public VideoCanvas getVideoCanvas() {
+        return tabbedPaneWindow.getTabbedScreenFramePanel().getVideoCanvas();
     }
 }

@@ -9,7 +9,6 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import pl.polsl.screensharing.host.aggregator.StreamingStateFrameModeAggregator;
 import pl.polsl.screensharing.host.controller.VideoCanvasController;
-import pl.polsl.screensharing.host.net.ServerDatagramSocket;
 import pl.polsl.screensharing.host.state.HostState;
 import pl.polsl.screensharing.host.state.StreamingState;
 import pl.polsl.screensharing.host.view.HostWindow;
@@ -23,11 +22,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Slf4j
 @Getter
 public class VideoCanvas extends JPanel {
-    private final HostWindow hostWindow;
     private final HostState hostState;
     private final VideoCanvasController controller;
     private final FrameSelectorPanel frameSelectorPanel;
-    private final ServerDatagramSocket serverDatagramSocket;
 
     private GraphicsDevice graphicsDevice;
     private StreamingState streamingState;
@@ -35,10 +32,8 @@ public class VideoCanvas extends JPanel {
     private final AtomicBoolean isCursorShowing;
 
     public VideoCanvas(HostWindow hostWindow, TabbedScreenFramePanel tabbedScreenFramePanel) {
-        this.hostWindow = hostWindow;
         hostState = hostWindow.getHostState();
         controller = new VideoCanvasController(hostWindow, this, tabbedScreenFramePanel);
-        serverDatagramSocket = new ServerDatagramSocket(hostWindow, this, controller);
 
         frameSelectorPanel = new FrameSelectorPanel(hostWindow, this);
         isScreenShowingForParticipants = new AtomicBoolean(true);
@@ -52,10 +47,6 @@ public class VideoCanvas extends JPanel {
         hostWindow.addComponentListener(new ResizeComponentAdapter(controller::onResizeWithAspectRatio));
 
         add(frameSelectorPanel);
-
-        serverDatagramSocket.createDatagramSocket();
-        serverDatagramSocket.initAES();
-        serverDatagramSocket.start();
     }
 
     @Override

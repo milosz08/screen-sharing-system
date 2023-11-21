@@ -6,9 +6,11 @@ package pl.polsl.screensharing.host.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import pl.polsl.screensharing.host.net.ServerDatagramSocket;
 import pl.polsl.screensharing.host.state.HostState;
 import pl.polsl.screensharing.host.state.StreamingState;
 import pl.polsl.screensharing.host.view.HostWindow;
+import pl.polsl.screensharing.host.view.fragment.VideoCanvas;
 
 import javax.swing.*;
 
@@ -25,11 +27,13 @@ abstract class AbstractStreamController {
             "Please confirm", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 
         if (result == JOptionPane.YES_OPTION) {
+            final VideoCanvas videoCanvas = hostWindow.getVideoCanvas();
+            final ServerDatagramSocket serverDatagramSocket = new ServerDatagramSocket(hostWindow,
+                videoCanvas.getController());
+            hostWindow.setServerDatagramSocket(serverDatagramSocket);
+            serverDatagramSocket.start();
             state.updateStreamingState(StreamingState.STREAMING);
             bottomInfoBarController.startStreamingTimer();
-
-            // TODO: starting screen sharing
-
             log.info("Started screen streaming");
         }
     }
@@ -37,12 +41,12 @@ abstract class AbstractStreamController {
     public void stopVideoStreaming() {
         final HostState state = hostWindow.getHostState();
         final BottomInfobarController bottomInfoBarController = hostWindow.getBottomInfobarController();
-
-        state.updateStreamingState(StreamingState.STOPPED);
+        final ServerDatagramSocket serverDatagramSocket = hostWindow.getServerDatagramSocket();
+        if (serverDatagramSocket != null) {
+            serverDatagramSocket.stopAndClear();
+            state.updateStreamingState(StreamingState.STOPPED);
+        }
         bottomInfoBarController.stopStreamingTimer();
-
-        // TODO: stopping screen sharing
-
         log.info("Stopped screen streaming");
     }
 
