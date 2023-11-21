@@ -5,6 +5,7 @@
 package pl.polsl.screensharing.host.net;
 
 import lombok.extern.slf4j.Slf4j;
+import org.imgscalr.Scalr;
 import pl.polsl.screensharing.host.controller.VideoCanvasController;
 import pl.polsl.screensharing.host.state.HostState;
 import pl.polsl.screensharing.host.state.QualityLevel;
@@ -21,6 +22,7 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageOutputStream;
 import javax.swing.*;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.*;
@@ -38,6 +40,8 @@ public class ServerDatagramSocket extends Thread {
 
     private static final int PACKAGE_SIZE = 32_768; // 32kb
     private static final int BILION = 1_000_000_000;
+    private static final int MAX_FRAME_WIDTH = 1280;
+    private static final int MAX_FRAME_HEIGHT = 720;
 
     private static final String SECRET_KEY = "ThisIsASecretKey";
     private static final String INIT_VECTOR = "RandomInitVector";
@@ -159,7 +163,7 @@ public class ServerDatagramSocket extends Thread {
     }
 
     private long sendPackage(byte[] chunk) throws Exception {
-        final DatagramPacket packet = new DatagramPacket(chunk, chunk.length, InetAddress.getByName("localhost"), 7648);
+        final DatagramPacket packet = new DatagramPacket(chunk, chunk.length, InetAddress.getByName("192.168.0.102"), 7648);
         datagramSocket.send(packet);
         return chunk.length;
     }
@@ -176,13 +180,18 @@ public class ServerDatagramSocket extends Thread {
     public byte[] loadImage() throws IOException {
         final ByteArrayOutputStream compressed = new ByteArrayOutputStream();
         final ImageOutputStream outputStream = ImageIO.createImageOutputStream(compressed);
+        BufferedImage rawImage = videoCanvasController.getRawImage();
 
         final ImageWriter jpgWriter = ImageIO.getImageWritersByFormatName("JPEG").next();
         final ImageWriteParam jpgWriteParam = jpgWriter.getDefaultWriteParam();
         jpgWriteParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
         jpgWriteParam.setCompressionQuality(qualityLevel.getJpegLevel());
         jpgWriter.setOutput(outputStream);
-        jpgWriter.write(null, new IIOImage(videoCanvasController.getRawImage(), null, null), jpgWriteParam);
+        if (rawImage.getWidth() > MAX_FRAME_WIDTH || rawImage.getHeight() > MAX_FRAME_HEIGHT) {
+            final int newHeight = (int) ((double) MAX_FRAME_WIDTH / rawImage.getWidth() * rawImage.getHeight());
+            rawImage = Scalr.resize(rawImage, MAX_FRAME_WIDTH, newHeight);
+        }
+        jpgWriter.write(null, new IIOImage(rawImage, null, null), jpgWriteParam);
 
         final byte[] compressedData = compressed.toByteArray();
 
