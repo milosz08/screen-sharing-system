@@ -32,6 +32,7 @@ public class ConnectWindow extends AbstractPopupDialog {
 
     private final JPanel formPanel;
     private final JPanel rightPanel;
+    private final JPanel rightTopPanel;
     private final JPanel addtlDataPanel;
 
     private final JPanel basicInfoPanel;
@@ -79,7 +80,8 @@ public class ConnectWindow extends AbstractPopupDialog {
         documentListener = new SimpleDocumentListener(controller::resetSaveButtonState);
 
         formPanel = new JPanel();
-        rightPanel = new JPanel(new GridLayout(8, 1, 5, 5));
+        rightPanel = new JPanel(new BorderLayout());
+        rightTopPanel = new JPanel(new GridLayout(3, 1, 0, 5));
         addtlDataPanel = new JPanel(new GridBagLayout());
 
         basicInfoPanel = new JPanel(new GridBagLayout());
@@ -158,15 +160,12 @@ public class ConnectWindow extends AbstractPopupDialog {
         formPanel.add(basicInfoPanel);
         formPanel.add(additlnInfoPanel);
 
-        rightPanel.add(connectButton);
-        rightPanel.add(saveDetailsButton);
-        rightPanel.add(addToListCheckbox);
+        rightTopPanel.add(connectButton);
+        rightTopPanel.add(saveDetailsButton);
+        rightTopPanel.add(addToListCheckbox);
 
-        for (int i = 0; i < 4; i++) {
-            rightPanel.add(new JPanel());
-        }
-
-        rightPanel.add(cancelButton);
+        rightPanel.add(rightTopPanel, BorderLayout.NORTH);
+        rightPanel.add(cancelButton, BorderLayout.SOUTH);
 
         rootPanel.add(formPanel, BorderLayout.CENTER);
         rootPanel.add(rightPanel, BorderLayout.EAST);

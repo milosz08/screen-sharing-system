@@ -60,7 +60,6 @@ public class HostWindow extends AbstractRootFrame {
         connectionSettingsDialogWindow = new ConnectionSettingsDialogWindow(this);
         participantsDialogWindow = new ParticipantsDialogWindow(this);
 
-
         initObservables();
 
         setResizable(false);

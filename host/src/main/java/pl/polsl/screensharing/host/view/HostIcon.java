@@ -19,7 +19,6 @@ public enum HostIcon implements AppIcon {
     LOOKUP_GROUP_MEMBERS("LookupGroupMembers"),
     OPEN_QUERY("OpenQuery"),
     REMOVE_LINK("RemoveLink"),
-    SERVER_SETTINGS("ServerSettings"),
     STOP_QUERY("StopQuery"),
     VISIBLE("Visible"),
     ;

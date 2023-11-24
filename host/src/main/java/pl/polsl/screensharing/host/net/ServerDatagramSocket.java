@@ -30,6 +30,7 @@ import java.nio.charset.StandardCharsets;
 
 @Slf4j
 public class ServerDatagramSocket extends Thread {
+    private final HostWindow hostWindow;
     private final HostState hostState;
     private final VideoCanvasController videoCanvasController;
 
@@ -49,6 +50,7 @@ public class ServerDatagramSocket extends Thread {
     public ServerDatagramSocket(
         HostWindow hostWindow, VideoCanvasController videoCanvasController
     ) {
+        this.hostWindow = hostWindow;
         hostState = hostWindow.getHostState();
         this.videoCanvasController = videoCanvasController;
         qualityLevel = QualityLevel.GOOD;
@@ -122,7 +124,7 @@ public class ServerDatagramSocket extends Thread {
                 }
                 sleep(1);
             } catch (SocketTimeoutException | PortUnreachableException ex) {
-                JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(hostWindow, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 log.error("Unexpected network error. Cause: {}", ex.getMessage());
                 break;
             } catch (Exception ignored) {

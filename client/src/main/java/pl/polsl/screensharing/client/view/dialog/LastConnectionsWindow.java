@@ -25,6 +25,7 @@ public class LastConnectionsWindow extends AbstractPopupDialog {
     private final ClientState clientState;
 
     private final JPanel rightPanel;
+    private final JPanel rightTopPanel;
     private final JScrollPane scrollPane;
 
     private final LastConnectionsController controller;
@@ -44,7 +45,8 @@ public class LastConnectionsWindow extends AbstractPopupDialog {
         clientState = clientWindow.getClientState();
         controller = new LastConnectionsController(clientWindow, this);
 
-        rightPanel = new JPanel(new GridLayout(5, 1, 5, 5));
+        rightPanel = new JPanel(new BorderLayout());
+        rightTopPanel = new JPanel(new GridLayout(3, 1, 0, 5));
 
         tableModel = new DefaultTableModel(new Object[][]{}, tableHeaders);
         table = new JTable(tableModel);
@@ -83,11 +85,12 @@ public class LastConnectionsWindow extends AbstractPopupDialog {
         connectButton.setEnabled(false);
         removeRowButton.setEnabled(false);
 
-        rightPanel.add(connectButton);
-        rightPanel.add(removeRowButton);
-        rightPanel.add(removeAllRowsButton);
-        rightPanel.add(new JPanel());
-        rightPanel.add(cancelButton);
+        rightTopPanel.add(connectButton);
+        rightTopPanel.add(removeRowButton);
+        rightTopPanel.add(removeAllRowsButton);
+
+        rightPanel.add(rightTopPanel, BorderLayout.NORTH);
+        rightPanel.add(cancelButton, BorderLayout.SOUTH);
 
         rootPanel.add(scrollPane, BorderLayout.CENTER);
         rootPanel.add(rightPanel, BorderLayout.EAST);

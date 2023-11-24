@@ -38,7 +38,7 @@ public class SavedConnection implements Comparable<SavedConnection> {
         }
         SavedConnection that = (SavedConnection) o;
         return port == that.port && Objects.equals(ipAddress, that.ipAddress)
-            && Objects.equals(username, that.username) && Objects.equals(description, that.description);
+            && Objects.equals(username, that.username);
     }
 
     @Override
