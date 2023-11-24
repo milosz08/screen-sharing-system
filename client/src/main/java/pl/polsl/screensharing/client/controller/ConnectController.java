@@ -11,6 +11,7 @@ import pl.polsl.screensharing.client.model.SavedConnection;
 import pl.polsl.screensharing.client.state.ClientState;
 import pl.polsl.screensharing.client.view.ClientWindow;
 import pl.polsl.screensharing.client.view.dialog.ConnectWindow;
+import pl.polsl.screensharing.lib.Utils;
 import pl.polsl.screensharing.lib.gui.component.JAppPasswordTextField;
 
 import javax.swing.*;
@@ -29,12 +30,10 @@ public class ConnectController extends AbstractPopupDialogController {
     @Override
     protected ConnectionDetails createConnectionParameters() {
         final String ipAddress = connectionWindow.getIpAddressTextField().getText();
-        final int port = Integer.parseInt(connectionWindow.getPortTextField().getText());
         final String username = connectionWindow.getUsernameTextField().getText();
-
         return ConnectionDetails.builder()
             .ipAddress(ipAddress)
-            .port(port)
+            .port(Utils.getPortOrDefault(connectionWindow.getPortTextField()))
             .username(username)
             .password(new String(connectionWindow.getPasswordTextField().getPassword()))
             .build();
@@ -76,7 +75,7 @@ public class ConnectController extends AbstractPopupDialogController {
 
         final FastConnectionDetails savedConnDetails = FastConnectionDetails.builder()
             .ipAddress(connectionWindow.getIpAddressTextField().getText())
-            .port(Integer.parseInt(connectionWindow.getPortTextField().getText()))
+            .port(Utils.getPortOrDefault(connectionWindow.getPortTextField()))
             .username(connectionWindow.getUsernameTextField().getText())
             .description(connectionWindow.getDescriptionTextArea().getText())
             .build();

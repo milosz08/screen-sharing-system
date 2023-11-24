@@ -11,9 +11,9 @@ import pl.polsl.screensharing.host.net.ServerDatagramSocket;
 import pl.polsl.screensharing.host.state.HostState;
 import pl.polsl.screensharing.host.state.StreamingState;
 import pl.polsl.screensharing.host.view.dialog.AboutDialogWindow;
-import pl.polsl.screensharing.host.view.dialog.ConnectionSettingsDialogWindow;
 import pl.polsl.screensharing.host.view.dialog.LicenseDialogWindow;
 import pl.polsl.screensharing.host.view.dialog.ParticipantsDialogWindow;
+import pl.polsl.screensharing.host.view.dialog.SessionDetailsDialogWindow;
 import pl.polsl.screensharing.host.view.fragment.BottomInfobar;
 import pl.polsl.screensharing.host.view.fragment.TopMenuBar;
 import pl.polsl.screensharing.host.view.fragment.TopToolbar;
@@ -39,7 +39,7 @@ public class HostWindow extends AbstractRootFrame {
 
     private final AboutDialogWindow aboutDialogWindow;
     private final LicenseDialogWindow licenseDialogWindow;
-    private final ConnectionSettingsDialogWindow connectionSettingsDialogWindow;
+    private final SessionDetailsDialogWindow sessionDetailsDialogWindow;
     private final ParticipantsDialogWindow participantsDialogWindow;
 
     @Setter
@@ -57,7 +57,7 @@ public class HostWindow extends AbstractRootFrame {
 
         aboutDialogWindow = new AboutDialogWindow(this);
         licenseDialogWindow = new LicenseDialogWindow(this);
-        connectionSettingsDialogWindow = new ConnectionSettingsDialogWindow(this);
+        sessionDetailsDialogWindow = new SessionDetailsDialogWindow(this);
         participantsDialogWindow = new ParticipantsDialogWindow(this);
 
         initObservables();

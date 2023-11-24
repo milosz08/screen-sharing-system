@@ -12,6 +12,8 @@ import org.apache.commons.lang3.time.DurationFormatUtils;
 
 import javax.swing.*;
 import java.awt.*;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Utils {
@@ -67,5 +69,21 @@ public class Utils {
         final double widthS = ((double) scale.width / width) * (int) bounds.getWidth();
         final double heightS = ((double) scale.height / height) * (int) bounds.getHeight();
         return new Rectangle((int) xS, (int) yS, (int) widthS, (int) heightS);
+    }
+
+    public static String getMachineAddress() {
+        try {
+            return InetAddress.getLocalHost().getHostAddress();
+        } catch (UnknownHostException ex) {
+            throw new UnoperableException(ex);
+        }
+    }
+
+    public static int getPortOrDefault(JTextField portComponent) {
+        String port = portComponent.getText();
+        if (port.equals(StringUtils.EMPTY)) {
+            port = String.valueOf(SharedConstants.ROOT_PORT);
+        }
+        return Integer.parseInt(port);
     }
 }

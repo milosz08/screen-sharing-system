@@ -28,7 +28,6 @@ public class TopMenuBar extends JMenuBar {
     private final JMenu screenMenu;
     private final JMenu helpMenu;
 
-    private final JAppMenuIconItem sessionParamsMenuItem;
     private final JAppMenuIconItem createSessionMenuItem;
     private final JAppMenuIconItem removeSessionMenuItem;
 
@@ -55,7 +54,6 @@ public class TopMenuBar extends JMenuBar {
         screenMenu = new JMenu("Screen");
         helpMenu = new JMenu("Help");
 
-        sessionParamsMenuItem = new JAppMenuIconItem("Session settings", HostIcon.SERVER_SETTINGS);
         createSessionMenuItem = new JAppMenuIconItem("Create session", HostIcon.ADD_LINK);
         removeSessionMenuItem = new JAppMenuIconItem("Remove session", HostIcon.REMOVE_LINK, false);
 
@@ -71,7 +69,6 @@ public class TopMenuBar extends JMenuBar {
         initObservables();
 
         sessionMenuItems = new JAppMenuIconItem[]{
-            sessionParamsMenuItem,
             createSessionMenuItem,
             removeSessionMenuItem,
         };
@@ -88,8 +85,7 @@ public class TopMenuBar extends JMenuBar {
             licenseMenuItem,
         };
 
-        sessionParamsMenuItem.addActionListener(e -> controller.openSessionParamsWindow());
-        createSessionMenuItem.addActionListener(e -> controller.createSession());
+        createSessionMenuItem.addActionListener(e -> controller.openSessionDetailsWindow());
         removeSessionMenuItem.addActionListener(e -> controller.removeSession());
 
         startVideoStreamingMenuItem.addActionListener(e -> controller.startVideoStreaming());
@@ -121,7 +117,6 @@ public class TopMenuBar extends JMenuBar {
     private void initObservables() {
         hostState.wrapAsDisposable(hostState.getSessionState$(), state -> {
             final boolean isCreated = state.equals(SessionState.CREATED);
-            sessionParamsMenuItem.setEnabled(!isCreated);
             createSessionMenuItem.setEnabled(!isCreated);
             removeSessionMenuItem.setEnabled(isCreated);
         });
