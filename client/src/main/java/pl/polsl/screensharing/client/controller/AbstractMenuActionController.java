@@ -7,6 +7,7 @@ package pl.polsl.screensharing.client.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import pl.polsl.screensharing.client.net.ClientDatagramSocket;
+import pl.polsl.screensharing.client.net.ClientTcpSocket;
 import pl.polsl.screensharing.client.state.ClientState;
 import pl.polsl.screensharing.client.state.ConnectionState;
 import pl.polsl.screensharing.client.state.VisibilityState;
@@ -43,15 +44,16 @@ abstract class AbstractMenuActionController {
 
         if (result == JOptionPane.YES_OPTION) {
             final ClientDatagramSocket clientDatagramSocket = clientWindow.getClientDatagramSocket();
+            final ClientTcpSocket clientTcpSocket = clientWindow.getClientTcpSocket();
             if (clientDatagramSocket != null) {
                 clientDatagramSocket.stopAndClear();
                 state.updateVisibilityState(VisibilityState.WAITING_FOR_CONNECTION);
             }
+            if (clientTcpSocket != null) {
+                clientTcpSocket.stopAndClear();
+            }
             state.updateConnectionState(ConnectionState.DISCONNECTED);
             bottomInfobarController.stopConnectionTimer();
-
-            // TODO: disconnect from TCP session
-
             log.info("Disconected from session.");
         }
     }
