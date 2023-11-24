@@ -15,5 +15,5 @@ target/
 *.ipr
 .bin/
 client.json
-server.json
+host.json
 .logs/
