@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import pl.polsl.screensharing.host.controller.BottomInfobarController;
 import pl.polsl.screensharing.host.net.ServerDatagramSocket;
+import pl.polsl.screensharing.host.net.ServerTcpSocker;
 import pl.polsl.screensharing.host.state.HostState;
 import pl.polsl.screensharing.host.state.StreamingState;
 import pl.polsl.screensharing.host.view.dialog.AboutDialogWindow;
@@ -44,6 +45,8 @@ public class HostWindow extends AbstractRootFrame {
 
     @Setter
     private ServerDatagramSocket serverDatagramSocket;
+    @Setter
+    private ServerTcpSocker serverTcpSocker;
 
     public HostWindow(HostState hostState) {
         super(AppType.HOST, hostState, HostWindow.class);
