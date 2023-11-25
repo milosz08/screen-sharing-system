@@ -44,12 +44,11 @@ abstract class AbstractStreamController {
     }
 
     public void stopVideoStreaming() {
-        final HostState state = hostWindow.getHostState();
+        final HostState hostState = hostWindow.getHostState();
         final BottomInfobarController bottomInfoBarController = hostWindow.getBottomInfobarController();
         final ServerDatagramSocket serverDatagramSocket = hostWindow.getServerDatagramSocket();
         if (serverDatagramSocket != null) {
             serverDatagramSocket.stopAndClear();
-            state.updateStreamingState(StreamingState.STOPPED);
         }
         bottomInfoBarController.stopStreamingTimer();
         log.info("Stopped screen streaming");

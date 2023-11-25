@@ -8,9 +8,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import pl.polsl.screensharing.client.net.ClientDatagramSocket;
 import pl.polsl.screensharing.client.net.ClientTcpSocket;
-import pl.polsl.screensharing.client.state.ClientState;
-import pl.polsl.screensharing.client.state.ConnectionState;
-import pl.polsl.screensharing.client.state.VisibilityState;
 import pl.polsl.screensharing.client.view.ClientWindow;
 import pl.polsl.screensharing.client.view.dialog.ConnectWindow;
 import pl.polsl.screensharing.client.view.dialog.LastConnectionsWindow;
@@ -36,9 +33,6 @@ abstract class AbstractMenuActionController {
     }
 
     public void disconnectFromSession() {
-        final ClientState state = clientWindow.getClientState();
-        final BottomInfobarController bottomInfobarController = clientWindow.getBottomInfobarController();
-
         final int result = JOptionPane.showConfirmDialog(clientWindow, "Are you sure to end up connection?",
             "Please confirm", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 
@@ -47,13 +41,10 @@ abstract class AbstractMenuActionController {
             final ClientTcpSocket clientTcpSocket = clientWindow.getClientTcpSocket();
             if (clientDatagramSocket != null) {
                 clientDatagramSocket.stopAndClear();
-                state.updateVisibilityState(VisibilityState.WAITING_FOR_CONNECTION);
             }
             if (clientTcpSocket != null) {
                 clientTcpSocket.stopAndClear();
             }
-            state.updateConnectionState(ConnectionState.DISCONNECTED);
-            bottomInfobarController.stopConnectionTimer();
             log.info("Disconected from session.");
         }
     }

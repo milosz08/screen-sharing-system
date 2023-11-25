@@ -19,7 +19,7 @@ import java.net.SocketException;
 import java.security.KeyPair;
 
 @Slf4j
-public class ServerTcpSocker extends Thread {
+public class ServerTcpSocket extends Thread {
     private ServerSocket serverSocket;
     private boolean isEstabilished;
     private KeyPair serverKeypair;
@@ -29,7 +29,7 @@ public class ServerTcpSocker extends Thread {
     private final SessionDetails sessionDetails;
     private final ConnectionHandler connectionHandler;
 
-    public ServerTcpSocker(HostWindow hostWindow, ConnectionHandler connectionHandler) {
+    public ServerTcpSocket(HostWindow hostWindow, ConnectionHandler connectionHandler) {
         this.hostWindow = hostWindow;
         serverDatagramSocket = hostWindow.getServerDatagramSocket();
         sessionDetails = hostWindow.getHostState().getLastEmittedSessionDetails();

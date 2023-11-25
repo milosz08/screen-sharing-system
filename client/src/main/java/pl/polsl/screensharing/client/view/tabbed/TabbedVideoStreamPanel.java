@@ -23,7 +23,7 @@ public class TabbedVideoStreamPanel extends AbstractTabbedPanel {
         videoStreamHolder = new JPanel();
         videoCanvas = new VideoCanvas(clientWindow, this);
         connectionStatusPanel = new ConnectionStatusPanel(clientWindow);
-        
+
         videoStreamHolder.add(videoCanvas);
         videoStreamHolder.add(connectionStatusPanel);
 

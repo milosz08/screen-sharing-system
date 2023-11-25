@@ -9,6 +9,7 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject;
 import lombok.Getter;
 import pl.polsl.screensharing.client.model.FastConnectionDetails;
 import pl.polsl.screensharing.client.model.SavedConnection;
+import pl.polsl.screensharing.lib.SharedConstants;
 import pl.polsl.screensharing.lib.state.AbstractDisposableProvider;
 
 import java.util.SortedSet;
@@ -38,7 +39,7 @@ public class ClientState extends AbstractDisposableProvider {
         savedConnections$ = BehaviorSubject.createDefault(new TreeSet<>());
         visibilityState$ = BehaviorSubject.createDefault(VisibilityState.WAITING_FOR_CONNECTION);
         lostFramesCount$ = BehaviorSubject.createDefault(0);
-        frameAspectRatio$ = BehaviorSubject.createDefault((double) (16 / 9));
+        frameAspectRatio$ = BehaviorSubject.createDefault(SharedConstants.DEFAULT_ASPECT_RATIO);
 
         persistedStateLoader.loadApplicationSavedState();
     }

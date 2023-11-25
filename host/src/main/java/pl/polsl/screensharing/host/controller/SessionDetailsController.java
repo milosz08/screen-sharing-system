@@ -10,7 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import pl.polsl.screensharing.host.model.SessionDetails;
 import pl.polsl.screensharing.host.net.ConnectionHandler;
 import pl.polsl.screensharing.host.net.DatagramKeys;
-import pl.polsl.screensharing.host.net.ServerTcpSocker;
+import pl.polsl.screensharing.host.net.ServerTcpSocket;
 import pl.polsl.screensharing.host.state.HostState;
 import pl.polsl.screensharing.host.state.SessionState;
 import pl.polsl.screensharing.host.view.HostWindow;
@@ -44,9 +44,9 @@ public class SessionDetailsController implements ConnectionHandler {
         datagramKeys.generateKeys();
         hostWindow.setDatagramKeys(datagramKeys);
 
-        final ServerTcpSocker serverTcpSocker = new ServerTcpSocker(hostWindow, this);
-        hostWindow.setServerTcpSocker(serverTcpSocker);
-        serverTcpSocker.start();
+        final ServerTcpSocket serverTcpSocket = new ServerTcpSocket(hostWindow, this);
+        hostWindow.setServerTcpSocket(serverTcpSocket);
+        serverTcpSocket.start();
     }
 
     public void closeWindow() {
