@@ -12,7 +12,10 @@ import org.apache.commons.lang3.time.DurationFormatUtils;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
+import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.ServerSocket;
 import java.net.UnknownHostException;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -79,11 +82,23 @@ public class Utils {
         }
     }
 
-    public static int getPortOrDefault(JTextField portComponent) {
-        String port = portComponent.getText();
-        if (port.equals(StringUtils.EMPTY)) {
-            port = String.valueOf(SharedConstants.ROOT_PORT);
+    public static int getRandomPortOrDefault(int defaultPort) {
+        int selectedPort = defaultPort;
+        for (int port = 1024; port <= 65535; port++) {
+            try (
+                final ServerSocket ignored = new ServerSocket(port);
+                final DatagramSocket ignored1 = new DatagramSocket(port)
+            ) {
+                selectedPort = port;
+                break;
+            } catch (IOException ignore) {
+            }
         }
-        return Integer.parseInt(port);
+        return selectedPort;
+    }
+
+    public static InetAddr extractAddrDetails(String merged) {
+        final int separatorPos = merged.indexOf(':');
+        return new InetAddr(merged.substring(0, separatorPos), Integer.parseInt(merged.substring(separatorPos + 1)));
     }
 }

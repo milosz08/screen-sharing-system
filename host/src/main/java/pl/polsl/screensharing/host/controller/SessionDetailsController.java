@@ -66,6 +66,7 @@ public class SessionDetailsController implements ConnectionHandler {
         final JCheckBox showPasswordField = sessionDetailsDialogWindow.getPasswordTogglerCheckbox();
         passwordField.setEnabled(checkBox.isSelected());
         showPasswordField.setEnabled(checkBox.isSelected());
+        resetSaveButtonState();
     }
 
     public void toggleMachineIpAddressField(ActionEvent event) {
@@ -75,6 +76,7 @@ public class SessionDetailsController implements ConnectionHandler {
             ipAddressField.setText(Utils.getMachineAddress());
         }
         ipAddressField.setEnabled(!checkBox.isSelected());
+        resetSaveButtonState();
     }
 
     public void saveConnectionDetails(ActionEvent event) {

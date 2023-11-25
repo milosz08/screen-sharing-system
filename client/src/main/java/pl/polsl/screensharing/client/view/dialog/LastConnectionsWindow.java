@@ -66,8 +66,6 @@ public class LastConnectionsWindow extends AbstractPopupDialog {
         removeRowButton.addActionListener(e -> controller.removeSelectedRow());
         removeAllRowsButton.addActionListener(e -> controller.removeAllRows());
 
-        AppCellEditor.setCellEditor(0, 23, "^\\s*(.*?):(\\d+)\\s*$", table);
-        AppCellEditor.setCellEditor(1, 23, "^\\s*(.*?):(\\d+)\\s*$", table);
         AppCellEditor.setCellEditor(2, 40, "^[0-9a-zA-Z]+$", table);
         AppCellEditor.setCellEditor(3, 100, table);
 
