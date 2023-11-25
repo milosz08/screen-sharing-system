@@ -25,6 +25,7 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
+import java.util.Base64;
 
 @Getter
 public class SessionDetailsDialogWindow extends AbstractPopupDialog {
@@ -85,11 +86,11 @@ public class SessionDetailsDialogWindow extends AbstractPopupDialog {
         ipAddressTextField = new JAppTextField(10, 15, SharedConstants.IPV4_REGEX);
         isMachineIpAddress = new JCheckBox("Get machine IP");
 
-        portLabel = new JLabel("Connection port (optional)");
+        portLabel = new JLabel("Connection port");
         portTextField = new JAppTextField(10, 6, SharedConstants.PORT_REGEX);
 
         passwordPanel = new JPanel();
-        passwordLabel = new JLabel("Password");
+        passwordLabel = new JLabel("Password (optional)");
         passwordTextField = new JAppPasswordTextField(10);
         passwordTogglerCheckbox = new JCheckBox("Show password");
         hasPasswordCheckbox = new JCheckBox("Has Password");
@@ -102,6 +103,7 @@ public class SessionDetailsDialogWindow extends AbstractPopupDialog {
 
         ipAddressTextField.getDocument().addDocumentListener(documentListener);
         portTextField.getDocument().addDocumentListener(documentListener);
+        passwordTextField.getDocument().addDocumentListener(documentListener);
 
         passwordTogglerCheckbox.addActionListener(controller::togglePasswordField);
         isMachineIpAddress.addActionListener(controller::toggleMachineIpAddressField);
@@ -151,7 +153,7 @@ public class SessionDetailsDialogWindow extends AbstractPopupDialog {
             ipAddressTextField.setEnabled(!sessionDetails.isMachineIp());
             isMachineIpAddress.setSelected(sessionDetails.isMachineIp());
             portTextField.setText(sessionDetails.getPortAsStr());
-            passwordTextField.setText(sessionDetails.getPassword());
+            passwordTextField.setText(new String(Base64.getDecoder().decode(sessionDetails.getPassword())));
             passwordTextField.setEnabled(sessionDetails.isHasPassword());
             passwordTogglerCheckbox.setEnabled(sessionDetails.isHasPassword());
             hasPasswordCheckbox.setSelected(sessionDetails.isHasPassword());

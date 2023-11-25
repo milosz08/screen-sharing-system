@@ -66,11 +66,10 @@ abstract class AbstractPopupDialogController implements ConnectionHandler {
     public void onFailure(ConnectionDetails connectionDetails, String message) {
         final ClientState clientState = clientWindow.getClientState();
         clientState.updateConnectionState(ConnectionState.DISCONNECTED);
-
         String errMessage = message;
         if (message == null) {
             errMessage = String.format("Cannot connect with %s:%s. Check connection parameters.",
-                connectionDetails.getIpAddress(), connectionDetails.getPort());
+                connectionDetails.getHostIpAddress(), connectionDetails.getHostPort());
         }
         log.info("Unable to connect with connection details: {}", connectionDetails);
         JOptionPane.showMessageDialog(dialog, errMessage, "Error", JOptionPane.ERROR_MESSAGE);

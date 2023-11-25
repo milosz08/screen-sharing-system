@@ -89,8 +89,8 @@ public class ClientTcpSocket extends Thread {
     }
 
     private Socket createSocket() throws IOException {
-        final String ipAddress = fastConnectionDetails.getIpAddress();
-        final int port = fastConnectionDetails.getPort();
+        final String ipAddress = fastConnectionDetails.getHostIpAddress();
+        final int port = fastConnectionDetails.getHostPort();
         final Socket socket = new Socket();
         socket.connect(new InetSocketAddress(ipAddress, port));
         log.info("Successfully created connection with {}:{} server", ipAddress, port);

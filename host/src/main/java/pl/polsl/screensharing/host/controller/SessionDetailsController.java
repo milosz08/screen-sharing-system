@@ -6,6 +6,7 @@ package pl.polsl.screensharing.host.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import pl.polsl.screensharing.host.model.SessionDetails;
 import pl.polsl.screensharing.host.net.ConnectionHandler;
 import pl.polsl.screensharing.host.net.ServerTcpSocker;
@@ -28,11 +29,14 @@ public class SessionDetailsController implements ConnectionHandler {
 
     public void createSession() {
         final HostState hostState = hostWindow.getHostState();
-
+        if (sessionDetailsDialogWindow.getIpAddressTextField().getText().equals(StringUtils.EMPTY) ||
+            sessionDetailsDialogWindow.getPortTextField().getText().equals(StringUtils.EMPTY)
+        ) {
+            JOptionPane.showMessageDialog(null, "Fill all necesarry fields!", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         final String password = new String(sessionDetailsDialogWindow.getPasswordTextField().getPassword());
-        final SessionDetails sessionDetails = instantiateSessionDetails(password,
-            Utils.getPortOrDefault(sessionDetailsDialogWindow.getPortTextField()));
-
+        final SessionDetails sessionDetails = instantiateSessionDetails(password);
         hostState.updateSessionDetails(sessionDetails);
 
         final ServerTcpSocker serverTcpSocker = new ServerTcpSocker(hostWindow, this);
@@ -77,10 +81,9 @@ public class SessionDetailsController implements ConnectionHandler {
         final HostState hostState = hostWindow.getHostState();
         final JButton saveDetailsButton = (JButton) event.getSource();
 
-        final String encryptedPassword = Base64.getEncoder().encodeToString(new String(sessionDetailsDialogWindow
-            .getPasswordTextField().getPassword()).getBytes());
-        final SessionDetails sessionDetails = instantiateSessionDetails(encryptedPassword,
-            Utils.getPortOrDefault(sessionDetailsDialogWindow.getPortTextField()));
+        final String password = new String(sessionDetailsDialogWindow.getPasswordTextField().getPassword());
+        final SessionDetails sessionDetails = instantiateSessionDetails(Base64.getEncoder()
+            .encodeToString(password.getBytes()));
 
         hostState.updateSessionDetails(sessionDetails);
         hostState.getPersistedStateLoader().persistSessionDetails();

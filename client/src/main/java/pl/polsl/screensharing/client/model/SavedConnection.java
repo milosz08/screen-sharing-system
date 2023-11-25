@@ -18,8 +18,10 @@ import java.util.Objects;
 @NoArgsConstructor
 public class SavedConnection implements Comparable<SavedConnection> {
     private int id;
-    private String ipAddress;
-    private int port;
+    private String hostIpAddress;
+    private int hostPort;
+    private String clientIpAddress;
+    private int clientPort;
     private String username;
     private String description;
 
@@ -37,21 +39,23 @@ public class SavedConnection implements Comparable<SavedConnection> {
             return false;
         }
         SavedConnection that = (SavedConnection) o;
-        return port == that.port && Objects.equals(ipAddress, that.ipAddress)
+        return hostPort == that.hostPort && Objects.equals(hostIpAddress, that.hostIpAddress)
             && Objects.equals(username, that.username);
     }
 
     @Override
     public int hashCode() {
-        return ipAddress.hashCode() * port * username.hashCode() * description.hashCode();
+        return hostIpAddress.hashCode() * hostPort * username.hashCode() * description.hashCode();
     }
 
     @Override
     public String toString() {
         return "{" +
             "id=" + id +
-            ", ipAddress=" + ipAddress +
-            ", port=" + port +
+            ", hostIpAddress=" + hostIpAddress +
+            ", hostPort=" + hostPort +
+            ", clientIpAddress=" + clientIpAddress +
+            ", clientPort=" + clientPort +
             ", username=" + username +
             ", description=" + description.replaceAll("\n", StringUtils.SPACE) +
             '}';
