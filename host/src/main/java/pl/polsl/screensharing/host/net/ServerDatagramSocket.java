@@ -41,6 +41,7 @@ public class ServerDatagramSocket extends Thread {
     private Cipher cipher;
     private QualityLevel qualityLevel;
     private ConcurrentMap<Long, ConnectedClientInfo> connectedClients;
+    private boolean isShowing;
 
     private static final int PACKAGE_SIZE = 32_768; // 32kb
     private static final int BILION = 1_000_000_000;
@@ -137,7 +138,9 @@ public class ServerDatagramSocket extends Thread {
                 logTimer = 0;
             }
             if (timer >= BILION) {
-                hostState.updateSendBytesPerSec(sendBytes);
+                if (isShowing) {
+                    hostState.updateSendBytesPerSec(sendBytes);
+                }
                 log.debug("Host datagram socket processed {} bytes", sendBytes);
                 sendBytes = 0;
                 timer = 0;
@@ -225,6 +228,9 @@ public class ServerDatagramSocket extends Thread {
         });
         hostState.wrapAsDisposable(hostState.getConnectedClientsInfo$(), connectedClients -> {
             this.connectedClients = connectedClients;
+        });
+        hostState.wrapAsDisposable(hostState.isScreenIsShowForParticipants$(), isShowing -> {
+            this.isShowing = isShowing;
         });
     }
 }
