@@ -6,6 +6,7 @@ package pl.polsl.screensharing.host.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import pl.polsl.screensharing.host.net.DatagramKeys;
 import pl.polsl.screensharing.host.net.ServerDatagramSocket;
 import pl.polsl.screensharing.host.state.HostState;
 import pl.polsl.screensharing.host.state.StreamingState;
@@ -28,10 +29,14 @@ abstract class AbstractStreamController {
 
         if (result == JOptionPane.YES_OPTION) {
             final VideoCanvas videoCanvas = hostWindow.getVideoCanvas();
+            final DatagramKeys datagramKeys = hostWindow.getDatagramKeys();
+
             final ServerDatagramSocket serverDatagramSocket = new ServerDatagramSocket(hostWindow,
                 videoCanvas.getController());
+            serverDatagramSocket.createDatagramSocket(datagramKeys.getSecretKey(), datagramKeys.getSecureRandom());
             hostWindow.setServerDatagramSocket(serverDatagramSocket);
             serverDatagramSocket.start();
+
             state.updateStreamingState(StreamingState.STREAMING);
             bottomInfoBarController.startStreamingTimer();
             log.info("Started screen streaming");
