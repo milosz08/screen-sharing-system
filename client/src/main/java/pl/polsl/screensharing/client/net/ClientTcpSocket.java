@@ -213,6 +213,11 @@ public class ClientTcpSocket extends Thread {
             fastConnectionDetails.getHostPort());
         log.info("Stopping TCP connection thread: {}", getName());
         log.debug("Collected detatched thread with TID {} by GC", getName());
+
+        clientState.updateRecvBytesPerSec(0L);
+        clientState.updateVisibilityState(VisibilityState.WAITING_FOR_CONNECTION);
+        clientState.updateConnectionState(ConnectionState.DISCONNECTED);
+
         if (clientDatagramSocket != null) {
             clientDatagramSocket.stopAndClear();
         }

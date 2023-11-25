@@ -6,12 +6,14 @@ package pl.polsl.screensharing.client.net;
 
 import lombok.extern.slf4j.Slf4j;
 import org.imgscalr.Scalr;
+import pl.polsl.screensharing.client.controller.BottomInfobarController;
 import pl.polsl.screensharing.client.controller.VideoCanvasController;
 import pl.polsl.screensharing.client.state.ClientState;
 import pl.polsl.screensharing.client.state.VisibilityState;
 import pl.polsl.screensharing.client.view.ClientWindow;
 import pl.polsl.screensharing.client.view.fragment.VideoCanvas;
 import pl.polsl.screensharing.lib.CryptoUtils;
+import pl.polsl.screensharing.lib.SharedConstants;
 import pl.polsl.screensharing.lib.UnoperableException;
 
 import javax.crypto.Cipher;
@@ -28,12 +30,14 @@ import java.util.Arrays;
 @Slf4j
 public class ClientDatagramSocket extends Thread {
     private final ClientState clientState;
+    private final ClientWindow clientWindow;
     private final VideoCanvas videoCanvas;
     private final VideoCanvasController videoCanvasController;
 
     private DatagramSocket datagramSocket;
     private Cipher cipher;
     private boolean isFetchingData;
+    private VisibilityState visibilityState;
 
     private static final int PACKAGE_SIZE = 32_768; // 32kb
     private static final int BILION = 1_000_000_000;
@@ -41,9 +45,11 @@ public class ClientDatagramSocket extends Thread {
     public ClientDatagramSocket(
         ClientWindow clientWindow, VideoCanvas videoCanvas, VideoCanvasController videoCanvasController
     ) {
+        this.clientWindow = clientWindow;
         clientState = clientWindow.getClientState();
         this.videoCanvas = videoCanvas;
         this.videoCanvasController = videoCanvasController;
+        visibilityState = VisibilityState.WAITING_FOR_CONNECTION;
         initObservables();
     }
 
@@ -144,10 +150,7 @@ public class ClientDatagramSocket extends Thread {
                 timer = 0;
             }
         }
-        log.info("Stopping datagram thread with TID {}", getName());
-        log.debug("Collected detatched thread with TID {} by GC", getName());
-        datagramSocket.disconnect();
-        datagramSocket.close();
+        stopAndClear();
     }
 
     @Override
@@ -170,7 +173,21 @@ public class ClientDatagramSocket extends Thread {
     }
 
     public void stopAndClear() {
+        final BottomInfobarController bottomInfobarController = clientWindow.getBottomInfobarController();
+
+        log.info("Stopping datagram thread with TID {}", getName());
+        log.debug("Collected detatched thread with TID {} by GC", getName());
+
+        if (!visibilityState.equals(VisibilityState.TEMPORARY_HIDDEN)) {
+            clientState.updateVisibilityState(VisibilityState.WAITING_FOR_CONNECTION);
+        }
+        clientState.updateFrameAspectRation(SharedConstants.DEFAULT_ASPECT_RATIO);
+        clientState.updateRecvBytesPerSec(0L);
+        bottomInfobarController.stopConnectionTimer();
+
         isFetchingData = false;
+        datagramSocket.disconnect();
+        datagramSocket.close();
     }
 
     private byte[] decrypt(byte[] encryptedData) throws Exception {
@@ -180,6 +197,7 @@ public class ClientDatagramSocket extends Thread {
     private void initObservables() {
         clientState.wrapAsDisposable(clientState.getVisibilityState$(), visibilityState -> {
             isFetchingData = visibilityState.equals(VisibilityState.VISIBLE);
+            this.visibilityState = visibilityState;
         });
     }
 }

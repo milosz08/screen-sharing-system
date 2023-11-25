@@ -67,10 +67,7 @@ public class ServerTcpSocket extends Thread {
         if (serverDatagramSocket != null) {
             serverDatagramSocket.stopAndClear();
         }
-        isEstabilished = false;
-        if (!serverSocket.isClosed()) {
-            closeSocket();
-        }
+        stopAndClear();
     }
 
     @Override
@@ -91,7 +88,10 @@ public class ServerTcpSocket extends Thread {
     }
 
     public void stopAndClear() {
-        closeSocket();
+        if (!serverSocket.isClosed()) {
+            closeSocket();
+        }
+        hostState.updateSessionState(SessionState.INACTIVE);
         isEstabilished = false;
     }
 
@@ -124,5 +124,11 @@ public class ServerTcpSocket extends Thread {
         serverSocket.setReuseAddress(true);
         serverSocket.bind(new InetSocketAddress(ipAddress, port));
         log.info("TCP server created with details: {}", sessionDetails);
+    }
+
+    private void initObservables() {
+        hostState.wrapAsDisposable(hostState.getConnectedClientsInfo$(), connectedClients -> {
+            this.connectedClients = connectedClients;
+        });
     }
 }

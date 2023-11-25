@@ -6,6 +6,7 @@ package pl.polsl.screensharing.host.net;
 
 import lombok.extern.slf4j.Slf4j;
 import org.imgscalr.Scalr;
+import pl.polsl.screensharing.host.controller.BottomInfobarController;
 import pl.polsl.screensharing.host.controller.VideoCanvasController;
 import pl.polsl.screensharing.host.state.HostState;
 import pl.polsl.screensharing.host.state.QualityLevel;
@@ -24,10 +25,7 @@ import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.net.DatagramSocket;
-import java.net.PortUnreachableException;
-import java.net.SocketException;
-import java.net.SocketTimeoutException;
+import java.net.*;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -145,11 +143,7 @@ public class ServerDatagramSocket extends Thread {
                 timer = 0;
             }
         }
-        log.info("Stopping datagram thread with TID {}", getName());
-        log.debug("Collected detatched thread with TID {} by GC", getName());
-        datagramSocket.disconnect();
-        datagramSocket.close();
-        hostState.updateStreamingState(StreamingState.STOPPED);
+        stopAndClear();
     }
 
     @Override
@@ -163,6 +157,14 @@ public class ServerDatagramSocket extends Thread {
 
     public void stopAndClear() {
         isSendingData = false;
+        log.info("Stopping datagram thread with TID {}", getName());
+        log.debug("Collected detatched thread with TID {} by GC", getName());
+        datagramSocket.disconnect();
+        datagramSocket.close();
+        final BottomInfobarController bottomInfobarController = hostWindow.getBottomInfobarController();
+        bottomInfobarController.stopSessionTimer();
+        hostState.updateStreamingState(StreamingState.STOPPED);
+        hostState.updateRealFpsBuffer(0);
     }
 
     private long sendPackage(byte[] chunk) throws Exception {
