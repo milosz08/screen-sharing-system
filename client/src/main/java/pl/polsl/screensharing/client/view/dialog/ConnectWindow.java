@@ -32,11 +32,16 @@ public class ConnectWindow extends AbstractPopupDialog {
 
     private final JPanel formPanel;
     private final JPanel rightPanel;
+    private final JPanel rightTopPanel;
     private final JPanel addtlDataPanel;
 
-    private final JPanel basicInfoPanel;
-    private final TitledBorder basicInfoTitledBorder;
-    private final GridBagConstraints basicInfoGridBag;
+    private final JPanel hostDetailsPanel;
+    private final TitledBorder hostDetailsTitledBorder;
+    private final GridBagConstraints hostDetailsGridBag;
+
+    private final JPanel clientDetailsPanel;
+    private final TitledBorder clientDetailsTitledBorder;
+    private final GridBagConstraints clientDetailsGridBag;
 
     private final JPanel additlnInfoPanel;
     private final TitledBorder additionalInfoTitledBorder;
@@ -45,11 +50,21 @@ public class ConnectWindow extends AbstractPopupDialog {
     private final EmptyBorder margin;
     private final Insets gridInset;
 
-    private final JLabel ipAddressLabel;
-    private final JAppTextField ipAddressTextField;
+    private final JLabel hostIpAddressLabel;
+    private final JAppTextField hostIpAddressTextField;
 
-    private final JLabel portLabel;
-    private final JAppTextField portTextField;
+    private final JLabel hostPortLabel;
+    private final JAppTextField hostPortTextField;
+
+    private final JPanel clientIpAddressPanel;
+    private final JLabel clientIpAddressLabel;
+    private final JAppTextField clientIpAddressTextField;
+    private final JCheckBox isClientMachineIpAddressCheckbox;
+
+    private final JPanel clientPortPanel;
+    private final JLabel clientPortLabel;
+    private final JAppTextField clientPortTextField;
+    private final JCheckBox isClientRandomPortCheckbox;
 
     private final JLabel usernameLabel;
     private final JAppTextField usernameTextField;
@@ -78,13 +93,18 @@ public class ConnectWindow extends AbstractPopupDialog {
         controller = new ConnectController(clientWindow, this);
         documentListener = new SimpleDocumentListener(controller::resetSaveButtonState);
 
-        formPanel = new JPanel();
-        rightPanel = new JPanel(new GridLayout(8, 1, 5, 5));
+        formPanel = new JPanel(new FlowLayout());
+        rightPanel = new JPanel(new BorderLayout());
+        rightTopPanel = new JPanel(new GridLayout(3, 1, 0, 5));
         addtlDataPanel = new JPanel(new GridBagLayout());
 
-        basicInfoPanel = new JPanel(new GridBagLayout());
-        basicInfoTitledBorder = new TitledBorder("Connection parameters");
-        basicInfoGridBag = new GridBagConstraints();
+        hostDetailsPanel = new JPanel(new GridBagLayout());
+        hostDetailsTitledBorder = new TitledBorder("Host connection");
+        hostDetailsGridBag = new GridBagConstraints();
+
+        clientDetailsPanel = new JPanel(new GridBagLayout());
+        clientDetailsTitledBorder = new TitledBorder("Client connection");
+        clientDetailsGridBag = new GridBagConstraints();
 
         additlnInfoPanel = new JPanel(new GridBagLayout());
         additionalInfoTitledBorder = new TitledBorder("Additional parameters");
@@ -93,17 +113,27 @@ public class ConnectWindow extends AbstractPopupDialog {
         margin = new EmptyBorder(10, 10, 10, 10);
         gridInset = new Insets(3, 3, 3, 3);
 
-        ipAddressLabel = new JLabel("IP address");
-        ipAddressTextField = new JAppTextField(10, 15, SharedConstants.IPV4_REGEX);
+        hostIpAddressLabel = new JLabel("IP address");
+        hostIpAddressTextField = new JAppTextField(10, 15, SharedConstants.IPV4_REGEX);
 
-        portLabel = new JLabel("Connection port (optional)");
-        portTextField = new JAppTextField(10, 6, SharedConstants.PORT_REGEX);
+        hostPortLabel = new JLabel("Connection port");
+        hostPortTextField = new JAppTextField(10, 6, SharedConstants.PORT_REGEX);
 
-        usernameLabel = new JLabel("Username (optional)");
+        clientIpAddressPanel = new JPanel();
+        clientIpAddressLabel = new JLabel("IP address");
+        clientIpAddressTextField = new JAppTextField(10, 15, SharedConstants.IPV4_REGEX);
+        isClientMachineIpAddressCheckbox = new JCheckBox("Get machine IP");
+
+        clientPortPanel = new JPanel();
+        clientPortLabel = new JLabel("Connection port");
+        clientPortTextField = new JAppTextField(10, 6, SharedConstants.PORT_REGEX);
+        isClientRandomPortCheckbox = new JCheckBox("Get random port");
+
+        usernameLabel = new JLabel("Username");
         usernameTextField = new JAppTextField(10, 50, SharedConstants.USERNAME_REGEX);
 
         passwordPanel = new JPanel();
-        passwordLabel = new JLabel("Password");
+        passwordLabel = new JLabel("Password (optional)");
         passwordTextField = new JAppPasswordTextField(10);
         passwordTogglerCheckbox = new JCheckBox("Show password");
 
@@ -118,12 +148,14 @@ public class ConnectWindow extends AbstractPopupDialog {
 
         initObservables();
 
-        ipAddressTextField.getDocument().addDocumentListener(documentListener);
-        portTextField.getDocument().addDocumentListener(documentListener);
+        hostIpAddressTextField.getDocument().addDocumentListener(documentListener);
+        hostPortTextField.getDocument().addDocumentListener(documentListener);
         usernameTextField.getDocument().addDocumentListener(documentListener);
         descriptionTextArea.getDocument().addDocumentListener(documentListener);
 
         passwordTogglerCheckbox.addActionListener(controller::togglePasswordField);
+        isClientMachineIpAddressCheckbox.addActionListener(controller::toggleMachineIpField);
+        isClientRandomPortCheckbox.addActionListener(controller::toggleRandomPortField);
 
         connectButton.addActionListener(e -> controller.createConnection());
         cancelButton.addActionListener(e -> controller.closeWindow());
@@ -134,16 +166,29 @@ public class ConnectWindow extends AbstractPopupDialog {
 
     @Override
     protected void extendsDialog(JDialog dialog, JPanel rootPanel) {
-        basicInfoPanel.setBorder(new CompoundBorder(basicInfoTitledBorder, margin));
+        hostDetailsPanel.setBorder(new CompoundBorder(hostDetailsTitledBorder, margin));
+        clientDetailsPanel.setBorder(new CompoundBorder(clientDetailsTitledBorder, margin));
         additlnInfoPanel.setBorder(new CompoundBorder(additionalInfoTitledBorder, margin));
 
         passwordPanel.setLayout(new BoxLayout(passwordPanel, BoxLayout.Y_AXIS));
         passwordPanel.add(passwordTextField);
         passwordPanel.add(passwordTogglerCheckbox);
 
-        final GridBagDrawer basicInfoDrawer = new GridBagDrawer(basicInfoPanel, basicInfoGridBag, gridInset);
-        basicInfoDrawer.drawGridBagLabels(ipAddressLabel, portLabel);
-        basicInfoDrawer.drawGridBagInputs(ipAddressTextField, portTextField);
+        clientIpAddressPanel.setLayout(new BoxLayout(clientIpAddressPanel, BoxLayout.Y_AXIS));
+        clientIpAddressPanel.add(clientIpAddressTextField);
+        clientIpAddressPanel.add(isClientMachineIpAddressCheckbox);
+
+        clientPortPanel.setLayout(new BoxLayout(clientPortPanel, BoxLayout.Y_AXIS));
+        clientPortPanel.add(clientPortTextField);
+        clientPortPanel.add(isClientRandomPortCheckbox);
+
+        final GridBagDrawer hostDetailsDrawer = new GridBagDrawer(hostDetailsPanel, hostDetailsGridBag, gridInset);
+        hostDetailsDrawer.drawGridBagLabels(hostIpAddressLabel, hostPortLabel);
+        hostDetailsDrawer.drawGridBagInputs(hostIpAddressTextField, hostPortTextField);
+
+        final GridBagDrawer clientDetailsDrawer = new GridBagDrawer(clientDetailsPanel, clientDetailsGridBag, gridInset);
+        clientDetailsDrawer.drawGridBagLabels(clientIpAddressLabel, clientPortLabel);
+        clientDetailsDrawer.drawGridBagInputs(clientIpAddressPanel, clientPortPanel);
 
         final GridBagDrawer addtlnInfoDrawer = new GridBagDrawer(addtlDataPanel, addtlnInfoGridBag, gridInset);
         addtlnInfoDrawer.drawGridBagLabels(usernameLabel, passwordLabel);
@@ -155,18 +200,16 @@ public class ConnectWindow extends AbstractPopupDialog {
         textareaDrawer.drawGridBagLabels(addtlDataPanel, descriptionLabel, descriptionScrollPane);
 
         formPanel.setLayout(new BoxLayout(formPanel, BoxLayout.Y_AXIS));
-        formPanel.add(basicInfoPanel);
+        formPanel.add(hostDetailsPanel);
+        formPanel.add(clientDetailsPanel);
         formPanel.add(additlnInfoPanel);
 
-        rightPanel.add(connectButton);
-        rightPanel.add(saveDetailsButton);
-        rightPanel.add(addToListCheckbox);
+        rightTopPanel.add(connectButton);
+        rightTopPanel.add(saveDetailsButton);
+        rightTopPanel.add(addToListCheckbox);
 
-        for (int i = 0; i < 4; i++) {
-            rightPanel.add(new JPanel());
-        }
-
-        rightPanel.add(cancelButton);
+        rightPanel.add(rightTopPanel, BorderLayout.NORTH);
+        rightPanel.add(cancelButton, BorderLayout.SOUTH);
 
         rootPanel.add(formPanel, BorderLayout.CENTER);
         rootPanel.add(rightPanel, BorderLayout.EAST);
@@ -174,8 +217,14 @@ public class ConnectWindow extends AbstractPopupDialog {
 
     private void initObservables() {
         clientState.wrapAsDisposable(clientState.getFastConnectionDetails$(), fastConnectionsDetails -> {
-            ipAddressTextField.setText(fastConnectionsDetails.getIpAddress());
-            portTextField.setText(fastConnectionsDetails.getPortAsStr());
+            hostIpAddressTextField.setText(fastConnectionsDetails.getHostIpAddress());
+            hostPortTextField.setText(fastConnectionsDetails.getHostPortAsStr());
+            clientIpAddressTextField.setText(fastConnectionsDetails.getClientIpAddress());
+            clientIpAddressTextField.setEnabled(!fastConnectionsDetails.isMachineIpAddress());
+            isClientMachineIpAddressCheckbox.setSelected(fastConnectionsDetails.isMachineIpAddress());
+            clientPortTextField.setText(fastConnectionsDetails.getClientPortAsStr());
+            clientPortTextField.setEnabled(!fastConnectionsDetails.isRandomPort());
+            isClientRandomPortCheckbox.setSelected(fastConnectionsDetails.isRandomPort());
             usernameTextField.setText(fastConnectionsDetails.getUsername());
             descriptionTextArea.setText(fastConnectionsDetails.getDescription());
         });

@@ -58,7 +58,7 @@ public class VideoParametersPanel extends JPanel {
         stopVideoStreamingButton = new JAppIconButton("Stop stream", HostIcon.APPLICATION_ERROR, false, false);
         showScreenToParticipantsButton = new JAppIconButton("Show screen", HostIcon.OPEN_QUERY, false, false);
         hideScreenToParticipantsButton = new JAppIconButton("Hide screen", HostIcon.STOP_QUERY, false);
-        showParticipantsButton = new JAppIconButton("Show participants", HostIcon.LOOKUP_GROUP_MEMBERS, false);
+        showParticipantsButton = new JAppIconButton("Show participants (0)", HostIcon.LOOKUP_GROUP_MEMBERS, false);
 
         initObservables();
 
@@ -109,6 +109,9 @@ public class VideoParametersPanel extends JPanel {
         hostState.wrapAsDisposable(hostState.isScreenIsShowForParticipants$(), isShowing -> {
             showScreenToParticipantsButton.setEnabled(!isShowing);
             hideScreenToParticipantsButton.setEnabled(isShowing);
+        });
+        hostState.wrapAsDisposable(hostState.getConnectedClientsInfo$(), clients -> {
+            showParticipantsButton.setText(String.format("Show participants (%s)", clients.size()));
         });
     }
 }

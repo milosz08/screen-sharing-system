@@ -12,6 +12,11 @@ import org.apache.commons.lang3.time.DurationFormatUtils;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.UnknownHostException;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Utils {
@@ -67,5 +72,37 @@ public class Utils {
         final double widthS = ((double) scale.width / width) * (int) bounds.getWidth();
         final double heightS = ((double) scale.height / height) * (int) bounds.getHeight();
         return new Rectangle((int) xS, (int) yS, (int) widthS, (int) heightS);
+    }
+
+    public static double calcAspectRatio(JComponent component) {
+        return (double) component.getWidth() / component.getHeight();
+    }
+
+    public static String getMachineAddress() {
+        try {
+            return InetAddress.getLocalHost().getHostAddress();
+        } catch (UnknownHostException ex) {
+            throw new UnoperableException(ex);
+        }
+    }
+
+    public static int getRandomPortOrDefault(int defaultPort) {
+        int selectedPort = defaultPort;
+        for (int port = 1024; port <= 65535; port++) {
+            try (
+                final ServerSocket ignored = new ServerSocket(port);
+                final DatagramSocket ignored1 = new DatagramSocket(port)
+            ) {
+                selectedPort = port;
+                break;
+            } catch (IOException ignore) {
+            }
+        }
+        return selectedPort;
+    }
+
+    public static InetAddr extractAddrDetails(String merged) {
+        final int separatorPos = merged.indexOf(':');
+        return new InetAddr(merged.substring(0, separatorPos), Integer.parseInt(merged.substring(separatorPos + 1)));
     }
 }

@@ -5,29 +5,36 @@
 package pl.polsl.screensharing.host.net;
 
 import lombok.extern.slf4j.Slf4j;
+import org.imgscalr.Scalr;
 import pl.polsl.screensharing.host.controller.VideoCanvasController;
 import pl.polsl.screensharing.host.state.HostState;
 import pl.polsl.screensharing.host.state.QualityLevel;
 import pl.polsl.screensharing.host.state.StreamingState;
 import pl.polsl.screensharing.host.view.HostWindow;
+import pl.polsl.screensharing.lib.CryptoUtils;
 import pl.polsl.screensharing.lib.UnoperableException;
 
 import javax.crypto.Cipher;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageOutputStream;
 import javax.swing.*;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.net.*;
-import java.nio.charset.StandardCharsets;
+import java.net.DatagramSocket;
+import java.net.PortUnreachableException;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 @Slf4j
 public class ServerDatagramSocket extends Thread {
+    private final HostWindow hostWindow;
     private final HostState hostState;
     private final VideoCanvasController videoCanvasController;
 
@@ -35,19 +42,21 @@ public class ServerDatagramSocket extends Thread {
     private DatagramSocket datagramSocket;
     private Cipher cipher;
     private QualityLevel qualityLevel;
+    private ConcurrentMap<Long, ConnectedClientInfo> connectedClients;
 
     private static final int PACKAGE_SIZE = 32_768; // 32kb
     private static final int BILION = 1_000_000_000;
-
-    private static final String SECRET_KEY = "ThisIsASecretKey";
-    private static final String INIT_VECTOR = "RandomInitVector";
+    private static final int MAX_FRAME_WIDTH = 1280;
+    private static final int MAX_FRAME_HEIGHT = 720;
 
     public ServerDatagramSocket(
         HostWindow hostWindow, VideoCanvasController videoCanvasController
     ) {
+        this.hostWindow = hostWindow;
         hostState = hostWindow.getHostState();
         this.videoCanvasController = videoCanvasController;
         qualityLevel = QualityLevel.GOOD;
+        connectedClients = new ConcurrentHashMap<>();
         initObservables();
     }
 
@@ -118,7 +127,7 @@ public class ServerDatagramSocket extends Thread {
                 }
                 sleep(1);
             } catch (SocketTimeoutException | PortUnreachableException ex) {
-                JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(hostWindow, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 log.error("Unexpected network error. Cause: {}", ex.getMessage());
                 break;
             } catch (Exception ignored) {
@@ -145,8 +154,6 @@ public class ServerDatagramSocket extends Thread {
 
     @Override
     public synchronized void start() {
-        createDatagramSocket();
-        initAES();
         isSendingData = true;
         if (!isAlive()) {
             setName("Thread-UDP-" + getId());
@@ -158,13 +165,16 @@ public class ServerDatagramSocket extends Thread {
         isSendingData = false;
     }
 
-    private long sendPackage(byte[] chunk) throws Exception {
-        final DatagramPacket packet = new DatagramPacket(chunk, chunk.length, InetAddress.getByName("localhost"), 7648);
-        datagramSocket.send(packet);
+    private long sendPackage(byte[] chunk) {
+        for (final Map.Entry<Long, ConnectedClientInfo> connectedClient : connectedClients.entrySet()) {
+            final ConnectedClientInfo info = connectedClient.getValue();
+            final DatagramFrameThread thread = new DatagramFrameThread(chunk, datagramSocket, info);
+            thread.start();
+        }
         return chunk.length;
     }
 
-    public long sendEncryptedPackage(byte[] chunk) throws Exception {
+    private long sendEncryptedPackage(byte[] chunk) throws Exception {
         final byte[] encryptedChunk = encrypt(chunk);
         return sendPackage(encryptedChunk);
     }
@@ -173,16 +183,21 @@ public class ServerDatagramSocket extends Thread {
         return cipher.doFinal(rawData);
     }
 
-    public byte[] loadImage() throws IOException {
+    private byte[] loadImage() throws IOException {
         final ByteArrayOutputStream compressed = new ByteArrayOutputStream();
         final ImageOutputStream outputStream = ImageIO.createImageOutputStream(compressed);
+        BufferedImage rawImage = videoCanvasController.getRawImage();
 
         final ImageWriter jpgWriter = ImageIO.getImageWritersByFormatName("JPEG").next();
         final ImageWriteParam jpgWriteParam = jpgWriter.getDefaultWriteParam();
         jpgWriteParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
         jpgWriteParam.setCompressionQuality(qualityLevel.getJpegLevel());
         jpgWriter.setOutput(outputStream);
-        jpgWriter.write(null, new IIOImage(videoCanvasController.getRawImage(), null, null), jpgWriteParam);
+        if (rawImage.getWidth() > MAX_FRAME_WIDTH || rawImage.getHeight() > MAX_FRAME_HEIGHT) {
+            final int newHeight = (int) ((double) MAX_FRAME_WIDTH / rawImage.getWidth() * rawImage.getHeight());
+            rawImage = Scalr.resize(rawImage, MAX_FRAME_WIDTH, newHeight);
+        }
+        jpgWriter.write(null, new IIOImage(rawImage, null, null), jpgWriteParam);
 
         final byte[] compressedData = compressed.toByteArray();
 
@@ -192,23 +207,11 @@ public class ServerDatagramSocket extends Thread {
         return compressedData;
     }
 
-    public void createDatagramSocket() {
+    public void createDatagramSocket(byte[] secretKey, byte[] initVector) {
         try {
+            cipher = CryptoUtils.initEncryptSymAes(secretKey, initVector);
             datagramSocket = new DatagramSocket();
         } catch (SocketException ex) {
-            throw new UnoperableException(ex);
-        }
-    }
-
-    public void initAES() {
-        // tryb AES, CTR - counter mode pozwala na zaszyfrowanie danych o dowolnej długości, bez dopełnienia
-        // potrzebne dla UDP, bo każda ramka musi zostać zaszyfrowana oddzielnie
-        try {
-            final SecretKeySpec secretKeySpec = new SecretKeySpec(SECRET_KEY.getBytes(StandardCharsets.UTF_8), "AES");
-            final IvParameterSpec ivParameterSpec = new IvParameterSpec(INIT_VECTOR.getBytes(StandardCharsets.UTF_8));
-            cipher = Cipher.getInstance("AES/CTR/NoPadding");
-            cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, ivParameterSpec);
-        } catch (Exception ex) {
             throw new UnoperableException(ex);
         }
     }
@@ -216,6 +219,9 @@ public class ServerDatagramSocket extends Thread {
     private void initObservables() {
         hostState.wrapAsDisposable(hostState.getStreamingQualityLevel$(), qualityLevel -> {
             this.qualityLevel = qualityLevel;
+        });
+        hostState.wrapAsDisposable(hostState.getConnectedClientsInfo$(), connectedClients -> {
+            this.connectedClients = connectedClients;
         });
     }
 }

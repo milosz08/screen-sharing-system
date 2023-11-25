@@ -12,6 +12,7 @@ import pl.polsl.screensharing.client.view.ClientIcon;
 import pl.polsl.screensharing.client.view.ClientWindow;
 import pl.polsl.screensharing.lib.AppType;
 import pl.polsl.screensharing.lib.gui.AbstractPopupDialog;
+import pl.polsl.screensharing.lib.gui.CellEditableModel;
 import pl.polsl.screensharing.lib.gui.component.JAppIconButton;
 import pl.polsl.screensharing.lib.gui.icon.LibIcon;
 import pl.polsl.screensharing.lib.gui.input.AppCellEditor;
@@ -25,6 +26,7 @@ public class LastConnectionsWindow extends AbstractPopupDialog {
     private final ClientState clientState;
 
     private final JPanel rightPanel;
+    private final JPanel rightTopPanel;
     private final JScrollPane scrollPane;
 
     private final LastConnectionsController controller;
@@ -34,19 +36,20 @@ public class LastConnectionsWindow extends AbstractPopupDialog {
     private final JAppIconButton removeRowButton;
     private final JAppIconButton removeAllRowsButton;
 
-    private final String[] tableHeaders = { "IP address", "Port", "Username", "Description" };
+    private final String[] tableHeaders = { "Host", "Client", "Username", "Description" };
 
     private final JTable table;
     private final DefaultTableModel tableModel;
 
     public LastConnectionsWindow(ClientWindow clientWindow) {
-        super(AppType.HOST, 650, 210, "Last connections", clientWindow, LastConnectionsWindow.class);
+        super(AppType.HOST, 850, 210, "Last connections", clientWindow, LastConnectionsWindow.class);
         clientState = clientWindow.getClientState();
         controller = new LastConnectionsController(clientWindow, this);
 
-        rightPanel = new JPanel(new GridLayout(5, 1, 5, 5));
+        rightPanel = new JPanel(new BorderLayout());
+        rightTopPanel = new JPanel(new GridLayout(3, 1, 0, 5));
 
-        tableModel = new DefaultTableModel(new Object[][]{}, tableHeaders);
+        tableModel = new CellEditableModel(new Object[][]{}, tableHeaders, 0, 1);
         table = new JTable(tableModel);
 
         scrollPane = new JScrollPane(table);
@@ -63,38 +66,38 @@ public class LastConnectionsWindow extends AbstractPopupDialog {
         removeRowButton.addActionListener(e -> controller.removeSelectedRow());
         removeAllRowsButton.addActionListener(e -> controller.removeAllRows());
 
-        AppCellEditor.setCellEditor(0, 15, "^[0-9.]+$", table);
-        AppCellEditor.setCellEditor(1, 6, "^[0-9]+$", table);
         AppCellEditor.setCellEditor(2, 40, "^[0-9a-zA-Z]+$", table);
         AppCellEditor.setCellEditor(3, 100, table);
 
         table.getSelectionModel().addListSelectionListener(e -> controller.markupSelectedRow());
         table.addPropertyChangeListener(controller::updateLastConnectionsData);
+        table.getTableHeader().setReorderingAllowed(false);
 
         initDialogGui(false);
     }
 
     @Override
     protected void extendsDialog(JDialog dialog, JPanel rootPanel) {
-        setColumnWidth(0, 100);
-        setColumnWidth(1, 60);
+        setColumnWidth(0, 150);
+        setColumnWidth(1, 150);
         setColumnWidth(2, 100);
 
         connectButton.setEnabled(false);
         removeRowButton.setEnabled(false);
 
-        rightPanel.add(connectButton);
-        rightPanel.add(removeRowButton);
-        rightPanel.add(removeAllRowsButton);
-        rightPanel.add(new JPanel());
-        rightPanel.add(cancelButton);
+        rightTopPanel.add(connectButton);
+        rightTopPanel.add(removeRowButton);
+        rightTopPanel.add(removeAllRowsButton);
+
+        rightPanel.add(rightTopPanel, BorderLayout.NORTH);
+        rightPanel.add(cancelButton, BorderLayout.SOUTH);
 
         rootPanel.add(scrollPane, BorderLayout.CENTER);
         rootPanel.add(rightPanel, BorderLayout.EAST);
     }
 
     private void setColumnWidth(int index, int width) {
-        table.getColumnModel().getColumn(index).setMaxWidth(width);
+        table.getColumnModel().getColumn(index).setMinWidth(width);
     }
 
     private void initObservables() {
@@ -105,8 +108,8 @@ public class LastConnectionsWindow extends AbstractPopupDialog {
             }
             for (final SavedConnection savedConnection : savedConnections) {
                 model.addRow(new Object[]{
-                    savedConnection.getIpAddress(),
-                    savedConnection.getPort(),
+                    savedConnection.getHostIpAddress() + ":" + savedConnection.getHostPort(),
+                    savedConnection.getClientIpAddress() + ":" + savedConnection.getClientPort(),
                     savedConnection.getUsername(),
                     savedConnection.getDescription()
                 });

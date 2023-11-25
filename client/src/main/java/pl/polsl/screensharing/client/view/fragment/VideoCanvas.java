@@ -44,6 +44,7 @@ public class VideoCanvas extends JPanel {
     }
 
     private void initObservables() {
+        clientState.wrapAsDisposable(clientState.getFrameAspectRatio$(), controller::onResizeWithAspectRatio);
         clientState.wrapAsDisposable(clientState.getVisibilityState$(), visibilityState -> {
             setVisible(visibilityState.equals(VisibilityState.VISIBLE));
         });

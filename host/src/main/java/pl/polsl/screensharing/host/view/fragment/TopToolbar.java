@@ -21,7 +21,6 @@ import javax.swing.*;
 public class TopToolbar extends JToolBar {
     private final HostState hostState;
 
-    private final JAppIconButton sessionParamsButton;
     private final JAppIconButton createSessionButton;
     private final JAppIconButton removeSessionButton;
 
@@ -37,7 +36,6 @@ public class TopToolbar extends JToolBar {
         controller = new TopToolbarController(hostWindow);
         hostState = hostWindow.getHostState();
 
-        sessionParamsButton = new JAppIconButton("Session settings", HostIcon.SERVER_SETTINGS, true);
         createSessionButton = new JAppIconButton("Create session", HostIcon.ADD_LINK, true);
         removeSessionButton = new JAppIconButton("Remove session", HostIcon.REMOVE_LINK, true, false);
 
@@ -49,8 +47,7 @@ public class TopToolbar extends JToolBar {
 
         initObservables();
 
-        sessionParamsButton.addActionListener(e -> controller.openSessionParamsWindow());
-        createSessionButton.addActionListener(e -> controller.createSession());
+        createSessionButton.addActionListener(e -> controller.openSessionDetailsWindow());
         removeSessionButton.addActionListener(e -> controller.removeSession());
 
         startVideoStreamingButton.addActionListener(e -> controller.startVideoStreaming());
@@ -59,8 +56,6 @@ public class TopToolbar extends JToolBar {
         showScreenToParticipantsButton.addActionListener(e -> controller.toggleScreenShowingForParticipants(true));
         hideScreenFromParticipantsButton.addActionListener(e -> controller.toggleScreenShowingForParticipants(false));
 
-        addButtonWithSeparation(sessionParamsButton);
-        addSeparator();
         addButtonWithSeparation(createSessionButton);
         addButtonWithSeparation(removeSessionButton);
         addSeparator();
@@ -81,7 +76,6 @@ public class TopToolbar extends JToolBar {
     private void initObservables() {
         hostState.wrapAsDisposable(hostState.getSessionState$(), state -> {
             final boolean isCreated = state.equals(SessionState.CREATED);
-            sessionParamsButton.setEnabled(!isCreated);
             createSessionButton.setEnabled(!isCreated);
             removeSessionButton.setEnabled(isCreated);
         });

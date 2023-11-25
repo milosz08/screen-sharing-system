@@ -6,9 +6,14 @@ package pl.polsl.screensharing.host.state;
 
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.BehaviorSubject;
+import lombok.Getter;
+import pl.polsl.screensharing.host.model.SessionDetails;
+import pl.polsl.screensharing.host.net.ConnectedClientInfo;
 import pl.polsl.screensharing.lib.state.AbstractDisposableProvider;
 
 import java.awt.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public class HostState extends AbstractDisposableProvider {
     private final BehaviorSubject<StreamingState> streamingState$;
@@ -24,8 +29,16 @@ public class HostState extends AbstractDisposableProvider {
     private final BehaviorSubject<Boolean> isShowingFrameSelector$;
     private final BehaviorSubject<Boolean> isCursorShowing$;
     private final BehaviorSubject<CaptureMode> captureMode$;
+    private final BehaviorSubject<SessionDetails> sessionDetails$;
+    private final BehaviorSubject<ConcurrentMap<Long, ConnectedClientInfo>> connectedClients$;
+
+    @Getter
+    private final PersistedStateLoader persistedStateLoader;
 
     public HostState() {
+        persistedStateLoader = new PersistedStateLoader(this);
+        persistedStateLoader.initPersistor(new PersistedState());
+
         streamingState$ = BehaviorSubject.createDefault(StreamingState.STOPPED);
         streamingTime$ = BehaviorSubject.createDefault(0L);
         sessionState$ = BehaviorSubject.createDefault(SessionState.INACTIVE);
@@ -39,6 +52,10 @@ public class HostState extends AbstractDisposableProvider {
         isShowingFrameSelector$ = BehaviorSubject.createDefault(false);
         isCursorShowing$ = BehaviorSubject.createDefault(true);
         captureMode$ = BehaviorSubject.createDefault(CaptureMode.FULL_FRAME);
+        sessionDetails$ = BehaviorSubject.createDefault(new SessionDetails());
+        connectedClients$ = BehaviorSubject.createDefault(new ConcurrentHashMap<>());
+
+        persistedStateLoader.loadApplicationSavedState();
     }
 
     public void updateStreamingState(StreamingState streamingState) {
@@ -93,6 +110,14 @@ public class HostState extends AbstractDisposableProvider {
         captureMode$.onNext(captureMode);
     }
 
+    public void updateSessionDetails(SessionDetails sessionDetails) {
+        sessionDetails$.onNext(sessionDetails);
+    }
+
+    public void updateConnectedClients(ConcurrentMap<Long, ConnectedClientInfo> connectedClients) {
+        connectedClients$.onNext(connectedClients);
+    }
+
     public Observable<StreamingState> getStreamingState$() {
         return streamingState$.hide();
     }
@@ -145,11 +170,31 @@ public class HostState extends AbstractDisposableProvider {
         return captureMode$.hide();
     }
 
+    public Observable<SessionDetails> getSessionDetails$() {
+        return sessionDetails$.hide();
+    }
+
+    public Observable<ConcurrentMap<Long, ConnectedClientInfo>> getConnectedClientsInfo$() {
+        return connectedClients$.hide();
+    }
+
     public Color getLastEmittedFrameColor() {
         return frameColor$.getValue();
     }
 
     public CaptureMode getLastEmittedCapturedMode() {
         return captureMode$.getValue();
+    }
+
+    public SessionDetails getLastEmittedSessionDetails() {
+        return sessionDetails$.getValue();
+    }
+
+    public ConcurrentMap<Long, ConnectedClientInfo> getLastEmittedConnectedClients() {
+        return connectedClients$.getValue();
+    }
+
+    public StreamingState getLastEmittedStreamingState() {
+        return streamingState$.getValue();
     }
 }

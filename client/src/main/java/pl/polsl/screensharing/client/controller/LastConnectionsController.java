@@ -11,6 +11,8 @@ import pl.polsl.screensharing.client.state.ClientState;
 import pl.polsl.screensharing.client.view.ClientWindow;
 import pl.polsl.screensharing.client.view.dialog.LastConnectionsWindow;
 import pl.polsl.screensharing.client.view.popup.PasswordPopup;
+import pl.polsl.screensharing.lib.InetAddr;
+import pl.polsl.screensharing.lib.Utils;
 
 import javax.swing.*;
 import java.beans.PropertyChangeEvent;
@@ -35,9 +37,13 @@ public class LastConnectionsController extends AbstractPopupDialogController {
         if (password == null) {
             return null;
         }
+        final InetAddr hostConnection = Utils.extractAddrDetails(getTableValue(0));
+        final InetAddr clientConnection = Utils.extractAddrDetails(getTableValue(1));
         return ConnectionDetails.builder()
-            .ipAddress(getTableValue(0))
-            .port(Integer.parseInt(getTableValue(1)))
+            .hostIpAddress(hostConnection.getIpAddress())
+            .hostPort(hostConnection.getPort())
+            .clientIpAddress(clientConnection.getIpAddress())
+            .clientPort(clientConnection.getPort())
             .username(getTableValue(2))
             .password(password)
             .build();
@@ -53,12 +59,12 @@ public class LastConnectionsController extends AbstractPopupDialogController {
 
         final int selectedRow = table.getSelectedRow();
 
-        final String ip = getTableValue(0);
-        final String port = getTableValue(1);
+        final String hostAddress = getTableValue(0);
+        final String clientAddress = getTableValue(1);
 
         final int result = JOptionPane.showConfirmDialog(lastConnectionsWindow,
-            String.format("Are you sure to remove saved connection: %s:%s?", ip, port),
-            "Please confirm", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+            String.format("Are you sure to remove saved connection: h: %s, c: %s?", hostAddress, clientAddress),
+            "Please confirm", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 
         if (result != JOptionPane.YES_OPTION) {
             return;
@@ -92,7 +98,7 @@ public class LastConnectionsController extends AbstractPopupDialogController {
 
         final int result = JOptionPane.showConfirmDialog(lastConnectionsWindow,
             "Are you sure to remove all saved connections?",
-            "Please confirm", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+            "Please confirm", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 
         if (result != JOptionPane.YES_OPTION) {
             return;
@@ -111,10 +117,14 @@ public class LastConnectionsController extends AbstractPopupDialogController {
             return;
         }
         for (int i = 0; i < table.getRowCount(); i++) {
+            final InetAddr hostConnection = Utils.extractAddrDetails((String) table.getValueAt(i, 0));
+            final InetAddr clientConnection = Utils.extractAddrDetails((String) table.getValueAt(i, 1));
             final SavedConnection savedConnection = SavedConnection.builder()
                 .id(i)
-                .ipAddress((String) table.getValueAt(i, 0))
-                .port(Integer.parseInt(String.valueOf(table.getValueAt(i, 1))))
+                .hostIpAddress(hostConnection.getIpAddress())
+                .hostPort(hostConnection.getPort())
+                .clientIpAddress(clientConnection.getIpAddress())
+                .clientPort(clientConnection.getPort())
                 .username((String) table.getValueAt(i, 2))
                 .description((String) table.getValueAt(i, 3))
                 .build();

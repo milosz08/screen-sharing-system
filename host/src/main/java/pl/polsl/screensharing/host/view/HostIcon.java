@@ -15,12 +15,13 @@ public enum HostIcon implements AppIcon {
     APPLICATION_ERROR("ApplicationError"),
     CLOAK_OR_HIDE("CloakOrHide"),
     CURSOR("Cursor"),
+    IN_USER_BY_OTHER_USER("InUseByOtherUser"),
     DEBUG_INTERACTIVE_WINDOW("DebugInteractiveWindow"),
     LOOKUP_GROUP_MEMBERS("LookupGroupMembers"),
     OPEN_QUERY("OpenQuery"),
     REMOVE_LINK("RemoveLink"),
-    SERVER_SETTINGS("ServerSettings"),
     STOP_QUERY("StopQuery"),
+    TEAM_PROJECT_COLLECTION_OFFLINE("TeamProjectCollectionOffline"),
     VISIBLE("Visible"),
     ;
 

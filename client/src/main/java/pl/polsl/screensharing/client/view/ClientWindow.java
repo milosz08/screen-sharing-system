@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import pl.polsl.screensharing.client.controller.BottomInfobarController;
 import pl.polsl.screensharing.client.net.ClientDatagramSocket;
+import pl.polsl.screensharing.client.net.ClientTcpSocket;
 import pl.polsl.screensharing.client.state.ClientState;
 import pl.polsl.screensharing.client.view.dialog.AboutDialogWindow;
 import pl.polsl.screensharing.client.view.dialog.ConnectWindow;
@@ -40,6 +41,8 @@ public class ClientWindow extends AbstractRootFrame {
 
     @Setter
     private ClientDatagramSocket clientDatagramSocket;
+    @Setter
+    private ClientTcpSocket clientTcpSocket;
 
     public ClientWindow(ClientState clientState) {
         super(AppType.CLIENT, clientState, ClientWindow.class);

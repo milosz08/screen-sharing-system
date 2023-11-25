@@ -11,11 +11,10 @@ import pl.polsl.screensharing.client.state.ClientState;
 import pl.polsl.screensharing.client.state.VisibilityState;
 import pl.polsl.screensharing.client.view.ClientWindow;
 import pl.polsl.screensharing.client.view.fragment.VideoCanvas;
+import pl.polsl.screensharing.lib.CryptoUtils;
 import pl.polsl.screensharing.lib.UnoperableException;
 
 import javax.crypto.Cipher;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -24,7 +23,6 @@ import java.io.ByteArrayOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 @Slf4j
@@ -39,9 +37,6 @@ public class ClientDatagramSocket extends Thread {
 
     private static final int PACKAGE_SIZE = 32_768; // 32kb
     private static final int BILION = 1_000_000_000;
-
-    private static final String SECRET_KEY = "ThisIsASecretKey";
-    private static final String INIT_VECTOR = "RandomInitVector";
 
     public ClientDatagramSocket(
         ClientWindow clientWindow, VideoCanvas videoCanvas, VideoCanvasController videoCanvasController
@@ -158,11 +153,19 @@ public class ClientDatagramSocket extends Thread {
     @Override
     public synchronized void start() {
         isFetchingData = true;
-        createDatagramSocket();
-        initAES();
         if (!isAlive()) {
             setName("Thread-UDP-" + getId());
             super.start();
+        }
+    }
+
+    public void createDatagramSocket(byte[] secretKey, byte[] initVector, int port) {
+        cipher = CryptoUtils.initDecryptSymAes(secretKey, initVector);
+        try {
+            datagramSocket = new DatagramSocket(port);
+            datagramSocket.setSoTimeout(1000);
+        } catch (SocketException ex) {
+            throw new UnoperableException(ex);
         }
     }
 
@@ -172,26 +175,6 @@ public class ClientDatagramSocket extends Thread {
 
     private byte[] decrypt(byte[] encryptedData) throws Exception {
         return cipher.doFinal(encryptedData);
-    }
-
-    public void createDatagramSocket() {
-        try {
-            datagramSocket = new DatagramSocket(7648);
-            datagramSocket.setSoTimeout(1000);
-        } catch (SocketException ex) {
-            throw new UnoperableException(ex);
-        }
-    }
-
-    public void initAES() {
-        try {
-            final SecretKeySpec secretKeySpec = new SecretKeySpec(SECRET_KEY.getBytes(StandardCharsets.UTF_8), "AES");
-            final IvParameterSpec ivParameterSpec = new IvParameterSpec(INIT_VECTOR.getBytes(StandardCharsets.UTF_8));
-            cipher = Cipher.getInstance("AES/CTR/NoPadding");
-            cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, ivParameterSpec);
-        } catch (Exception ex) {
-            throw new UnoperableException(ex);
-        }
     }
 
     private void initObservables() {

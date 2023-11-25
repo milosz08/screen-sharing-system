@@ -5,13 +5,16 @@
 package pl.polsl.screensharing.client.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import pl.polsl.screensharing.client.model.ConnectionDetails;
 import pl.polsl.screensharing.client.model.FastConnectionDetails;
 import pl.polsl.screensharing.client.model.SavedConnection;
 import pl.polsl.screensharing.client.state.ClientState;
 import pl.polsl.screensharing.client.view.ClientWindow;
 import pl.polsl.screensharing.client.view.dialog.ConnectWindow;
+import pl.polsl.screensharing.lib.Utils;
 import pl.polsl.screensharing.lib.gui.component.JAppPasswordTextField;
+import pl.polsl.screensharing.lib.gui.component.JAppTextField;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -28,14 +31,21 @@ public class ConnectController extends AbstractPopupDialogController {
 
     @Override
     protected ConnectionDetails createConnectionParameters() {
-        final String ipAddress = connectionWindow.getIpAddressTextField().getText();
-        final int port = Integer.parseInt(connectionWindow.getPortTextField().getText());
-        final String username = connectionWindow.getUsernameTextField().getText();
-
+        if (connectionWindow.getHostIpAddressTextField().getText().equals(StringUtils.EMPTY) ||
+            connectionWindow.getHostPortTextField().getText().equals(StringUtils.EMPTY) ||
+            connectionWindow.getClientIpAddressTextField().getText().equals(StringUtils.EMPTY) ||
+            connectionWindow.getClientPortTextField().getText().equals(StringUtils.EMPTY) ||
+            connectionWindow.getUsernameTextField().getText().equals(StringUtils.EMPTY)
+        ) {
+            JOptionPane.showMessageDialog(null, "Fill all necesarry fields!", "Error", JOptionPane.ERROR_MESSAGE);
+            return null;
+        }
         return ConnectionDetails.builder()
-            .ipAddress(ipAddress)
-            .port(port)
-            .username(username)
+            .hostIpAddress(connectionWindow.getHostIpAddressTextField().getText())
+            .hostPort(Integer.parseInt(connectionWindow.getHostPortTextField().getText()))
+            .clientIpAddress(connectionWindow.getClientIpAddressTextField().getText())
+            .clientPort(Integer.parseInt(connectionWindow.getClientPortTextField().getText()))
+            .username(connectionWindow.getUsernameTextField().getText())
             .password(new String(connectionWindow.getPasswordTextField().getPassword()))
             .build();
     }
@@ -48,8 +58,10 @@ public class ConnectController extends AbstractPopupDialogController {
             return;
         }
         final SavedConnection savedConnection = SavedConnection.builder()
-            .ipAddress(connectionDetails.getIpAddress())
-            .port(connectionDetails.getPort())
+            .hostIpAddress(connectionDetails.getHostIpAddress())
+            .hostPort(connectionDetails.getHostPort())
+            .clientIpAddress(connectionDetails.getClientIpAddress())
+            .clientPort(connectionDetails.getClientPort())
             .username(connectionDetails.getUsername())
             .description(connectionWindow.getDescriptionTextArea().getText())
             .build();
@@ -75,8 +87,12 @@ public class ConnectController extends AbstractPopupDialogController {
         final JButton saveDetailsButton = (JButton) event.getSource();
 
         final FastConnectionDetails savedConnDetails = FastConnectionDetails.builder()
-            .ipAddress(connectionWindow.getIpAddressTextField().getText())
-            .port(Integer.parseInt(connectionWindow.getPortTextField().getText()))
+            .hostIpAddress(connectionWindow.getHostIpAddressTextField().getText())
+            .hostPort(Integer.parseInt(connectionWindow.getHostPortTextField().getText()))
+            .clientIpAddress(connectionWindow.getClientIpAddressTextField().getText())
+            .isMachineIpAddress(connectionWindow.getIsClientMachineIpAddressCheckbox().isSelected())
+            .clientPort(Integer.parseInt(connectionWindow.getClientPortTextField().getText()))
+            .isRandomPort(connectionWindow.getIsClientRandomPortCheckbox().isSelected())
             .username(connectionWindow.getUsernameTextField().getText())
             .description(connectionWindow.getDescriptionTextArea().getText())
             .build();
@@ -97,8 +113,26 @@ public class ConnectController extends AbstractPopupDialogController {
     }
 
     public void togglePasswordField(ActionEvent event) {
-        final JAppPasswordTextField passwordField = connectionWindow.getPasswordTextField();
         final JCheckBox checkBox = (JCheckBox) event.getSource();
+        final JAppPasswordTextField passwordField = connectionWindow.getPasswordTextField();
         passwordField.toggleVisibility(checkBox.isSelected());
+    }
+
+    public void toggleMachineIpField(ActionEvent event) {
+        final JCheckBox checkBox = (JCheckBox) event.getSource();
+        final JAppTextField clientIpField = connectionWindow.getClientIpAddressTextField();
+        clientIpField.setEnabled(!checkBox.isSelected());
+        if (checkBox.isSelected()) {
+            clientIpField.setText(Utils.getMachineAddress());
+        }
+    }
+
+    public void toggleRandomPortField(ActionEvent event) {
+        final JCheckBox checkBox = (JCheckBox) event.getSource();
+        final JAppTextField clientPortField = connectionWindow.getClientPortTextField();
+        clientPortField.setEnabled(!checkBox.isSelected());
+        if (checkBox.isSelected()) {
+            clientPortField.setText(String.valueOf(Utils.getRandomPortOrDefault(443)));
+        }
     }
 }
