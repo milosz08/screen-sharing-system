@@ -32,9 +32,11 @@ public class VideoCanvasController {
         final JPanel videoFrameHolder = tabbedVideoStreamPanel.getVideoStreamHolder();
         final Dimension size = Utils
             .calcSizeBaseAspectRatio(videoFrameHolder, aspectRatio);
-        tabbedVideoStreamPanel.getVideoCanvas().setPreferredSize(size);
-        tabbedVideoStreamPanel.getConnectionStatusPanel().setPreferredSize(size);
-        videoFrameHolder.revalidate();
+        if (videoCanvas != null && tabbedVideoStreamPanel.getConnectionStatusPanel() != null) {
+            videoCanvas.setPreferredSize(size);
+            tabbedVideoStreamPanel.getConnectionStatusPanel().setPreferredSize(size);
+            videoFrameHolder.revalidate();
+        }
     }
 
     public void drawContent(Graphics graphics) {

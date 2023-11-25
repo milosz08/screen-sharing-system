@@ -6,7 +6,6 @@ package pl.polsl.screensharing.host.net;
 
 import lombok.extern.slf4j.Slf4j;
 import pl.polsl.screensharing.host.model.SessionDetails;
-import pl.polsl.screensharing.host.state.HostState;
 import pl.polsl.screensharing.host.view.HostWindow;
 import pl.polsl.screensharing.lib.CryptoUtils;
 import pl.polsl.screensharing.lib.UnoperableException;
@@ -25,15 +24,15 @@ public class ServerTcpSocker extends Thread {
     private boolean isEstabilished;
     private KeyPair serverKeypair;
 
-    private final HostState hostState;
+    private final HostWindow hostWindow;
     private final ServerDatagramSocket serverDatagramSocket;
     private final SessionDetails sessionDetails;
     private final ConnectionHandler connectionHandler;
 
     public ServerTcpSocker(HostWindow hostWindow, ConnectionHandler connectionHandler) {
-        hostState = hostWindow.getHostState();
+        this.hostWindow = hostWindow;
         serverDatagramSocket = hostWindow.getServerDatagramSocket();
-        sessionDetails = hostState.getLastEmittedSessionDetails();
+        sessionDetails = hostWindow.getHostState().getLastEmittedSessionDetails();
         this.connectionHandler = connectionHandler;
     }
 
@@ -43,14 +42,8 @@ public class ServerTcpSocker extends Thread {
         try {
             while (isEstabilished) {
                 final Socket clientSocket = serverSocket.accept();
-                final ClientThread clientThread = new ClientThread(clientSocket, hostState, sessionDetails,
-                    connectionHandler, serverKeypair);
-                final ConnectedClientInfo connectedClientInfo = ConnectedClientInfo.builder()
-                    .clientThread(clientThread)
-                    .build();
-                hostState
-                    .getLastEmittedConnectedClients()
-                    .put(clientThread.getId(), connectedClientInfo);
+                final ClientThread clientThread = new ClientThread(clientSocket, hostWindow, sessionDetails,
+                    serverKeypair);
                 clientThread.start();
             }
         } catch (SocketException ignored) {
@@ -58,7 +51,7 @@ public class ServerTcpSocker extends Thread {
             log.error(ex.getMessage());
             JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
-        log.info("Stopping TCP server thread");
+        log.info("Stopping TCP server thread with TID {}", getName());
         log.debug("Collected detatched thread with TID {} by GC", getName());
         if (serverDatagramSocket != null) {
             serverDatagramSocket.stopAndClear();

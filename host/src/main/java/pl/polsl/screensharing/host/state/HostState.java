@@ -193,4 +193,8 @@ public class HostState extends AbstractDisposableProvider {
     public ConcurrentMap<Long, ConnectedClientInfo> getLastEmittedConnectedClients() {
         return connectedClients$.getValue();
     }
+
+    public StreamingState getLastEmittedStreamingState() {
+        return streamingState$.getValue();
+    }
 }

@@ -22,6 +22,7 @@ public class ClientState extends AbstractDisposableProvider {
     private final BehaviorSubject<SortedSet<SavedConnection>> savedConnections$;
     private final BehaviorSubject<VisibilityState> visibilityState$;
     private final BehaviorSubject<Integer> lostFramesCount$;
+    private final BehaviorSubject<Double> frameAspectRatio$;
 
     @Getter
     private final PersistedStateLoader persistedStateLoader;
@@ -37,6 +38,7 @@ public class ClientState extends AbstractDisposableProvider {
         savedConnections$ = BehaviorSubject.createDefault(new TreeSet<>());
         visibilityState$ = BehaviorSubject.createDefault(VisibilityState.WAITING_FOR_CONNECTION);
         lostFramesCount$ = BehaviorSubject.createDefault(0);
+        frameAspectRatio$ = BehaviorSubject.createDefault((double) (16 / 9));
 
         persistedStateLoader.loadApplicationSavedState();
     }
@@ -69,6 +71,10 @@ public class ClientState extends AbstractDisposableProvider {
         lostFramesCount$.onNext(lostFramesCount);
     }
 
+    public void updateFrameAspectRation(double frameAspectRatio) {
+        frameAspectRatio$.onNext(frameAspectRatio);
+    }
+
     public Observable<ConnectionState> getConnectionState$() {
         return connectionState$.hide();
     }
@@ -95,6 +101,10 @@ public class ClientState extends AbstractDisposableProvider {
 
     public Observable<Integer> getLostFramesCount$() {
         return lostFramesCount$.hide();
+    }
+
+    public Observable<Double> getFrameAspectRatio$() {
+        return frameAspectRatio$.hide();
     }
 
     public SortedSet<SavedConnection> getLastEmittedSavedConnections() {

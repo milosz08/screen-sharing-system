@@ -74,6 +74,10 @@ public class Utils {
         return new Rectangle((int) xS, (int) yS, (int) widthS, (int) heightS);
     }
 
+    public static double calcAspectRatio(JComponent component) {
+        return (double) component.getWidth() / component.getHeight();
+    }
+
     public static String getMachineAddress() {
         try {
             return InetAddress.getLocalHost().getHostAddress();

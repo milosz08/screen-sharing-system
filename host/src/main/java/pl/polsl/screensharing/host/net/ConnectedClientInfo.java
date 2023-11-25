@@ -13,4 +13,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ConnectedClientInfo {
     private final ClientThread clientThread;
+    private final String username;
+    private final String ipAddress;
+    private final int udpPort;
 }

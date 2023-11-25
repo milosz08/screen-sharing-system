@@ -7,14 +7,11 @@ package pl.polsl.screensharing.client.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import pl.polsl.screensharing.client.model.ConnectionDetails;
-import pl.polsl.screensharing.client.net.ClientDatagramSocket;
 import pl.polsl.screensharing.client.net.ClientTcpSocket;
 import pl.polsl.screensharing.client.net.ConnectionHandler;
 import pl.polsl.screensharing.client.state.ClientState;
 import pl.polsl.screensharing.client.state.ConnectionState;
-import pl.polsl.screensharing.client.state.VisibilityState;
 import pl.polsl.screensharing.client.view.ClientWindow;
-import pl.polsl.screensharing.client.view.fragment.VideoCanvas;
 import pl.polsl.screensharing.lib.gui.AbstractPopupDialog;
 
 import javax.swing.*;
@@ -46,20 +43,12 @@ abstract class AbstractPopupDialogController implements ConnectionHandler {
     public void onSuccess(ConnectionDetails connectionDetails) {
         final ClientState clientState = clientWindow.getClientState();
         final BottomInfobarController bottomInfobarController = clientWindow.getBottomInfobarController();
-        final VideoCanvas videoCanvas = clientWindow.getVideoCanvas();
 
         clientState.updateConnectionState(ConnectionState.CONNECTED);
         bottomInfobarController.startConnectionTimer();
 
         onSuccessConnect(connectionDetails);
         closeWindow();
-
-        final ClientDatagramSocket clientDatagramSocket = new ClientDatagramSocket(clientWindow, videoCanvas,
-            videoCanvas.getController());
-        clientWindow.setClientDatagramSocket(clientDatagramSocket);
-        // uruchomienie wątku grabbera UDP transmisji danych z hosta
-        clientDatagramSocket.start();
-        clientState.updateVisibilityState(VisibilityState.VISIBLE);
     }
 
     @Override
