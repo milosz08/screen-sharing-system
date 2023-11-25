@@ -40,7 +40,7 @@ abstract class AbstractMenuActionController {
         final BottomInfobarController bottomInfobarController = clientWindow.getBottomInfobarController();
 
         final int result = JOptionPane.showConfirmDialog(clientWindow, "Are you sure to end up connection?",
-            "Please confirm", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+            "Please confirm", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 
         if (result == JOptionPane.YES_OPTION) {
             final ClientDatagramSocket clientDatagramSocket = clientWindow.getClientDatagramSocket();

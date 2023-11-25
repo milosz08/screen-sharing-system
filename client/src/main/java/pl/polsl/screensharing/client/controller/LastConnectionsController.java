@@ -64,7 +64,7 @@ public class LastConnectionsController extends AbstractPopupDialogController {
 
         final int result = JOptionPane.showConfirmDialog(lastConnectionsWindow,
             String.format("Are you sure to remove saved connection: h: %s, c: %s?", hostAddress, clientAddress),
-            "Please confirm", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+            "Please confirm", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 
         if (result != JOptionPane.YES_OPTION) {
             return;
@@ -98,7 +98,7 @@ public class LastConnectionsController extends AbstractPopupDialogController {
 
         final int result = JOptionPane.showConfirmDialog(lastConnectionsWindow,
             "Are you sure to remove all saved connections?",
-            "Please confirm", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+            "Please confirm", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 
         if (result != JOptionPane.YES_OPTION) {
             return;

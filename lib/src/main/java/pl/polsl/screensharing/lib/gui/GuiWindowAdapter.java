@@ -20,8 +20,8 @@ public class GuiWindowAdapter extends WindowAdapter {
 
     @Override
     public void windowClosing(WindowEvent e) {
-        final int result = JOptionPane.showConfirmDialog(frame,
-            "Are you sure to close app?", "Please confirm", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+        final int result = JOptionPane.showConfirmDialog(frame, "Are you sure to close app?",
+            "Please confirm", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
         if (result == JOptionPane.YES_OPTION) {
             disposableProvider.disposeAllSubscriptions();
             System.exit(0);

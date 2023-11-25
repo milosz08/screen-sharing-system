@@ -24,7 +24,7 @@ abstract class AbstractStreamController {
         final BottomInfobarController bottomInfoBarController = hostWindow.getBottomInfobarController();
 
         final int result = JOptionPane.showConfirmDialog(hostWindow, "Are you sure to start streaming your screen?",
-            "Please confirm", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+            "Please confirm", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 
         if (result == JOptionPane.YES_OPTION) {
             final VideoCanvas videoCanvas = hostWindow.getVideoCanvas();

@@ -30,7 +30,7 @@ public class TabbedLogsPanelController {
 
     public void clearText() {
         final int result = JOptionPane.showConfirmDialog(tabbedLogsPanel, "Are you sure to clear console content?",
-            "Please confirm", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+            "Please confirm", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 
         if (result == JOptionPane.YES_OPTION) {
             final JTextArea textArea = JAppTabbedLogsPanel.textArea;
