@@ -165,11 +165,12 @@ public class ServerDatagramSocket extends Thread {
         isSendingData = false;
     }
 
-    private long sendPackage(byte[] chunk) {
+    private long sendPackage(byte[] chunk) throws Exception {
         for (final Map.Entry<Long, ConnectedClientInfo> connectedClient : connectedClients.entrySet()) {
             final ConnectedClientInfo info = connectedClient.getValue();
-            final DatagramFrameThread thread = new DatagramFrameThread(chunk, datagramSocket, info);
-            thread.start();
+            final DatagramPacket packet = new DatagramPacket(chunk, chunk.length,
+                InetAddress.getByName(info.getIpAddress()), info.getUdpPort());
+            datagramSocket.send(packet);
         }
         return chunk.length;
     }
