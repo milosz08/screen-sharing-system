@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  ~ Copyright (c) 2023 by MULTIPLE AUTHORS
+  ~ Part of the CS study course project.
+  -->
+<configuration>
+  <import class="ch.qos.logback.core.rolling.RollingFileAppender"/>
+  <import class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy"/>
+  <import class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy"/>
+
+  <property name="PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} > [%-5p] {%thread} \(%-35.35logger{39}\) : %m%n"/>
+  <property name="PATH" value=".logs/client"/>
+
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>${PATTERN}</pattern>
+    </encoder>
+  </appender>
+
+  <appender name="FILE" class="RollingFileAppender">
+    <file>${PATH}/client.log</file>
+    <append>true</append>
+    <immediateFlush>true</immediateFlush>
+    <rollingPolicy class="SizeAndTimeBasedRollingPolicy">
+      <fileNamePattern>${PATH}/error.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+      <maxFileSize>30MB</maxFileSize>
+      <maxHistory>30</maxHistory>
+      <totalSizeCap>2GB</totalSizeCap>
+    </rollingPolicy>
+    <encoder>
+      <pattern>${PATTERN}</pattern>
+    </encoder>
+  </appender>
+
+  <appender name="SWING" class="pl.polsl.screensharing.lib.LogbackTextAreaAppender"/>
+
+  <root level="info">
+    <appender-ref ref="STDOUT"/>
+    <appender-ref ref="FILE"/>
+    <appender-ref ref="SWING"/>
+  </root>
+</configuration>
