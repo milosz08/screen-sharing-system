@@ -97,10 +97,11 @@ public class SessionDetailsController implements ConnectionHandler {
             "Info", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE);
     }
 
-    private SessionDetails instantiateSessionDetails(String password, int port) {
+    private SessionDetails instantiateSessionDetails(String password) {
         return SessionDetails.builder()
             .ipAddress(sessionDetailsDialogWindow.getIpAddressTextField().getText())
-            .port(port)
+            .port(Integer.parseInt(sessionDetailsDialogWindow.getPortTextField().getText()))
+            .isMachineIp(sessionDetailsDialogWindow.getIsMachineIpAddress().isSelected())
             .hasPassword(sessionDetailsDialogWindow.getHasPasswordCheckbox().isSelected())
             .password(password)
             .build();
