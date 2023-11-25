@@ -12,6 +12,10 @@ public enum SocketState {
     CHECK_PASSWORD_RES,
     SEND_CLIENT_DATA_REQ,
     SEND_CLIENT_DATA_RES,
+    EVENT_START_STREAMING,
+    EVENT_STOP_STREAMING,
+    EVENT_TOGGLE_SCREEN_VISIBILITY,
+    KICK_FROM_SESSION,
     ;
 
     private static final char SEPARATOR = '%';

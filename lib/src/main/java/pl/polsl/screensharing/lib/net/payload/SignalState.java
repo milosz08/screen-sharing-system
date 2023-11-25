@@ -5,24 +5,19 @@
 package pl.polsl.screensharing.lib.net.payload;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import pl.polsl.screensharing.lib.net.StreamingSignalState;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class VideoFrameDetails {
-    private double aspectRatio;
-    private StreamingSignalState streamingSignalState;
+public class SignalState<T> {
+    private T currentState;
 
     @Override
     public String toString() {
         return "{" +
-            "aspectRatio=" + aspectRatio +
-            ", streamingSignalState=" + streamingSignalState +
+            "currentState=" + currentState +
             '}';
     }
 }

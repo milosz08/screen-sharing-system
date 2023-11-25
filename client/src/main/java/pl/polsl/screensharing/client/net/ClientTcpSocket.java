@@ -11,12 +11,14 @@ import lombok.extern.slf4j.Slf4j;
 import pl.polsl.screensharing.client.model.ConnectionDetails;
 import pl.polsl.screensharing.client.model.FastConnectionDetails;
 import pl.polsl.screensharing.client.state.ClientState;
+import pl.polsl.screensharing.client.state.ConnectionState;
 import pl.polsl.screensharing.client.state.VisibilityState;
 import pl.polsl.screensharing.client.view.ClientWindow;
 import pl.polsl.screensharing.client.view.fragment.VideoCanvas;
 import pl.polsl.screensharing.lib.CryptoUtils;
 import pl.polsl.screensharing.lib.UnoperableException;
 import pl.polsl.screensharing.lib.net.SocketState;
+import pl.polsl.screensharing.lib.net.StreamingSignalState;
 import pl.polsl.screensharing.lib.net.payload.AuthPasswordReq;
 import pl.polsl.screensharing.lib.net.payload.AuthPasswordRes;
 import pl.polsl.screensharing.lib.net.payload.ConnectionData;
@@ -38,18 +40,23 @@ import java.security.PublicKey;
 public class ClientTcpSocket extends Thread {
     @Getter
     private Socket clientSocket;
+    @Getter
     private KeyPair clientKeypair;
     private PublicKey serverPublicKey;
     private SocketState socketState;
+    @Getter
     private AuthPasswordRes authPasswordRes;
     private PrintWriter printWriter;
     private BufferedReader bufferedReader;
 
+    @Getter
     private final ClientWindow clientWindow;
+    @Getter
     private final ClientState clientState;
     private final FastConnectionDetails fastConnectionDetails;
     private final ClientDatagramSocket clientDatagramSocket;
     private final ConnectionHandler connectionHandler;
+    @Getter
     private final ConnectionDetails connectionDetails;
     private final ObjectMapper objectMapper;
 
@@ -139,18 +146,18 @@ public class ClientTcpSocket extends Thread {
                     // aspect ratio obrazu
                     case SEND_CLIENT_DATA_RES: {
                         final VideoFrameDetails videoFrameDetails = exchangeSSLResponse(VideoFrameDetails.class);
+                        final StreamingSignalState state = videoFrameDetails.getStreamingSignalState();
 
-                        clientState.updateVisibilityState(videoFrameDetails.isStreaming()
-                            ? VisibilityState.VISIBLE
-                            : VisibilityState.WAITING_FOR_CONNECTION);
-                        connectionHandler.onSuccess(connectionDetails);
+                        clientState.updateVisibilityState(VisibilityState.getBasedSignalState(state));
+                        clientState.updateFrameAspectRation(videoFrameDetails.getAspectRatio());
+
+                        // stworzenie i uruchomienie wątku pętli zdarzeń z hosta
+                        final ReceiveSignalsThread receiveSignalsThread = new ReceiveSignalsThread(this);
+                        receiveSignalsThread.start();
 
                         // uruchomienie wątku grabbera UDP
                         clientWindow.getClientDatagramSocket().start();
-
-                        // stworzenie i uruchomienie wątku pętli zdarzeń z hosta
-                        final ReceiveEventsThread receiveEventsThread = new ReceiveEventsThread(this);
-                        receiveEventsThread.start();
+                        connectionHandler.onSuccess(connectionDetails);
 
                         socketState = SocketState.WAITING;
                         log.info("Successfully got video frame details {}", videoFrameDetails);

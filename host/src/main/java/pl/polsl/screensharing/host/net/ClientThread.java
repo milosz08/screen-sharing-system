@@ -6,6 +6,7 @@ package pl.polsl.screensharing.host.net;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import pl.polsl.screensharing.host.model.SessionDetails;
 import pl.polsl.screensharing.host.state.HostState;
@@ -14,6 +15,7 @@ import pl.polsl.screensharing.host.view.HostWindow;
 import pl.polsl.screensharing.lib.CryptoUtils;
 import pl.polsl.screensharing.lib.Utils;
 import pl.polsl.screensharing.lib.net.SocketState;
+import pl.polsl.screensharing.lib.net.StreamingSignalState;
 import pl.polsl.screensharing.lib.net.payload.AuthPasswordReq;
 import pl.polsl.screensharing.lib.net.payload.AuthPasswordRes;
 import pl.polsl.screensharing.lib.net.payload.ConnectionData;
@@ -33,13 +35,16 @@ import java.util.function.Function;
 
 @Slf4j
 public class ClientThread extends Thread {
+    @Getter
     private final Socket socket;
     private final HostWindow hostWindow;
     private final HostState hostState;
     private final SessionDetails sessionDetails;
     private final KeyPair serverKeyPair;
     private final ObjectMapper objectMapper;
+    private final SendSignalsThread sendSignalsThread;
 
+    @Getter
     private PublicKey clientPublicKey;
     private SocketState socketState;
     private PrintWriter printWriter;
@@ -52,6 +57,7 @@ public class ClientThread extends Thread {
         this.serverKeyPair = serverKeyPair;
         socketState = SocketState.WAITING;
         objectMapper = new ObjectMapper();
+        sendSignalsThread = new SendSignalsThread(this, hostWindow);
     }
 
     @Override
@@ -74,16 +80,26 @@ public class ClientThread extends Thread {
         } catch (Exception ex) {
             log.error(ex.getMessage());
         }
-        log.info("Stopping TCP client thread");
-        log.debug("Collected detatched thread with TID {} by GC", getName());
-        final ConcurrentMap<Long, ConnectedClientInfo> allClients = hostState.getLastEmittedConnectedClients();
-        final ConnectedClientInfo removed = allClients.remove(getId());
-        hostState.updateConnectedClients(allClients);
-        log.info("Removed user with details {} from all connected users list", removed);
-        try {
-            socket.close();
-        } catch (IOException ignore) {
+        stopAndClose();
+    }
+
+    public void sendSignalEvent(SocketState eventSignalState) {
+        sendSignalsThread.setEventSignalState(eventSignalState);
+    }
+
+    public StreamingSignalState determinateStreamingState() {
+        StreamingSignalState streamingSignalState;
+        final StreamingState streamingState = hostState.getLastEmittedStreamingState();
+        final Boolean isShowing = hostState.getLastEmittedIsScreenIsShowForParticipants();
+        // jeśli streamowanie jest aktywne a ekran nie jest ukryty
+        if (streamingState.equals(StreamingState.STREAMING)) {
+            streamingSignalState = isShowing
+                ? StreamingSignalState.STREAMING
+                : StreamingSignalState.SCREEN_HIDDEN;
+        } else {
+            streamingSignalState = StreamingSignalState.STOPPED;
         }
+        return streamingSignalState;
     }
 
     private void authenticationEventLoop(String data) throws Exception {
@@ -93,7 +109,7 @@ public class ClientThread extends Thread {
                 clientPublicKey = CryptoUtils.base64ToPublicKey(data);
                 final String keyEnc = CryptoUtils.publicKeyToBase64(serverKeyPair.getPublic());
                 printWriter.println(keyEnc);
-                log.info("(To-way exchange) Save client public key and send server public key to the client");
+                log.info("(to-way exchange) Save client public key and send server public key to the client");
                 break;
             }
             // porównanie nadesłanego hasza hasła od klienta z hasłem sesji i wysłanie zestawu kluczy do szyfrowania
@@ -107,13 +123,16 @@ public class ClientThread extends Thread {
                             .verified;
                     }
                     final DatagramKeys datagramKeys = hostWindow.getDatagramKeys();
-                    return AuthPasswordRes.builder()
-                        .isValid(isValid)
+                    final AuthPasswordRes.AuthPasswordResBuilder builder = AuthPasswordRes.builder().isValid(isValid);
+                    if (!isValid) {
+                        return builder.build();
+                    }
+                    return builder
                         .secretKeyUdp(datagramKeys.getSecretKey())
                         .secureRandomUdp(datagramKeys.getSecureRandom())
                         .build();
                 }, rawResponse -> {
-                    log.info("(To-way exchange) Checked client password with result: {}", rawResponse);
+                    log.info("(to-way exchange) Checked client password with result: {}", rawResponse);
                 }, AuthPasswordReq.class);
                 break;
             }
@@ -133,13 +152,15 @@ public class ClientThread extends Thread {
                     allClients.put(getId(), connectedClientInfo);
                     hostState.updateConnectedClients(allClients);
 
-                    final StreamingState streamingState = hostState.getLastEmittedStreamingState();
+                    // uruchomienie wątku wysyłającego zdarzenia do klientów poprzez event-loop
+                    sendSignalsThread.start();
+
                     return VideoFrameDetails.builder()
-                        .aspectRatio(Utils.calcAspectRatio(hostWindow.getVideoCanvas()))
-                        .isStreaming(streamingState.equals(StreamingState.STREAMING))
+                        .aspectRatio(Utils.calcAspectRatio(hostWindow.getVideoCanvas().getController().getRawImage()))
+                        .streamingSignalState(determinateStreamingState())
                         .build();
                 }, rawResponse -> {
-                    log.info("(To-way exchange) Persist client connection details {}", rawResponse);
+                    log.info("(to-way exchange) Persist client connection details {}", rawResponse);
                 }, ConnectionData.class);
                 break;
             }
@@ -162,6 +183,19 @@ public class ClientThread extends Thread {
         setName("Thread-TCP-Client-" + getId());
         if (!isAlive()) {
             super.start();
+        }
+    }
+
+    public void stopAndClose() {
+        log.info("Stopping TCP client thread");
+        log.debug("Collected detatched thread with TID {} by GC", getName());
+        final ConcurrentMap<Long, ConnectedClientInfo> allClients = hostState.getLastEmittedConnectedClients();
+        final ConnectedClientInfo removed = allClients.remove(getId());
+        hostState.updateConnectedClients(allClients);
+        log.info("Removed user with details {} from all connected users list", removed);
+        try {
+            socket.close();
+        } catch (IOException ignore) {
         }
     }
 }

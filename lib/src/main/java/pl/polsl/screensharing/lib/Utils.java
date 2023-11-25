@@ -12,6 +12,7 @@ import org.apache.commons.lang3.time.DurationFormatUtils;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -74,8 +75,8 @@ public class Utils {
         return new Rectangle((int) xS, (int) yS, (int) widthS, (int) heightS);
     }
 
-    public static double calcAspectRatio(JComponent component) {
-        return (double) component.getWidth() / component.getHeight();
+    public static double calcAspectRatio(BufferedImage bufferedImage) {
+        return (double) bufferedImage.getWidth() / bufferedImage.getHeight();
     }
 
     public static String getMachineAddress() {

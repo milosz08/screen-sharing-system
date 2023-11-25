@@ -15,4 +15,5 @@ public class SharedConstants {
 
     public static final int DEFAULT_PORT = 9092;
     public static final String DEFAULT_USERNAME = "user";
+    public static final double DEFAULT_ASPECT_RATIO = 16.0 / 9.0;
 }

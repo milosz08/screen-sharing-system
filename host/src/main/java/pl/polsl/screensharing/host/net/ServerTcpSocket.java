@@ -6,9 +6,12 @@ package pl.polsl.screensharing.host.net;
 
 import lombok.extern.slf4j.Slf4j;
 import pl.polsl.screensharing.host.model.SessionDetails;
+import pl.polsl.screensharing.host.state.HostState;
+import pl.polsl.screensharing.host.state.SessionState;
 import pl.polsl.screensharing.host.view.HostWindow;
 import pl.polsl.screensharing.lib.CryptoUtils;
 import pl.polsl.screensharing.lib.UnoperableException;
+import pl.polsl.screensharing.lib.net.SocketState;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -17,23 +20,31 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.security.KeyPair;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 @Slf4j
 public class ServerTcpSocket extends Thread {
     private ServerSocket serverSocket;
     private boolean isEstabilished;
     private KeyPair serverKeypair;
+    private ConcurrentMap<Long, ConnectedClientInfo> connectedClients;
 
     private final HostWindow hostWindow;
+    private final HostState hostState;
     private final ServerDatagramSocket serverDatagramSocket;
     private final SessionDetails sessionDetails;
     private final ConnectionHandler connectionHandler;
 
     public ServerTcpSocket(HostWindow hostWindow, ConnectionHandler connectionHandler) {
         this.hostWindow = hostWindow;
+        hostState = hostWindow.getHostState();
         serverDatagramSocket = hostWindow.getServerDatagramSocket();
         sessionDetails = hostWindow.getHostState().getLastEmittedSessionDetails();
         this.connectionHandler = connectionHandler;
+        connectedClients = new ConcurrentHashMap<>();
+        initObservables();
     }
 
     @Override
@@ -82,6 +93,20 @@ public class ServerTcpSocket extends Thread {
     public void stopAndClear() {
         closeSocket();
         isEstabilished = false;
+    }
+
+    public void sendSignalToAllClients(SocketState socketState) {
+        for (final Map.Entry<Long, ConnectedClientInfo> connectedClientInfoEntry : connectedClients.entrySet()) {
+            final ClientThread clientThread = connectedClientInfoEntry.getValue().getClientThread();
+            if (clientThread != null) {
+                clientThread.sendSignalEvent(socketState);
+            }
+        }
+    }
+
+    public void sendSignalToClient(SocketState socketState, Long threadId) {
+        final ConnectedClientInfo connectedClientInfo = connectedClients.get(threadId);
+        connectedClientInfo.getClientThread().sendSignalEvent(socketState);
     }
 
     private void closeSocket() {

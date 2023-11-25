@@ -10,6 +10,7 @@ import pl.polsl.screensharing.host.net.ConnectedClientInfo;
 import pl.polsl.screensharing.host.state.HostState;
 import pl.polsl.screensharing.host.view.HostWindow;
 import pl.polsl.screensharing.host.view.dialog.ParticipantsDialogWindow;
+import pl.polsl.screensharing.lib.net.SocketState;
 
 import javax.swing.*;
 import java.util.Optional;
@@ -41,8 +42,7 @@ public class ParticipantsController {
         if (selectedRow < 0 || selectedRow >= sessionParticipants.size()) {
             return;
         }
-        final Long threadId = Long.valueOf((String) table.getModel().getValueAt(selectedRow, 0));
-
+        final Long threadId = (long) table.getModel().getValueAt(selectedRow, 0);
         final Optional<Long> removedOptional = sessionParticipants.keySet().stream()
             .filter(connectedClientInfo -> connectedClientInfo.equals(threadId))
             .findFirst();
@@ -50,10 +50,9 @@ public class ParticipantsController {
             return;
         }
         final Long removed = removedOptional.get();
+        hostWindow.getServerTcpSocket().sendSignalToClient(SocketState.KICK_FROM_SESSION, removed);
+
         sessionParticipants.remove(removed);
-
-        // TODO: remove selected participant from session base Thread ID
-
         hostState.updateConnectedClients(sessionParticipants);
 
         log.info("Removed last connection: {}.", removed);
@@ -71,7 +70,7 @@ public class ParticipantsController {
         if (result != JOptionPane.YES_OPTION) {
             return;
         }
-        // TODO: remove all participants from session
+        hostWindow.getServerTcpSocket().sendSignalToAllClients(SocketState.KICK_FROM_SESSION);
         log.info("Kicked all {} participants.", participantsSize);
     }
 

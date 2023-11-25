@@ -197,4 +197,8 @@ public class HostState extends AbstractDisposableProvider {
     public StreamingState getLastEmittedStreamingState() {
         return streamingState$.getValue();
     }
+
+    public Boolean getLastEmittedIsScreenIsShowForParticipants() {
+        return isScreenShowForParticipants$.getValue();
+    }
 }

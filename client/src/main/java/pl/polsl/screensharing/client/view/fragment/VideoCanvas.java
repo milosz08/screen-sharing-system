@@ -21,6 +21,8 @@ public class VideoCanvas extends JPanel {
     private final ClientState clientState;
     private final VideoCanvasController controller;
 
+    private double aspectRatio;
+
     public VideoCanvas(ClientWindow clientWindow, TabbedVideoStreamPanel tabbedVideoStreamPanel) {
         this.clientWindow = clientWindow;
         clientState = clientWindow.getClientState();
@@ -33,7 +35,7 @@ public class VideoCanvas extends JPanel {
         setVisible(false);
 
         clientWindow.addComponentListener(new ResizeComponentAdapter(() -> {
-            controller.onResizeWithAspectRatio(16.0 / 9.0);
+            controller.onResizeWithAspectRatio(aspectRatio);
         }));
     }
 
@@ -44,7 +46,10 @@ public class VideoCanvas extends JPanel {
     }
 
     private void initObservables() {
-        clientState.wrapAsDisposable(clientState.getFrameAspectRatio$(), controller::onResizeWithAspectRatio);
+        clientState.wrapAsDisposable(clientState.getFrameAspectRatio$(), aspectRatio -> {
+            controller.onResizeWithAspectRatio(aspectRatio);
+            this.aspectRatio = aspectRatio;
+        });
         clientState.wrapAsDisposable(clientState.getVisibilityState$(), visibilityState -> {
             setVisible(visibilityState.equals(VisibilityState.VISIBLE));
         });
