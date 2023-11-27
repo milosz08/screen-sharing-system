@@ -8,7 +8,7 @@ import lombok.Getter;
 import pl.polsl.screensharing.lib.AppType;
 import pl.polsl.screensharing.lib.controller.TabbedLogsPanelController;
 import pl.polsl.screensharing.lib.gui.component.JAppIconButton;
-import pl.polsl.screensharing.lib.gui.icon.LibIcon;
+import pl.polsl.screensharing.lib.icon.LibIcon;
 
 import javax.swing.*;
 import java.awt.*;

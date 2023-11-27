@@ -15,7 +15,7 @@ import pl.polsl.screensharing.host.view.HostWindow;
 import pl.polsl.screensharing.host.view.fragment.VideoCanvas;
 import pl.polsl.screensharing.host.view.tabbed.TabbedScreenFramePanel;
 import pl.polsl.screensharing.lib.Utils;
-import pl.polsl.screensharing.lib.gui.file.FileUtils;
+import pl.polsl.screensharing.lib.file.FileUtils;
 import pl.polsl.screensharing.lib.thread.AbstractPerTickRunner;
 
 import javax.swing.*;

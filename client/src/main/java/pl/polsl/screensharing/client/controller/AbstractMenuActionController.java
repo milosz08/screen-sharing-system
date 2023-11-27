@@ -13,7 +13,7 @@ import pl.polsl.screensharing.client.view.dialog.ConnectWindow;
 import pl.polsl.screensharing.client.view.dialog.LastConnectionsWindow;
 import pl.polsl.screensharing.client.view.dialog.SessionInfoDialogWindow;
 import pl.polsl.screensharing.lib.Utils;
-import pl.polsl.screensharing.lib.gui.file.FileUtils;
+import pl.polsl.screensharing.lib.file.FileUtils;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;

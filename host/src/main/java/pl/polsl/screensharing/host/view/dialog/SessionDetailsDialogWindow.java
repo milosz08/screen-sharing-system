@@ -17,7 +17,7 @@ import pl.polsl.screensharing.lib.gui.GridBagDrawer;
 import pl.polsl.screensharing.lib.gui.component.JAppIconButton;
 import pl.polsl.screensharing.lib.gui.component.JAppPasswordTextField;
 import pl.polsl.screensharing.lib.gui.component.JAppTextField;
-import pl.polsl.screensharing.lib.gui.icon.LibIcon;
+import pl.polsl.screensharing.lib.icon.LibIcon;
 import pl.polsl.screensharing.lib.gui.input.SimpleDocumentListener;
 
 import javax.swing.*;

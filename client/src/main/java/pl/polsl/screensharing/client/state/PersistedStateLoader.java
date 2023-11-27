@@ -6,7 +6,7 @@ package pl.polsl.screensharing.client.state;
 
 import lombok.extern.slf4j.Slf4j;
 import pl.polsl.screensharing.lib.AppType;
-import pl.polsl.screensharing.lib.gui.file.AbstractPersistorStateLoader;
+import pl.polsl.screensharing.lib.file.AbstractPersistorStateLoader;
 
 @Slf4j
 public class PersistedStateLoader extends AbstractPersistorStateLoader<ClientState> {

@@ -20,7 +20,7 @@ import pl.polsl.screensharing.host.view.fragment.VideoCanvas;
 import pl.polsl.screensharing.host.view.tabbed.TabbedPaneWindow;
 import pl.polsl.screensharing.lib.AppType;
 import pl.polsl.screensharing.lib.gui.AbstractRootFrame;
-import pl.polsl.screensharing.lib.gui.file.FileUtils;
+import pl.polsl.screensharing.lib.file.FileUtils;
 
 import javax.swing.*;
 import java.awt.*;

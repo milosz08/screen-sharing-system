@@ -11,7 +11,7 @@ import pl.polsl.screensharing.client.state.ConnectionState;
 import pl.polsl.screensharing.client.view.ClientIcon;
 import pl.polsl.screensharing.client.view.ClientWindow;
 import pl.polsl.screensharing.lib.gui.component.JAppIconButton;
-import pl.polsl.screensharing.lib.gui.icon.LibIcon;
+import pl.polsl.screensharing.lib.icon.LibIcon;
 
 import javax.swing.*;
 

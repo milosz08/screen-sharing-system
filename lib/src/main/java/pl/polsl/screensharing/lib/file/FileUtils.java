@@ -2,7 +2,7 @@
  * Copyright (c) 2023 by MULTIPLE AUTHORS
  * Part of the CS study course project.
  */
-package pl.polsl.screensharing.lib.gui.file;
+package pl.polsl.screensharing.lib.file;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -11,7 +11,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
 import pl.polsl.screensharing.lib.AppType;
-import pl.polsl.screensharing.lib.gui.icon.AppIcon;
+import pl.polsl.screensharing.lib.icon.AppIcon;
 
 import javax.swing.*;
 import java.awt.*;

@@ -7,8 +7,8 @@ package pl.polsl.screensharing.lib.gui.fragment;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import pl.polsl.screensharing.lib.gui.file.Alignment;
-import pl.polsl.screensharing.lib.gui.file.FileUtils;
+import pl.polsl.screensharing.lib.file.Alignment;
+import pl.polsl.screensharing.lib.file.FileUtils;
 
 import javax.swing.*;
 import java.time.LocalDate;

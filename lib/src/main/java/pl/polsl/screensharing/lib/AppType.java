@@ -6,7 +6,7 @@ package pl.polsl.screensharing.lib;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import pl.polsl.screensharing.lib.gui.file.FileUtils;
+import pl.polsl.screensharing.lib.file.FileUtils;
 
 import java.awt.*;
 import java.util.Optional;

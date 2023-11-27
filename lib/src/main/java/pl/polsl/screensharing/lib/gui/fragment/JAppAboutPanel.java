@@ -9,8 +9,8 @@ import org.apache.commons.lang3.StringUtils;
 import pl.polsl.screensharing.lib.AppType;
 import pl.polsl.screensharing.lib.SystemProp;
 import pl.polsl.screensharing.lib.gui.component.JAppLink;
-import pl.polsl.screensharing.lib.gui.file.Alignment;
-import pl.polsl.screensharing.lib.gui.file.FileUtils;
+import pl.polsl.screensharing.lib.file.Alignment;
+import pl.polsl.screensharing.lib.file.FileUtils;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;

@@ -6,7 +6,7 @@ package pl.polsl.screensharing.client.view;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import pl.polsl.screensharing.lib.gui.icon.AppIcon;
+import pl.polsl.screensharing.lib.icon.AppIcon;
 
 @Getter
 @RequiredArgsConstructor

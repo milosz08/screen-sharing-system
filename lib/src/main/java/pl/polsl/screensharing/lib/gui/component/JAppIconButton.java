@@ -4,8 +4,8 @@
  */
 package pl.polsl.screensharing.lib.gui.component;
 
-import pl.polsl.screensharing.lib.gui.file.FileUtils;
-import pl.polsl.screensharing.lib.gui.icon.AppIcon;
+import pl.polsl.screensharing.lib.file.FileUtils;
+import pl.polsl.screensharing.lib.icon.AppIcon;
 
 import javax.swing.*;
 

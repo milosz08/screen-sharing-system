@@ -2,7 +2,7 @@
  * Copyright (c) 2023 by MULTIPLE AUTHORS
  * Part of the CS study course project.
  */
-package pl.polsl.screensharing.lib.gui.file;
+package pl.polsl.screensharing.lib.file;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
