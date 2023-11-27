@@ -7,6 +7,7 @@ package pl.polsl.screensharing.lib.gui;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import pl.polsl.screensharing.lib.UnoperableException;
+import pl.polsl.screensharing.lib.Utils;
 
 import javax.swing.*;
 import javax.swing.plaf.metal.MetalLookAndFeel;
@@ -31,6 +32,7 @@ public abstract class AbstractGUIThread<T> implements Runnable {
     public void init() {
         try {
             UIManager.setLookAndFeel(new MetalLookAndFeel());
+            Utils.generateThreadUsagePerTick();
             SwingUtilities.invokeLater(this);
         } catch (UnsupportedLookAndFeelException ex) {
             throw new RuntimeException(ex);

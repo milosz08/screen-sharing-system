@@ -6,6 +6,7 @@ package pl.polsl.screensharing.lib;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
@@ -18,7 +19,9 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.UnknownHostException;
+import java.util.concurrent.atomic.AtomicInteger;
 
+@Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Utils {
     public static String parseBytes(long bytes, String prefix, boolean isPerSec) {
@@ -106,5 +109,16 @@ public class Utils {
     public static InetAddr extractAddrDetails(String merged) {
         final int separatorPos = merged.indexOf(':');
         return new InetAddr(merged.substring(0, separatorPos), Integer.parseInt(merged.substring(separatorPos + 1)));
+    }
+
+    public static void generateThreadUsagePerTick() {
+        final AtomicInteger previousCount = new AtomicInteger(0);
+        final Timer timer = new Timer(12_000, e -> {
+            if (previousCount.get() != Thread.activeCount() || previousCount.get() == 0) {
+                log.info("All current active threads: {}", Thread.activeCount());
+            }
+            previousCount.set(Thread.activeCount());
+        });
+        timer.start();
     }
 }
