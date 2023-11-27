@@ -132,7 +132,7 @@ public class ClientThread extends Thread {
                             .verified;
                     }
                     final DatagramKeys datagramKeys = hostWindow.getDatagramKeys();
-                    final AuthPasswordRes.AuthPasswordResBuilder builder = AuthPasswordRes.builder().isValid(isValid);
+                    final AuthPasswordRes.AuthPasswordResBuilder builder = AuthPasswordRes.builder().validStatus(isValid);
                     if (!isValid) {
                         return builder.build();
                     }

@@ -104,7 +104,7 @@ public class ClientTcpSocket extends AbstractTcpSocketThread<Socket> {
                     // odebranie wiadomości o poprawności hasła oraz klucz do szyfrowanie symetrycznego UDP
                     case CHECK_PASSWORD_RES: {
                         final AuthPasswordRes res = exchangeSSLResponse(AuthPasswordRes.class);
-                        if (!res.isValid()) {
+                        if (!res.isValidStatus()) {
                             connectionHandler.onFailure(connectionDetails, "Invalid password");
                             log.warn("Invalid password. Disconnect from session");
                             break;

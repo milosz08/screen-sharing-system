@@ -4,6 +4,7 @@
  */
 package pl.polsl.screensharing.lib.net.payload;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,7 +16,10 @@ import pl.polsl.screensharing.lib.net.StreamingSignalState;
 @NoArgsConstructor
 @AllArgsConstructor
 public class VideoFrameDetails {
+    @JsonProperty("aspectRatio")
     private double aspectRatio;
+
+    @JsonProperty("streamingSignalState")
     private StreamingSignalState streamingSignalState;
 
     @Override

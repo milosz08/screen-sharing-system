@@ -4,6 +4,7 @@
  */
 package pl.polsl.screensharing.lib.net.payload;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,14 +15,19 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AuthPasswordRes {
-    private boolean isValid;
+    @JsonProperty("validStatus")
+    private boolean validStatus;
+
+    @JsonProperty("secretKeyUdp")
     private byte[] secretKeyUdp;
+
+    @JsonProperty("secureRandomUdp")
     private byte[] secureRandomUdp;
 
     @Override
     public String toString() {
         return "{" +
-            "isValid=" + isValid +
+            "validStatus=" + validStatus +
             ", secretKeyUdp=******" +
             ", secureRandomUdp==******" +
             '}';
