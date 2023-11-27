@@ -36,7 +36,7 @@ public abstract class AbstractPopupDialog extends JDialog {
         iconImageOptional.ifPresent(this::setIconImage);
         rootPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         rootPanel.setLayout(new BorderLayout(10, 10));
-        
+
         setModal(isModal);
         setSize(size);
         setMaximumSize(size);

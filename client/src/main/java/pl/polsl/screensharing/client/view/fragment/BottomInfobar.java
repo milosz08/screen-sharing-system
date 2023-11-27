@@ -41,7 +41,7 @@ public class BottomInfobar extends AbstractBottomInfobar {
         connectionStatusLabel.setBorder(marginRight);
         connectionStatusLabel.setForeground(Color.GRAY);
         lostFramesCountLabel.setBorder(marginRight);
-        
+
         stateCompoundPanel.add(connectionStatusTextLabel);
         stateCompoundPanel.add(connectionStatusLabel);
 
