@@ -6,7 +6,6 @@ package pl.polsl.screensharing.host.net;
 
 import lombok.extern.slf4j.Slf4j;
 import org.imgscalr.Scalr;
-import pl.polsl.screensharing.host.controller.BottomInfobarController;
 import pl.polsl.screensharing.host.controller.VideoCanvasController;
 import pl.polsl.screensharing.host.state.HostState;
 import pl.polsl.screensharing.host.state.QualityLevel;
@@ -160,8 +159,6 @@ public class ServerDatagramSocket extends AbstractDatagramSocketThread {
     @Override
     public void abstractStopAndClear() {
         executorService.shutdown();
-        final BottomInfobarController bottomInfobarController = hostWindow.getBottomInfobarController();
-        bottomInfobarController.stopSessionTimer();
         hostState.updateStreamingState(StreamingState.STOPPED);
         hostState.updateRealFpsBuffer(0);
     }

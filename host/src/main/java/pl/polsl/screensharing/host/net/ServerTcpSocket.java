@@ -6,6 +6,7 @@ package pl.polsl.screensharing.host.net;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import pl.polsl.screensharing.host.controller.BottomInfobarController;
 import pl.polsl.screensharing.host.model.SessionDetails;
 import pl.polsl.screensharing.host.state.HostState;
 import pl.polsl.screensharing.host.state.SessionState;
@@ -109,6 +110,8 @@ public class ServerTcpSocket extends AbstractTcpSocketThread<ServerSocket> {
         if (!socket.isClosed()) {
             closeSocket();
         }
+        final BottomInfobarController bottomInfobarController = hostWindow.getBottomInfobarController();
+        bottomInfobarController.stopSessionTimer();
         hostState.updateSessionState(SessionState.INACTIVE);
         hostState.updateSendBytesPerSec(0L);
         isEstabilished = false;
