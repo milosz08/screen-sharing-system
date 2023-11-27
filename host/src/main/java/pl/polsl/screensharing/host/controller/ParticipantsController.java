@@ -14,6 +14,7 @@ import pl.polsl.screensharing.lib.net.SocketState;
 
 import javax.swing.*;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 @Slf4j
@@ -71,6 +72,7 @@ public class ParticipantsController {
             return;
         }
         hostWindow.getServerTcpSocket().sendSignalToAllClients(SocketState.KICK_FROM_SESSION);
+        clientState.updateConnectedClients(new ConcurrentHashMap<>());
         log.info("Kicked all {} participants.", participantsSize);
     }
 

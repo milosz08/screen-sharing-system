@@ -98,9 +98,7 @@ public class ParticipantsDialogWindow extends AbstractPopupDialog {
     private void initObservables() {
         hostState.wrapAsDisposable(hostState.getConnectedClientsInfo$(), clientsInfo -> {
             final DefaultTableModel model = (DefaultTableModel) table.getModel();
-            for (int i = 0; i < model.getRowCount(); i++) {
-                model.removeRow(i);
-            }
+            model.setRowCount(0);
             for (final Map.Entry<Long, ConnectedClientInfo> clientInfoEntry : clientsInfo.entrySet()) {
                 final ConnectedClientInfo clientInfo = clientInfoEntry.getValue();
                 model.addRow(new Object[]{

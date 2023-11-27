@@ -32,12 +32,12 @@ public abstract class AbstractPopupDialog extends JDialog {
         iconImageOptional = appType.getIconPath(frameClazz);
     }
 
-    protected void initDialogGui(boolean fixedToContent) {
+    protected void initDialogGui(boolean fixedToContent, boolean isModal) {
         iconImageOptional.ifPresent(this::setIconImage);
         rootPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         rootPanel.setLayout(new BorderLayout(10, 10));
-
-        setModal(true);
+        
+        setModal(isModal);
         setSize(size);
         setMaximumSize(size);
         setMinimumSize(size);
@@ -50,6 +50,10 @@ public abstract class AbstractPopupDialog extends JDialog {
         if (fixedToContent) {
             pack();
         }
+    }
+
+    protected void initDialogGui(boolean fixedToContent) {
+        initDialogGui(fixedToContent, true);
     }
 
     public void closeWindow() {

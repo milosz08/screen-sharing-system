@@ -146,7 +146,7 @@ public class ReceiveSignalsThread extends Thread {
     @Override
     public synchronized void start() {
         if (!isAlive()) {
-            setName("Thread-TCP-Event-Recv-" + getId());
+            setName("Thread-TCP-Signal-" + getId());
             super.start();
         }
     }

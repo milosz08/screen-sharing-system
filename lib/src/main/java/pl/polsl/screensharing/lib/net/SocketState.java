@@ -16,6 +16,7 @@ public enum SocketState {
     EVENT_STOP_STREAMING,
     EVENT_TOGGLE_SCREEN_VISIBILITY,
     KICK_FROM_SESSION,
+    END_UP_SESSION,
     ;
 
     private static final char SEPARATOR = '%';

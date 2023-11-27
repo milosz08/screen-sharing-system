@@ -76,7 +76,8 @@ public class Utils {
     }
 
     public static double calcAspectRatio(BufferedImage bufferedImage) {
-        return (double) bufferedImage.getWidth() / bufferedImage.getHeight();
+        double aspectRatio = (double) bufferedImage.getWidth() / bufferedImage.getHeight();
+        return Math.round(aspectRatio * 100) / 100.0;
     }
 
     public static String getMachineAddress() {

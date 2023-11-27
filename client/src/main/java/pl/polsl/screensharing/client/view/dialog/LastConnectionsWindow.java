@@ -103,9 +103,7 @@ public class LastConnectionsWindow extends AbstractPopupDialog {
     private void initObservables() {
         clientState.wrapAsDisposable(clientState.getSavedConnections$(), savedConnections -> {
             final DefaultTableModel model = (DefaultTableModel) table.getModel();
-            for (int i = 0; i < model.getRowCount(); i++) {
-                model.removeRow(i);
-            }
+            model.setRowCount(0);
             for (final SavedConnection savedConnection : savedConnections) {
                 model.addRow(new Object[]{
                     savedConnection.getHostIpAddress() + ":" + savedConnection.getHostPort(),

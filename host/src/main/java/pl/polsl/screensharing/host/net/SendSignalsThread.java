@@ -100,6 +100,7 @@ public class SendSignalsThread extends Thread {
     @Override
     public synchronized void start() {
         if (!isAlive()) {
+            setName("Thread-TCP-Signal-" + clientThread.getThreadId() + getId());
             super.start();
         }
     }
