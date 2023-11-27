@@ -132,7 +132,7 @@ public class ClientTcpSocket extends AbstractTcpSocketThread<Socket> {
 
                         exchangeSSLRequest(connectionData, SocketState.SEND_CLIENT_DATA_REQ,
                             SocketState.SEND_CLIENT_DATA_RES);
-                        log.info("Successfully sended client connection details");
+                        log.info("Successfully sent client connection details");
                         break;
                     }
                     // odebranie od hosta (serwera) dodatkowych informacji, czy stream jest aktywny oraz

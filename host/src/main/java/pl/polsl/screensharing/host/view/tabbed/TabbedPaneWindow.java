@@ -32,7 +32,7 @@ public class TabbedPaneWindow extends JTabbedPane {
         tabbedLogsPanel = new JAppTabbedLogsPanel(AppType.HOST);
 
         addTab("Screen capture", tabbedScreenFramePanel);
-        addTab("Sended data chart", tabbedChartPanel);
+        addTab("Sent data chart", tabbedChartPanel);
         addTab("Logs", tabbedLogsPanel);
     }
 }
