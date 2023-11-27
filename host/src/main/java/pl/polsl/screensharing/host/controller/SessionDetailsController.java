@@ -46,7 +46,7 @@ public class SessionDetailsController implements ConnectionHandler {
 
         final ServerTcpSocket serverTcpSocket = new ServerTcpSocket(hostWindow, this);
         hostWindow.setServerTcpSocket(serverTcpSocket);
-        serverTcpSocket.start();
+        serverTcpSocket.startExecutor();
     }
 
     public void closeWindow() {

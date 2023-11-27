@@ -30,7 +30,7 @@ abstract class AbstractPopupDialogController implements ConnectionHandler {
         if (connectionDetails != null) {
             final ClientTcpSocket clientTcpSocket = new ClientTcpSocket(clientWindow, this, connectionDetails);
             clientWindow.setClientTcpSocket(clientTcpSocket);
-            clientTcpSocket.start();
+            clientTcpSocket.startExecutor();
         }
     }
 

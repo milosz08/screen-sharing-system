@@ -12,11 +12,10 @@ import pl.polsl.screensharing.client.state.ClientState;
 import pl.polsl.screensharing.client.state.VisibilityState;
 import pl.polsl.screensharing.client.view.ClientWindow;
 import pl.polsl.screensharing.client.view.fragment.VideoCanvas;
-import pl.polsl.screensharing.lib.CryptoUtils;
 import pl.polsl.screensharing.lib.SharedConstants;
 import pl.polsl.screensharing.lib.UnoperableException;
+import pl.polsl.screensharing.lib.net.AbstractDatagramSocketThread;
 
-import javax.crypto.Cipher;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -24,27 +23,21 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.SocketException;
 import java.util.Arrays;
 
 @Slf4j
-public class ClientDatagramSocket extends Thread {
+public class ClientDatagramSocket extends AbstractDatagramSocketThread {
     private final ClientState clientState;
     private final ClientWindow clientWindow;
     private final VideoCanvas videoCanvas;
     private final VideoCanvasController videoCanvasController;
 
-    private DatagramSocket datagramSocket;
-    private Cipher cipher;
-    private boolean isFetchingData;
     private VisibilityState visibilityState;
-
-    private static final int PACKAGE_SIZE = 32_768; // 32kb
-    private static final int BILION = 1_000_000_000;
 
     public ClientDatagramSocket(
         ClientWindow clientWindow, VideoCanvas videoCanvas, VideoCanvasController videoCanvasController
     ) {
+        super();
         this.clientWindow = clientWindow;
         clientState = clientWindow.getClientState();
         this.videoCanvas = videoCanvas;
@@ -81,7 +74,7 @@ public class ClientDatagramSocket extends Thread {
         long recvBytes = 0;
         int corruptedFrames = 0;
 
-        while (isFetchingData) {
+        while (isThreadActive) {
             currentTime = System.nanoTime();
             timer += (currentTime - lastTime);
             logTimer += (currentTime - lastTime);
@@ -95,7 +88,9 @@ public class ClientDatagramSocket extends Thread {
                 // odkodowanie danych przy użyciu klucza AES (UWAGA! Istotnia jest metoda Arrays.copyOf, ponieważ bez
                 // niej AES rozpoznawał ciąg bajtów jako nieprawidłowy ponieważ dodawał swoje dopełnienie do niepełnej
                 // klatki zamiast ustawić tam zera
-                final byte[] decrypted = decrypt(Arrays.copyOf(receivePacket.getData(), receivePacket.getLength()));
+                final byte[] decrypted = cryptoSymmetricHelper
+                    .decrypt(Arrays.copyOf(receivePacket.getData(), receivePacket.getLength()));
+
                 rawDataBuffer = new byte[decrypted.length - debugBytesLength];
                 countOfPackages = decrypted[0];
                 packageIteration = decrypted[1];
@@ -154,49 +149,31 @@ public class ClientDatagramSocket extends Thread {
     }
 
     @Override
-    public synchronized void start() {
-        isFetchingData = true;
-        if (!isAlive()) {
-            setName("Thread-UDP-" + getId());
-            super.start();
-        }
-    }
-
     public void createDatagramSocket(byte[] secretKey, byte[] initVector, int port) {
-        cipher = CryptoUtils.initDecryptSymAes(secretKey, initVector);
         try {
+            cryptoSymmetricHelper.initDecrypt(secretKey, initVector);
             datagramSocket = new DatagramSocket(port);
             datagramSocket.setSoTimeout(1000);
-        } catch (SocketException ex) {
+        } catch (Exception ex) {
             throw new UnoperableException(ex);
         }
     }
 
-    public void stopAndClear() {
+    @Override
+    protected void abstractStopAndClear() {
         final BottomInfobarController bottomInfobarController = clientWindow.getBottomInfobarController();
-
-        log.info("Stopping datagram thread with TID {}", getName());
-        log.debug("Collected detatched thread with TID {} by GC", getName());
-
         if (!visibilityState.equals(VisibilityState.TEMPORARY_HIDDEN)) {
             clientState.updateVisibilityState(VisibilityState.WAITING_FOR_CONNECTION);
         }
         clientState.updateFrameAspectRation(SharedConstants.DEFAULT_ASPECT_RATIO);
         clientState.updateRecvBytesPerSec(0L);
         bottomInfobarController.stopConnectionTimer();
-
-        isFetchingData = false;
-        datagramSocket.disconnect();
-        datagramSocket.close();
     }
 
-    private byte[] decrypt(byte[] encryptedData) throws Exception {
-        return cipher.doFinal(encryptedData);
-    }
-
-    private void initObservables() {
+    @Override
+    protected void initObservables() {
         clientState.wrapAsDisposable(clientState.getVisibilityState$(), visibilityState -> {
-            isFetchingData = visibilityState.equals(VisibilityState.VISIBLE);
+            isThreadActive = visibilityState.equals(VisibilityState.VISIBLE);
             this.visibilityState = visibilityState;
         });
     }

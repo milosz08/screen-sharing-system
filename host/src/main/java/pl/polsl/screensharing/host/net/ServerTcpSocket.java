@@ -4,13 +4,13 @@
  */
 package pl.polsl.screensharing.host.net;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import pl.polsl.screensharing.host.model.SessionDetails;
 import pl.polsl.screensharing.host.state.HostState;
 import pl.polsl.screensharing.host.state.SessionState;
 import pl.polsl.screensharing.host.view.HostWindow;
-import pl.polsl.screensharing.lib.CryptoUtils;
-import pl.polsl.screensharing.lib.UnoperableException;
+import pl.polsl.screensharing.lib.net.AbstractTcpSocketThread;
 import pl.polsl.screensharing.lib.net.SocketState;
 
 import javax.swing.*;
@@ -19,25 +19,25 @@ import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
-import java.security.KeyPair;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 @Slf4j
-public class ServerTcpSocket extends Thread {
-    private ServerSocket serverSocket;
+public class ServerTcpSocket extends AbstractTcpSocketThread<ServerSocket> {
     private boolean isEstabilished;
-    private KeyPair serverKeypair;
     private ConcurrentMap<Long, ConnectedClientInfo> connectedClients;
 
+    @Getter
     private final HostWindow hostWindow;
     private final HostState hostState;
     private final ServerDatagramSocket serverDatagramSocket;
+    @Getter
     private final SessionDetails sessionDetails;
     private final ConnectionHandler connectionHandler;
 
     public ServerTcpSocket(HostWindow hostWindow, ConnectionHandler connectionHandler) {
+        super();
         this.hostWindow = hostWindow;
         hostState = hostWindow.getHostState();
         serverDatagramSocket = hostWindow.getServerDatagramSocket();
@@ -52,9 +52,8 @@ public class ServerTcpSocket extends Thread {
         log.info("Starting TCP server thread...");
         try {
             while (isEstabilished) {
-                final Socket clientSocket = serverSocket.accept();
-                final ClientThread clientThread = new ClientThread(clientSocket, hostWindow, sessionDetails,
-                    serverKeypair);
+                final Socket clientSocket = socket.accept();
+                final ClientThread clientThread = new ClientThread(clientSocket, this);
                 clientThread.start();
             }
         } catch (SocketException ignored) {
@@ -62,37 +61,7 @@ public class ServerTcpSocket extends Thread {
             log.error(ex.getMessage());
             JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
-        log.info("Stopping TCP server thread with TID {}", getName());
-        log.debug("Collected detatched thread with TID {} by GC", getName());
-        if (serverDatagramSocket != null) {
-            serverDatagramSocket.stopAndClear();
-        }
         stopAndClear();
-    }
-
-    @Override
-    public synchronized void start() {
-        try {
-            createServerSocket();
-            serverKeypair = CryptoUtils.generateRsaKeypair();
-            isEstabilished = true;
-            if (!isAlive()) {
-                setName("Thread-TCP-" + getId());
-                super.start();
-            }
-            connectionHandler.onSuccess();
-        } catch (Exception ex) {
-            log.error(ex.getMessage());
-            connectionHandler.onFailure(ex);
-        }
-    }
-
-    public void stopAndClear() {
-        if (!serverSocket.isClosed()) {
-            closeSocket();
-        }
-        hostState.updateSessionState(SessionState.INACTIVE);
-        isEstabilished = false;
     }
 
     public void sendSignalToAllClients(SocketState socketState) {
@@ -109,21 +78,41 @@ public class ServerTcpSocket extends Thread {
         connectedClientInfo.getClientThread().sendSignalEvent(socketState);
     }
 
-    private void closeSocket() {
+    @Override
+    public synchronized void startExecutor() {
         try {
-            serverSocket.close();
-        } catch (IOException ex) {
-            throw new UnoperableException(ex);
+            initSocketAndKeys();
+            isEstabilished = true;
+            startThread();
+            connectionHandler.onSuccess();
+        } catch (Exception ex) {
+            log.error(ex.getMessage());
+            connectionHandler.onFailure(ex);
         }
     }
 
-    private void createServerSocket() throws IOException {
+    @Override
+    protected void createTcpSocket() throws IOException {
         final String ipAddress = sessionDetails.getIpAddress();
         final int port = sessionDetails.getPort();
-        serverSocket = new ServerSocket();
-        serverSocket.setReuseAddress(true);
-        serverSocket.bind(new InetSocketAddress(ipAddress, port));
+        socket = new ServerSocket();
+        socket.setReuseAddress(true);
+        socket.bind(new InetSocketAddress(ipAddress, port));
         log.info("TCP server created with details: {}", sessionDetails);
+    }
+
+    @Override
+    protected void abstractStopAndClear() {
+        if (serverDatagramSocket != null) {
+            serverDatagramSocket.stopAndClear();
+        }
+        if (!socket.isClosed()) {
+            closeSocket();
+        }
+        hostState.updateSessionState(SessionState.INACTIVE);
+        hostState.updateSendBytesPerSec(0L);
+        isEstabilished = false;
+        sendSignalToAllClients(SocketState.END_UP_SESSION);
     }
 
     private void initObservables() {

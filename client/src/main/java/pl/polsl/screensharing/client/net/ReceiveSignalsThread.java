@@ -12,7 +12,7 @@ import pl.polsl.screensharing.client.state.ClientState;
 import pl.polsl.screensharing.client.state.VisibilityState;
 import pl.polsl.screensharing.client.view.ClientWindow;
 import pl.polsl.screensharing.client.view.fragment.VideoCanvas;
-import pl.polsl.screensharing.lib.CryptoUtils;
+import pl.polsl.screensharing.lib.net.CryptoAsymmetricHelper;
 import pl.polsl.screensharing.lib.net.SocketState;
 import pl.polsl.screensharing.lib.net.StreamingSignalState;
 import pl.polsl.screensharing.lib.net.payload.AuthPasswordRes;
@@ -23,7 +23,6 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.SocketException;
-import java.security.KeyPair;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -32,8 +31,8 @@ public class ReceiveSignalsThread extends Thread {
     private final ClientWindow clientWindow;
     private final ClientState clientState;
     private final Socket socket;
-    private final KeyPair keyPair;
     private final ObjectMapper objectMapper;
+    private final CryptoAsymmetricHelper cryptoAsymmetricHelper;
 
     private SocketState signalState;
     private String signalRawData;
@@ -43,9 +42,9 @@ public class ReceiveSignalsThread extends Thread {
         this.clientTcpSocket = clientTcpSocket;
         clientWindow = clientTcpSocket.getClientWindow();
         clientState = clientTcpSocket.getClientState();
-        socket = clientTcpSocket.getClientSocket();
-        keyPair = clientTcpSocket.getClientKeypair();
+        socket = clientTcpSocket.getSocket();
         objectMapper = new ObjectMapper();
+        cryptoAsymmetricHelper = clientTcpSocket.getCryptoAsymmetricHelper();
         signalState = SocketState.WAITING;
     }
 
@@ -139,7 +138,7 @@ public class ReceiveSignalsThread extends Thread {
     }
 
     private <T> T exchangeSSLRequest(Class<T> parseClazz) throws Exception {
-        final String decrypted = CryptoUtils.rsaAsymDecrypt(signalRawData, keyPair.getPrivate());
+        final String decrypted = cryptoAsymmetricHelper.decrypt(signalRawData);
         return objectMapper.readValue(decrypted, parseClazz);
     }
 

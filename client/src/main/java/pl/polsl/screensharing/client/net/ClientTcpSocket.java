@@ -15,8 +15,7 @@ import pl.polsl.screensharing.client.state.ConnectionState;
 import pl.polsl.screensharing.client.state.VisibilityState;
 import pl.polsl.screensharing.client.view.ClientWindow;
 import pl.polsl.screensharing.client.view.fragment.VideoCanvas;
-import pl.polsl.screensharing.lib.CryptoUtils;
-import pl.polsl.screensharing.lib.UnoperableException;
+import pl.polsl.screensharing.lib.net.AbstractTcpSocketThread;
 import pl.polsl.screensharing.lib.net.SocketState;
 import pl.polsl.screensharing.lib.net.StreamingSignalState;
 import pl.polsl.screensharing.lib.net.payload.AuthPasswordReq;
@@ -33,16 +32,9 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
 import java.security.GeneralSecurityException;
-import java.security.KeyPair;
-import java.security.PublicKey;
 
 @Slf4j
-public class ClientTcpSocket extends Thread {
-    @Getter
-    private Socket clientSocket;
-    @Getter
-    private KeyPair clientKeypair;
-    private PublicKey serverPublicKey;
+public class ClientTcpSocket extends AbstractTcpSocketThread<Socket> {
     private SocketState socketState;
     @Getter
     private AuthPasswordRes authPasswordRes;
@@ -63,6 +55,7 @@ public class ClientTcpSocket extends Thread {
     public ClientTcpSocket(
         ClientWindow clientWindow, ConnectionHandler connectionHandler, ConnectionDetails connectionDetails
     ) {
+        super();
         this.clientWindow = clientWindow;
         clientState = clientWindow.getClientState();
         clientDatagramSocket = clientWindow.getClientDatagramSocket();
@@ -77,8 +70,8 @@ public class ClientTcpSocket extends Thread {
     public void run() {
         log.info("Starting TCP client thread...");
         try (
-            final BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            final PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true)
+            final BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            final PrintWriter out = new PrintWriter(socket.getOutputStream(), true)
         ) {
             bufferedReader = in;
             printWriter = out;
@@ -86,7 +79,7 @@ public class ClientTcpSocket extends Thread {
                 switch (socketState) {
                     // wysłanie klucza publicznego klienta do hosta (serwera)
                     case EXHANGE_KEYS_REQ: {
-                        final String keyEnc = CryptoUtils.publicKeyToBase64(clientKeypair.getPublic());
+                        final String keyEnc = cryptoAsymmetricHelper.publicKeyToBase64();
                         out.println(SocketState.EXHANGE_KEYS_REQ.generateBody(keyEnc));
                         socketState = SocketState.EXHANGE_KEYS_RES;
                         log.info("Send public RSA key to server");
@@ -94,7 +87,7 @@ public class ClientTcpSocket extends Thread {
                     }
                     // otrzymanie klucza publicznego od hosta i zapisanie go w pamięci
                     case EXHANGE_KEYS_RES: {
-                        serverPublicKey = CryptoUtils.base64ToPublicKey(readData());
+                        exchangePublicKey = cryptoAsymmetricHelper.base64ToPublicKey(readData());
                         socketState = SocketState.CHECK_PASSWORD_REQ;
                         log.info("Persist public RSA key from server and save in-memory storage");
                         break;
@@ -175,13 +168,13 @@ public class ClientTcpSocket extends Thread {
 
     private void exchangeSSLRequest(Object req, SocketState sendState, SocketState nextState) throws Exception {
         final String parsedJson = objectMapper.writeValueAsString(req);
-        final String encrypted = CryptoUtils.rsaAysmEncrypt(parsedJson, serverPublicKey);
+        final String encrypted = cryptoAsymmetricHelper.encrypt(parsedJson, exchangePublicKey);
         printWriter.println(sendState.generateBody(encrypted));
         socketState = nextState;
     }
 
     private <T> T exchangeSSLResponse(Class<T> parseClass) throws Exception {
-        final String decrypted = CryptoUtils.rsaAsymDecrypt(readData(), clientKeypair.getPrivate());
+        final String decrypted = cryptoAsymmetricHelper.decrypt(readData());
         return objectMapper.readValue(decrypted, parseClass);
     }
 
@@ -194,25 +187,20 @@ public class ClientTcpSocket extends Thread {
     }
 
     @Override
-    public synchronized void start() {
+    public synchronized void startExecutor() {
         try {
-            clientSocket = createSocket();
-            clientKeypair = CryptoUtils.generateRsaKeypair();
-            if (!isAlive()) {
-                setName("Thread-TCP-" + getId());
-                super.start();
-            }
+            initSocketAndKeys();
+            startThread();
         } catch (IOException | GeneralSecurityException ex) {
             log.error(ex.getMessage());
             connectionHandler.onFailure(connectionDetails, null);
         }
     }
 
-    public void stopAndClear() {
+    @Override
+    public void abstractStopAndClear() {
         log.info("Disconnected with host: {}:{}", fastConnectionDetails.getHostIpAddress(),
             fastConnectionDetails.getHostPort());
-        log.info("Stopping TCP connection thread: {}", getName());
-        log.debug("Collected detatched thread with TID {} by GC", getName());
 
         clientState.updateRecvBytesPerSec(0L);
         clientState.updateVisibilityState(VisibilityState.WAITING_FOR_CONNECTION);
@@ -221,19 +209,14 @@ public class ClientTcpSocket extends Thread {
         if (clientDatagramSocket != null) {
             clientDatagramSocket.stopAndClear();
         }
-        try {
-            clientSocket.close();
-        } catch (IOException ex) {
-            throw new UnoperableException(ex);
-        }
     }
 
-    private Socket createSocket() throws IOException {
+    @Override
+    protected void createTcpSocket() throws IOException {
         final String ipAddress = fastConnectionDetails.getHostIpAddress();
         final int port = fastConnectionDetails.getHostPort();
-        final Socket socket = new Socket();
+        socket = new Socket();
         socket.connect(new InetSocketAddress(ipAddress, port));
         log.info("Successfully created connection with {}:{} server", ipAddress, port);
-        return socket;
     }
 }

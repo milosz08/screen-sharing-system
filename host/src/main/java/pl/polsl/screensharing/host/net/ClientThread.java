@@ -12,8 +12,8 @@ import pl.polsl.screensharing.host.model.SessionDetails;
 import pl.polsl.screensharing.host.state.HostState;
 import pl.polsl.screensharing.host.state.StreamingState;
 import pl.polsl.screensharing.host.view.HostWindow;
-import pl.polsl.screensharing.lib.CryptoUtils;
 import pl.polsl.screensharing.lib.Utils;
+import pl.polsl.screensharing.lib.net.CryptoAsymmetricHelper;
 import pl.polsl.screensharing.lib.net.SocketState;
 import pl.polsl.screensharing.lib.net.StreamingSignalState;
 import pl.polsl.screensharing.lib.net.payload.AuthPasswordReq;
@@ -27,8 +27,9 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.SocketException;
-import java.security.KeyPair;
 import java.security.PublicKey;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -40,24 +41,32 @@ public class ClientThread extends Thread {
     private final HostWindow hostWindow;
     private final HostState hostState;
     private final SessionDetails sessionDetails;
-    private final KeyPair serverKeyPair;
     private final ObjectMapper objectMapper;
     private final SendSignalsThread sendSignalsThread;
+    @Getter
+    private final CryptoAsymmetricHelper cryptoAsymmetricHelper;
+    private final Random random;
 
     @Getter
     private PublicKey clientPublicKey;
     private SocketState socketState;
     private PrintWriter printWriter;
+    @Getter
+    private long threadId;
+    private ConcurrentMap<Long, ConnectedClientInfo> connectedClients;
 
-    public ClientThread(Socket socket, HostWindow hostWindow, SessionDetails sessionDetails, KeyPair serverKeyPair) {
+    public ClientThread(Socket socket, ServerTcpSocket serverTcpSocket) {
         this.socket = socket;
-        this.hostWindow = hostWindow;
+        this.hostWindow = serverTcpSocket.getHostWindow();
         hostState = hostWindow.getHostState();
-        this.sessionDetails = sessionDetails;
-        this.serverKeyPair = serverKeyPair;
+        this.sessionDetails = serverTcpSocket.getSessionDetails();
         socketState = SocketState.WAITING;
         objectMapper = new ObjectMapper();
+        cryptoAsymmetricHelper = serverTcpSocket.getCryptoAsymmetricHelper();
+        random = new Random();
         sendSignalsThread = new SendSignalsThread(this, hostWindow);
+        connectedClients = new ConcurrentHashMap<>();
+        initObservables();
     }
 
     @Override
@@ -106,8 +115,8 @@ public class ClientThread extends Thread {
         switch (socketState) {
             // pobranie klucza publicznego od klienta i odesłanie do niego własnego klucza publicznego
             case EXHANGE_KEYS_REQ: {
-                clientPublicKey = CryptoUtils.base64ToPublicKey(data);
-                final String keyEnc = CryptoUtils.publicKeyToBase64(serverKeyPair.getPublic());
+                clientPublicKey = cryptoAsymmetricHelper.base64ToPublicKey(data);
+                final String keyEnc = cryptoAsymmetricHelper.publicKeyToBase64();
                 printWriter.println(keyEnc);
                 log.info("(to-way exchange) Save client public key and send server public key to the client");
                 break;
@@ -147,10 +156,8 @@ public class ClientThread extends Thread {
                         .udpPort(decryptedObj.getUdpPort())
                         .build();
 
-                    final ConcurrentMap<Long, ConnectedClientInfo> allClients = hostState
-                        .getLastEmittedConnectedClients();
-                    allClients.put(getId(), connectedClientInfo);
-                    hostState.updateConnectedClients(allClients);
+                    connectedClients.merge(threadId, connectedClientInfo, (existingList, newList) -> existingList);
+                    hostState.updateConnectedClients(connectedClients);
 
                     // uruchomienie wątku wysyłającego zdarzenia do klientów poprzez event-loop
                     sendSignalsThread.start();
@@ -170,32 +177,46 @@ public class ClientThread extends Thread {
     private <T> void performSSLExchange(
         String rawData, Function<T, Object> callback, Consumer<Object> onEnd, Class<T> parseClazz
     ) throws Exception {
-        final String decrypted = CryptoUtils.rsaAsymDecrypt(rawData, serverKeyPair.getPrivate());
+        final String decrypted = cryptoAsymmetricHelper.decrypt(rawData);
         final Object resData = callback.apply(objectMapper.readValue(decrypted, parseClazz));
         final String rawResponse = objectMapper.writeValueAsString(resData);
-        final String encrypted = CryptoUtils.rsaAysmEncrypt(rawResponse, clientPublicKey);
+        final String encrypted = cryptoAsymmetricHelper.encrypt(rawResponse, clientPublicKey);
         printWriter.println(encrypted);
         onEnd.accept(resData);
     }
 
     @Override
     public synchronized void start() {
-        setName("Thread-TCP-Client-" + getId());
         if (!isAlive()) {
+            threadId = generateRandomThreadNumber();
+            setName("Thread-TCP-Client-" + threadId + "-" + getId());
             super.start();
         }
+    }
+
+    private Long generateRandomThreadNumber() {
+        final StringBuilder stringBuffer = new StringBuilder();
+        for (int i = 0; i < 5; i++) {
+            stringBuffer.append(random.nextInt(9) + 1);
+        }
+        return Long.parseLong(stringBuffer.toString());
     }
 
     public void stopAndClose() {
         log.info("Stopping TCP client thread");
         log.debug("Collected detatched thread with TID {} by GC", getName());
-        final ConcurrentMap<Long, ConnectedClientInfo> allClients = hostState.getLastEmittedConnectedClients();
-        final ConnectedClientInfo removed = allClients.remove(getId());
-        hostState.updateConnectedClients(allClients);
+        final ConnectedClientInfo removed = connectedClients.remove(threadId);
+        hostState.updateConnectedClients(connectedClients);
         log.info("Removed user with details {} from all connected users list", removed);
         try {
             socket.close();
         } catch (IOException ignore) {
         }
+    }
+
+    private void initObservables() {
+        hostState.wrapAsDisposable(hostState.getConnectedClientsInfo$(), connectedClients -> {
+            this.connectedClients = new ConcurrentHashMap<>(connectedClients);
+        });
     }
 }

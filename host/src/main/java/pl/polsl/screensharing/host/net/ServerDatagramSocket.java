@@ -12,10 +12,9 @@ import pl.polsl.screensharing.host.state.HostState;
 import pl.polsl.screensharing.host.state.QualityLevel;
 import pl.polsl.screensharing.host.state.StreamingState;
 import pl.polsl.screensharing.host.view.HostWindow;
-import pl.polsl.screensharing.lib.CryptoUtils;
 import pl.polsl.screensharing.lib.UnoperableException;
+import pl.polsl.screensharing.lib.net.AbstractDatagramSocketThread;
 
-import javax.crypto.Cipher;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
@@ -25,37 +24,36 @@ import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.net.*;
-import java.util.Map;
+import java.net.DatagramSocket;
+import java.net.PortUnreachableException;
+import java.net.SocketTimeoutException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Slf4j
-public class ServerDatagramSocket extends Thread {
+public class ServerDatagramSocket extends AbstractDatagramSocketThread {
     private final HostWindow hostWindow;
     private final HostState hostState;
     private final VideoCanvasController videoCanvasController;
+    private final ExecutorService executorService;
 
-    private boolean isSendingData;
-    private DatagramSocket datagramSocket;
-    private Cipher cipher;
     private QualityLevel qualityLevel;
     private ConcurrentMap<Long, ConnectedClientInfo> connectedClients;
     private boolean isShowing;
 
-    private static final int PACKAGE_SIZE = 32_768; // 32kb
-    private static final int BILION = 1_000_000_000;
-    private static final int MAX_FRAME_WIDTH = 1280;
-    private static final int MAX_FRAME_HEIGHT = 720;
+    private static final int MAX_FRAME_WIDTH = 1920;
+    private static final int MAX_FRAME_HEIGHT = 1080;
 
-    public ServerDatagramSocket(
-        HostWindow hostWindow, VideoCanvasController videoCanvasController
-    ) {
+    public ServerDatagramSocket(HostWindow hostWindow, VideoCanvasController videoCanvasController) {
+        super();
         this.hostWindow = hostWindow;
         hostState = hostWindow.getHostState();
         this.videoCanvasController = videoCanvasController;
         qualityLevel = QualityLevel.GOOD;
         connectedClients = new ConcurrentHashMap<>();
+        executorService = Executors.newFixedThreadPool(10); // pula wątków wysyłająca paczki do klientów
         initObservables();
     }
 
@@ -80,7 +78,7 @@ public class ServerDatagramSocket extends Thread {
         // po stronie odbiorcy.
 
         log.info("Started datagram thread with TID {}", getName());
-        while (isSendingData) {
+        while (isThreadActive) {
             currentTime = System.nanoTime();
             timer += (currentTime - lastTime);
             logTimer += (currentTime - lastTime);
@@ -150,43 +148,30 @@ public class ServerDatagramSocket extends Thread {
     }
 
     @Override
-    public synchronized void start() {
-        isSendingData = true;
-        if (!isAlive()) {
-            setName("Thread-UDP-" + getId());
-            super.start();
+    public void createDatagramSocket(byte[] secretKey, byte[] initVector, int port) {
+        try {
+            cryptoSymmetricHelper.initEncrypt(secretKey, initVector);
+            datagramSocket = new DatagramSocket();
+        } catch (Exception ex) {
+            throw new UnoperableException(ex);
         }
     }
 
-    public void stopAndClear() {
-        isSendingData = false;
-        log.info("Stopping datagram thread with TID {}", getName());
-        log.debug("Collected detatched thread with TID {} by GC", getName());
-        datagramSocket.disconnect();
-        datagramSocket.close();
+    @Override
+    public void abstractStopAndClear() {
+        executorService.shutdown();
         final BottomInfobarController bottomInfobarController = hostWindow.getBottomInfobarController();
         bottomInfobarController.stopSessionTimer();
         hostState.updateStreamingState(StreamingState.STOPPED);
         hostState.updateRealFpsBuffer(0);
     }
 
-    private long sendPackage(byte[] chunk) throws Exception {
-        for (final Map.Entry<Long, ConnectedClientInfo> connectedClient : connectedClients.entrySet()) {
-            final ConnectedClientInfo info = connectedClient.getValue();
-            final DatagramPacket packet = new DatagramPacket(chunk, chunk.length,
-                InetAddress.getByName(info.getIpAddress()), info.getUdpPort());
-            datagramSocket.send(packet);
-        }
-        return chunk.length;
-    }
-
     private long sendEncryptedPackage(byte[] chunk) throws Exception {
-        final byte[] encryptedChunk = encrypt(chunk);
-        return sendPackage(encryptedChunk);
-    }
-
-    private byte[] encrypt(byte[] rawData) throws Exception {
-        return cipher.doFinal(rawData);
+        final byte[] encryptedChunk = cryptoSymmetricHelper.encrypt(chunk);
+        connectedClients.entrySet().parallelStream().forEach(clientInfo -> {
+            executorService.execute(new FrameSenderThread(datagramSocket, clientInfo.getValue(), encryptedChunk));
+        });
+        return chunk.length;
     }
 
     private byte[] loadImage() throws IOException {
@@ -208,21 +193,15 @@ public class ServerDatagramSocket extends Thread {
         final byte[] compressedData = compressed.toByteArray();
 
         jpgWriter.dispose();
-        outputStream.close();
+        if (outputStream != null) {
+            outputStream.close();
+        }
         compressed.close();
         return compressedData;
     }
 
-    public void createDatagramSocket(byte[] secretKey, byte[] initVector) {
-        try {
-            cipher = CryptoUtils.initEncryptSymAes(secretKey, initVector);
-            datagramSocket = new DatagramSocket();
-        } catch (SocketException ex) {
-            throw new UnoperableException(ex);
-        }
-    }
-
-    private void initObservables() {
+    @Override
+    protected void initObservables() {
         hostState.wrapAsDisposable(hostState.getStreamingQualityLevel$(), qualityLevel -> {
             this.qualityLevel = qualityLevel;
         });

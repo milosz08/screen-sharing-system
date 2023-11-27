@@ -8,8 +8,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import pl.polsl.screensharing.host.view.HostWindow;
-import pl.polsl.screensharing.lib.CryptoUtils;
 import pl.polsl.screensharing.lib.Utils;
+import pl.polsl.screensharing.lib.net.CryptoAsymmetricHelper;
 import pl.polsl.screensharing.lib.net.SocketState;
 import pl.polsl.screensharing.lib.net.payload.SignalState;
 import pl.polsl.screensharing.lib.net.payload.VideoFrameDetails;
@@ -24,6 +24,7 @@ public class SendSignalsThread extends Thread {
     private final HostWindow hostWindow;
     private final Socket socket;
     private final ObjectMapper objectMapper;
+    private final CryptoAsymmetricHelper cryptoAsymmetricHelper;
 
     private PrintWriter printWriter;
     @Setter
@@ -33,6 +34,7 @@ public class SendSignalsThread extends Thread {
         this.clientThread = clientThread;
         this.hostWindow = hostWindow;
         socket = clientThread.getSocket();
+        cryptoAsymmetricHelper = clientThread.getCryptoAsymmetricHelper();
         eventSignalState = SocketState.WAITING;
         objectMapper = new ObjectMapper();
     }
@@ -107,7 +109,7 @@ public class SendSignalsThread extends Thread {
 
     private void performSSLSignal(Object resData, SocketState signal) throws Exception {
         final String rawResponse = objectMapper.writeValueAsString(resData);
-        final String encrypted = CryptoUtils.rsaAysmEncrypt(rawResponse, clientThread.getClientPublicKey());
+        final String encrypted = cryptoAsymmetricHelper.encrypt(rawResponse, clientThread.getClientPublicKey());
         printWriter.println(signal.generateBody(encrypted));
     }
 }
