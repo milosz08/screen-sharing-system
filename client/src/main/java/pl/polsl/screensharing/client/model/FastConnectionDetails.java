@@ -5,6 +5,7 @@
 package pl.polsl.screensharing.client.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,13 +18,28 @@ import pl.polsl.screensharing.lib.Utils;
 @Builder
 @AllArgsConstructor
 public class FastConnectionDetails {
+    @JsonProperty("hostIpAddress")
     private String hostIpAddress;
+
+    @JsonProperty("hostPort")
     private int hostPort;
+
+    @JsonProperty("clientIpAddress")
     private String clientIpAddress;
+
+    @JsonProperty("isMachineIpAddress")
     private boolean isMachineIpAddress;
+
+    @JsonProperty("clientPort")
     private int clientPort;
+
+    @JsonProperty("isRandomPort")
     private boolean isRandomPort;
+
+    @JsonProperty("username")
     private String username;
+
+    @JsonProperty("description")
     private String description;
 
     public FastConnectionDetails() {

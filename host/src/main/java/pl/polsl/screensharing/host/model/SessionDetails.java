@@ -5,6 +5,7 @@
 package pl.polsl.screensharing.host.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,10 +19,19 @@ import java.util.Base64;
 @Builder
 @AllArgsConstructor
 public class SessionDetails {
+    @JsonProperty("ipAddress")
     private String ipAddress;
+
+    @JsonProperty("isMachineIp")
     private boolean isMachineIp;
+
+    @JsonProperty("port")
     private int port;
+
+    @JsonProperty("hasPassword")
     private boolean hasPassword;
+
+    @JsonProperty("password")
     private String password;
 
     public SessionDetails() {

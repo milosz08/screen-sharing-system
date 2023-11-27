@@ -5,6 +5,7 @@
 package pl.polsl.screensharing.host.state;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 import pl.polsl.screensharing.host.model.FrameColorRgb;
@@ -16,8 +17,13 @@ import java.util.Base64;
 @Getter
 @Setter
 public class PersistedState {
+    @JsonProperty("sessionDetails")
     private final SessionDetails sessionDetails;
+
+    @JsonProperty("frameColor")
     private FrameColorRgb frameColor;
+
+    @JsonProperty("cursorIsShowing")
     private boolean cursorIsShowing;
 
     public PersistedState() {

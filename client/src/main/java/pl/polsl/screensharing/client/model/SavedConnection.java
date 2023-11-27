@@ -4,6 +4,7 @@
  */
 package pl.polsl.screensharing.client.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,12 +18,25 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SavedConnection implements Comparable<SavedConnection> {
+    @JsonProperty("id")
     private int id;
+
+    @JsonProperty("hostIpAddress")
     private String hostIpAddress;
+
+    @JsonProperty("hostPort")
     private int hostPort;
+
+    @JsonProperty("clientIpAddress")
     private String clientIpAddress;
+
+    @JsonProperty("clientPort")
     private int clientPort;
+
+    @JsonProperty("username")
     private String username;
+
+    @JsonProperty("description")
     private String description;
 
     @Override
