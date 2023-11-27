@@ -11,8 +11,8 @@ import pl.polsl.screensharing.client.state.ClientState;
 import pl.polsl.screensharing.client.view.ClientWindow;
 import pl.polsl.screensharing.client.view.dialog.LastConnectionsWindow;
 import pl.polsl.screensharing.client.view.popup.PasswordPopup;
-import pl.polsl.screensharing.lib.InetAddr;
 import pl.polsl.screensharing.lib.Utils;
+import pl.polsl.screensharing.lib.net.InetAddr;
 
 import javax.swing.*;
 import java.beans.PropertyChangeEvent;

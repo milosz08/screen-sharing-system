@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
+import pl.polsl.screensharing.lib.net.InetAddr;
 
 import javax.swing.*;
 import java.awt.*;
