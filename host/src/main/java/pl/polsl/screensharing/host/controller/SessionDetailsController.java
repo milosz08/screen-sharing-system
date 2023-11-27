@@ -20,7 +20,6 @@ import pl.polsl.screensharing.lib.gui.component.JAppPasswordTextField;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
-import java.util.Base64;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -36,8 +35,7 @@ public class SessionDetailsController implements ConnectionHandler {
             JOptionPane.showMessageDialog(null, "Fill all necesarry fields!", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        final String password = new String(sessionDetailsDialogWindow.getPasswordTextField().getPassword());
-        final SessionDetails sessionDetails = instantiateSessionDetails(password);
+        final SessionDetails sessionDetails = instantiateSessionDetails();
         hostState.updateSessionDetails(sessionDetails);
 
         final DatagramKeys datagramKeys = new DatagramKeys();
@@ -87,10 +85,7 @@ public class SessionDetailsController implements ConnectionHandler {
     public void saveConnectionDetails(ActionEvent event) {
         final HostState hostState = hostWindow.getHostState();
         final JButton saveDetailsButton = (JButton) event.getSource();
-
-        final String password = new String(sessionDetailsDialogWindow.getPasswordTextField().getPassword());
-        final SessionDetails sessionDetails = instantiateSessionDetails(Base64.getEncoder()
-            .encodeToString(password.getBytes()));
+        final SessionDetails sessionDetails = instantiateSessionDetails();
 
         hostState.updateSessionDetails(sessionDetails);
         hostState.getPersistedStateLoader().persistSessionDetails();
@@ -102,13 +97,13 @@ public class SessionDetailsController implements ConnectionHandler {
             "Info", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE);
     }
 
-    private SessionDetails instantiateSessionDetails(String password) {
+    private SessionDetails instantiateSessionDetails() {
         return SessionDetails.builder()
             .ipAddress(sessionDetailsDialogWindow.getIpAddressTextField().getText())
             .port(Integer.parseInt(sessionDetailsDialogWindow.getPortTextField().getText()))
             .isMachineIp(sessionDetailsDialogWindow.getIsMachineIpAddress().isSelected())
             .hasPassword(sessionDetailsDialogWindow.getHasPasswordCheckbox().isSelected())
-            .password(password)
+            .password(new String(sessionDetailsDialogWindow.getPasswordTextField().getPassword()))
             .build();
     }
 

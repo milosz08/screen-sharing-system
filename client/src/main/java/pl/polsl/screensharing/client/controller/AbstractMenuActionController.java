@@ -12,6 +12,7 @@ import pl.polsl.screensharing.client.view.ClientWindow;
 import pl.polsl.screensharing.client.view.dialog.ConnectWindow;
 import pl.polsl.screensharing.client.view.dialog.LastConnectionsWindow;
 import pl.polsl.screensharing.client.view.dialog.SessionInfoDialogWindow;
+import pl.polsl.screensharing.lib.Utils;
 import pl.polsl.screensharing.lib.gui.file.FileUtils;
 
 import javax.imageio.ImageIO;
@@ -25,6 +26,7 @@ abstract class AbstractMenuActionController {
 
     public void openMakeConnectionWindow() {
         final ConnectWindow window = clientWindow.getConnectWindow();
+        window.getClientPortTextField().setText(String.valueOf(Utils.getRandomPortOrDefault(443)));
         window.setVisible(true);
     }
 

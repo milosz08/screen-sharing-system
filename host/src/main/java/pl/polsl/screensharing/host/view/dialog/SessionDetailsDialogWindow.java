@@ -25,7 +25,6 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
-import java.util.Base64;
 
 @Getter
 public class SessionDetailsDialogWindow extends AbstractPopupDialog {
@@ -153,7 +152,7 @@ public class SessionDetailsDialogWindow extends AbstractPopupDialog {
             ipAddressTextField.setEnabled(!sessionDetails.isMachineIp());
             isMachineIpAddress.setSelected(sessionDetails.isMachineIp());
             portTextField.setText(sessionDetails.getPortAsStr());
-            passwordTextField.setText(new String(Base64.getDecoder().decode(sessionDetails.getPassword())));
+            passwordTextField.setText(sessionDetails.getPassword());
             passwordTextField.setEnabled(sessionDetails.isHasPassword());
             passwordTogglerCheckbox.setEnabled(sessionDetails.isHasPassword());
             hasPasswordCheckbox.setSelected(sessionDetails.isHasPassword());

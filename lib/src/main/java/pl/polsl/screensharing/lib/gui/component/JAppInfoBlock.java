@@ -15,14 +15,16 @@ public class JAppInfoBlock {
     private final JLabel label;
     @Getter
     private final JLabel value;
-    private final Font font;
+    private final Font normalFont;
+    private final Font italicFont;
 
     public JAppInfoBlock(String label, String initValue) {
         this.label = new JLabel(label + ":");
         this.value = new JLabel(initValue);
         final Font labelFont = this.label.getFont();
-        this.font = new Font(labelFont.getName(), Font.PLAIN, labelFont.getSize());
-        this.label.setFont(font);
+        this.normalFont = new Font(labelFont.getName(), Font.PLAIN, labelFont.getSize());
+        this.italicFont = new Font(labelFont.getName(), Font.ITALIC, labelFont.getSize());
+        this.label.setFont(normalFont);
     }
 
     public JAppInfoBlock(String label) {
@@ -36,5 +38,9 @@ public class JAppInfoBlock {
 
     public void setText(String text) {
         value.setText(text);
+    }
+
+    public void setFontToValue(boolean isItalic) {
+        value.setFont(isItalic ? italicFont : normalFont);
     }
 }

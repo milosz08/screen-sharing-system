@@ -12,6 +12,8 @@ import org.apache.commons.lang3.StringUtils;
 import pl.polsl.screensharing.lib.SharedConstants;
 import pl.polsl.screensharing.lib.Utils;
 
+import java.util.Base64;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -36,7 +38,7 @@ public class SessionDetails {
         isMachineIp = o.isMachineIp;
         port = o.port;
         hasPassword = o.hasPassword;
-        password = o.password;
+        password = Base64.getEncoder().encodeToString(o.password.getBytes());
     }
 
     @JsonIgnore

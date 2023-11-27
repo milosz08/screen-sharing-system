@@ -78,6 +78,10 @@ public class SessionInfoDialogWindow extends AbstractPopupDialog {
             portInfoBlock.setText(sessionDetails.getPortAsStr());
             password = sessionDetails.getPassword();
             hasPasswordInfoBlock.setText(String.valueOf(sessionDetails.isHasPassword()));
+            passwordCheckbox.setEnabled(sessionDetails.isHasPassword());
+            passwordInfoBlock.setText(sessionDetails.isHasPassword()
+                ? SharedConstants.PASSWORD_REPLACEMENT : "no password");
+            passwordInfoBlock.setFontToValue(!sessionDetails.isHasPassword());
         });
     }
 }

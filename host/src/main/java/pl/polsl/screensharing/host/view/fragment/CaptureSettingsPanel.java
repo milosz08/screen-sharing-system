@@ -46,9 +46,9 @@ public class CaptureSettingsPanel extends AbstractScreenCaptureRightPanel {
         fullScreenCaptureModeRadio = new JRadioButton("Capture full screen", true);
         areaCaptureModeRadio = new JRadioButton("Capture selected area");
 
-        selectFrameColorButton = new JButton("Select frame color");
+        selectFrameColorButton = new JButton("Selected frame color");
         selectedFrameColorPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        selectedFrameColorLabel = new JLabel("Frame color:");
+        selectedFrameColorLabel = new JLabel("Selected frame color:");
         selectedFrameColorLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
         frameColorRectInfo = new FrameColorRectInfo(hostState);
 
