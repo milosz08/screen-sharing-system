@@ -11,6 +11,7 @@ import pl.polsl.screensharing.host.view.HostWindow;
 import pl.polsl.screensharing.lib.Utils;
 import pl.polsl.screensharing.lib.net.CryptoAsymmetricHelper;
 import pl.polsl.screensharing.lib.net.SocketState;
+import pl.polsl.screensharing.lib.net.payload.KickReason;
 import pl.polsl.screensharing.lib.net.payload.SignalState;
 import pl.polsl.screensharing.lib.net.payload.VideoFrameDetails;
 
@@ -74,11 +75,20 @@ public class SendSignalsThread extends Thread {
             }
             // sygnał w przypadku wyrzucenia użytkownika/użytkowników z sesji
             case KICK_FROM_SESSION: {
-                final SignalState<Boolean> signalState = new SignalState<>(true);
-                performSSLSignal(signalState, SocketState.KICK_FROM_SESSION);
+                final KickReason kickReason = new KickReason("You has been kicked from session.");
+                performSSLSignal(kickReason, SocketState.KICK_FROM_SESSION);
                 socket.close();
                 eventSignalState = SocketState.WAITING;
-                log.info("(signal event) Send kick user/s event with data {}", signalState);
+                log.info("(signal event) Send kick user/s event with data {}", kickReason);
+                break;
+            }
+            // sygnał w przypadku zakończenia sesji
+            case END_UP_SESSION: {
+                final KickReason kickReason = new KickReason("Session has been ended.");
+                performSSLSignal(kickReason, SocketState.END_UP_SESSION);
+                socket.close();
+                eventSignalState = SocketState.WAITING;
+                log.info("(signal event) Send end up session event with data {}", kickReason);
                 break;
             }
         }

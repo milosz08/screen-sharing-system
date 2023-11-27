@@ -16,6 +16,7 @@ import pl.polsl.screensharing.lib.net.CryptoAsymmetricHelper;
 import pl.polsl.screensharing.lib.net.SocketState;
 import pl.polsl.screensharing.lib.net.StreamingSignalState;
 import pl.polsl.screensharing.lib.net.payload.AuthPasswordRes;
+import pl.polsl.screensharing.lib.net.payload.KickReason;
 import pl.polsl.screensharing.lib.net.payload.VideoFrameDetails;
 
 import javax.swing.*;
@@ -36,7 +37,8 @@ public class ReceiveSignalsThread extends Thread {
 
     private SocketState signalState;
     private String signalRawData;
-    private boolean isKicked;
+    private boolean isConnectionEnded;
+    private String connectionEndedReason;
 
     public ReceiveSignalsThread(ClientTcpSocket clientTcpSocket) {
         this.clientTcpSocket = clientTcpSocket;
@@ -52,7 +54,7 @@ public class ReceiveSignalsThread extends Thread {
     public void run() {
         log.info("Starting TCP client receive events thread...");
         try (final BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
-            while (socket.isConnected() && !isKicked) {
+            while (socket.isConnected() && !isConnectionEnded) {
                 final String line = in.readLine();
                 if (line == null) {
                     break;
@@ -96,10 +98,13 @@ public class ReceiveSignalsThread extends Thread {
                         log.info("(signal event) Receive show/hide screen event with data {}", videoFrameDetails);
                         break;
                     }
-                    // sygnał w przypadku wyrzucenia użytkownika z sesji
+                    // sygnał w przypadku zakończenia sesji dla użytkownika (wyrzucenie, wyłączenie przez hosta)
+                    case END_UP_SESSION:
                     case KICK_FROM_SESSION: {
-                        isKicked = true;
-                        log.info("(signal event) Receive kick from session event");
+                        final KickReason kickReason = exchangeSSLRequest(KickReason.class);
+                        isConnectionEnded = true;
+                        connectionEndedReason = kickReason.getReason();
+                        log.info("(signal event) Receive kick from session event with reason {}", kickReason.getReason());
                         break;
                     }
                 }
@@ -110,10 +115,9 @@ public class ReceiveSignalsThread extends Thread {
             log.error(ex.getMessage());
             JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
-        if (isKicked) {
+        if (isConnectionEnded) {
             clientTcpSocket.stopAndClear();
-            JOptionPane.showMessageDialog(null, "You has been kicked from session", "Info",
-                JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, connectionEndedReason, "Info", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
