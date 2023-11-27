@@ -10,10 +10,7 @@ import pl.polsl.screensharing.client.controller.BottomInfobarController;
 import pl.polsl.screensharing.client.net.ClientDatagramSocket;
 import pl.polsl.screensharing.client.net.ClientTcpSocket;
 import pl.polsl.screensharing.client.state.ClientState;
-import pl.polsl.screensharing.client.view.dialog.AboutDialogWindow;
-import pl.polsl.screensharing.client.view.dialog.ConnectWindow;
-import pl.polsl.screensharing.client.view.dialog.LastConnectionsWindow;
-import pl.polsl.screensharing.client.view.dialog.LicenseDialogWindow;
+import pl.polsl.screensharing.client.view.dialog.*;
 import pl.polsl.screensharing.client.view.fragment.BottomInfobar;
 import pl.polsl.screensharing.client.view.fragment.TopMenuBar;
 import pl.polsl.screensharing.client.view.fragment.TopToolbar;
@@ -38,6 +35,7 @@ public class ClientWindow extends AbstractRootFrame {
     private final LastConnectionsWindow lastConnectionsWindow;
     private final AboutDialogWindow aboutDialogWindow;
     private final LicenseDialogWindow licenseDialogWindow;
+    private final SessionInfoDialogWindow sessionInfoDialogWindow;
 
     @Setter
     private ClientDatagramSocket clientDatagramSocket;
@@ -57,6 +55,7 @@ public class ClientWindow extends AbstractRootFrame {
         lastConnectionsWindow = new LastConnectionsWindow(this);
         aboutDialogWindow = new AboutDialogWindow(this);
         licenseDialogWindow = new LicenseDialogWindow(this);
+        sessionInfoDialogWindow = new SessionInfoDialogWindow(this);
     }
 
     @Override

@@ -20,12 +20,14 @@ public class TopMenuBar extends JMenuBar {
     private final ClientState clientState;
 
     private final JMenu connectMenu;
+    private final JMenu sessionInfoMenu;
     private final JMenu interactionMenu;
     private final JMenu helpMenu;
 
     private final JAppMenuIconItem createConnectionMenuItem;
     private final JAppMenuIconItem disconnectMenuItem;
     private final JAppMenuIconItem lastConnectionsMenuItem;
+    private final JAppMenuIconItem sessionInfoMenuItem;
 
     private final JAppMenuIconItem takeScreenshotMenuItem;
 
@@ -33,6 +35,7 @@ public class TopMenuBar extends JMenuBar {
     private final JAppMenuIconItem licenseMenuItem;
 
     private final JAppMenuIconItem[] connectMenuItems;
+    private final JAppMenuIconItem[] sessionInfoMenuItems;
     private final JAppMenuIconItem[] interactionMenuItems;
     private final JAppMenuIconItem[] helpMenuItems;
 
@@ -43,12 +46,14 @@ public class TopMenuBar extends JMenuBar {
         controller = new TopMenuBarController(clientWindow);
 
         connectMenu = new JMenu("Connect");
+        sessionInfoMenu = new JMenu("Session");
         interactionMenu = new JMenu("Interaction");
         helpMenu = new JMenu("Help");
 
         createConnectionMenuItem = new JAppMenuIconItem("Connect", ClientIcon.ADD_CONNECTION);
         disconnectMenuItem = new JAppMenuIconItem("Disconnect", ClientIcon.DISCONNECT, false);
         lastConnectionsMenuItem = new JAppMenuIconItem("Last connections", LibIcon.CHECK_BOX_LIST);
+        sessionInfoMenuItem = new JAppMenuIconItem("Session info", LibIcon.STATUS_INFORMATION, false);
 
         takeScreenshotMenuItem = new JAppMenuIconItem("Take screenshot", ClientIcon.TAKE_SNAPSHOT, false);
 
@@ -60,13 +65,14 @@ public class TopMenuBar extends JMenuBar {
         connectMenuItems = new JAppMenuIconItem[]{
             createConnectionMenuItem,
             disconnectMenuItem,
-            lastConnectionsMenuItem
+            lastConnectionsMenuItem,
         };
-
+        sessionInfoMenuItems = new JAppMenuIconItem[]{
+            sessionInfoMenuItem,
+        };
         interactionMenuItems = new JAppMenuIconItem[]{
             takeScreenshotMenuItem,
         };
-
         helpMenuItems = new JAppMenuIconItem[]{
             aboutMenuItem,
             licenseMenuItem
@@ -76,16 +82,20 @@ public class TopMenuBar extends JMenuBar {
         disconnectMenuItem.addActionListener(e -> controller.disconnectFromSession());
         lastConnectionsMenuItem.addActionListener(e -> controller.openLastConnectionsWindow());
 
+        sessionInfoMenuItem.addActionListener(e -> controller.openSessionInfoWindow());
+
         takeScreenshotMenuItem.addActionListener(e -> controller.takeScreenshot());
 
         aboutMenuItem.addActionListener(e -> controller.openAboutProgramSection());
         licenseMenuItem.addActionListener(e -> controller.openLicenseSection());
 
         addMenuItems(connectMenu, connectMenuItems);
+        addMenuItems(sessionInfoMenu, sessionInfoMenuItems);
         addMenuItems(interactionMenu, interactionMenuItems);
         addMenuItems(helpMenu, helpMenuItems);
 
         add(connectMenu);
+        add(sessionInfoMenu);
         add(interactionMenu);
         add(helpMenu);
     }
@@ -103,6 +113,7 @@ public class TopMenuBar extends JMenuBar {
             lastConnectionsMenuItem.setEnabled(!isConnected);
             disconnectMenuItem.setEnabled(isConnected);
             takeScreenshotMenuItem.setEnabled(isConnected);
+            sessionInfoMenuItem.setEnabled(isConnected);
         });
     }
 }

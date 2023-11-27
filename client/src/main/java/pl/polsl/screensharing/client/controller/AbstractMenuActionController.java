@@ -11,6 +11,7 @@ import pl.polsl.screensharing.client.net.ClientTcpSocket;
 import pl.polsl.screensharing.client.view.ClientWindow;
 import pl.polsl.screensharing.client.view.dialog.ConnectWindow;
 import pl.polsl.screensharing.client.view.dialog.LastConnectionsWindow;
+import pl.polsl.screensharing.client.view.dialog.SessionInfoDialogWindow;
 import pl.polsl.screensharing.lib.gui.file.FileUtils;
 
 import javax.imageio.ImageIO;
@@ -29,6 +30,11 @@ abstract class AbstractMenuActionController {
 
     public void openLastConnectionsWindow() {
         final LastConnectionsWindow window = clientWindow.getLastConnectionsWindow();
+        window.setVisible(true);
+    }
+
+    public void openSessionInfoWindow() {
+        final SessionInfoDialogWindow window = clientWindow.getSessionInfoDialogWindow();
         window.setVisible(true);
     }
 

@@ -9,6 +9,7 @@ import pl.polsl.screensharing.host.net.ServerDatagramSocket;
 import pl.polsl.screensharing.host.net.ServerTcpSocket;
 import pl.polsl.screensharing.host.view.HostWindow;
 import pl.polsl.screensharing.host.view.dialog.SessionDetailsDialogWindow;
+import pl.polsl.screensharing.host.view.dialog.SessionInfoDialogWindow;
 
 import javax.swing.*;
 
@@ -20,6 +21,11 @@ abstract class AbstractMenuActionController extends AbstractStreamController {
 
     public void openSessionDetailsWindow() {
         final SessionDetailsDialogWindow window = hostWindow.getSessionDetailsDialogWindow();
+        window.setVisible(true);
+    }
+
+    public void openSessionInfoWindow() {
+        final SessionInfoDialogWindow window = hostWindow.getSessionInfoDialogWindow();
         window.setVisible(true);
     }
 

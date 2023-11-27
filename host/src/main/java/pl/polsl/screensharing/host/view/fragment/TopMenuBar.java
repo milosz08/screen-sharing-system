@@ -30,6 +30,7 @@ public class TopMenuBar extends JMenuBar {
 
     private final JAppMenuIconItem createSessionMenuItem;
     private final JAppMenuIconItem removeSessionMenuItem;
+    private final JAppMenuIconItem sessionInfoMenuItem;
 
     private final JAppMenuIconItem startVideoStreamingMenuItem;
     private final JAppMenuIconItem stopVideoStreamingMenuItem;
@@ -56,6 +57,7 @@ public class TopMenuBar extends JMenuBar {
 
         createSessionMenuItem = new JAppMenuIconItem("Create session", HostIcon.ADD_LINK);
         removeSessionMenuItem = new JAppMenuIconItem("Remove session", HostIcon.REMOVE_LINK, false);
+        sessionInfoMenuItem = new JAppMenuIconItem("Session info", LibIcon.STATUS_INFORMATION, false);
 
         startVideoStreamingMenuItem = new JAppMenuIconItem("Start streaming", HostIcon.DEBUG_INTERACTIVE_WINDOW, false);
         stopVideoStreamingMenuItem = new JAppMenuIconItem("Stop streaming", HostIcon.APPLICATION_ERROR, false);
@@ -71,6 +73,7 @@ public class TopMenuBar extends JMenuBar {
         sessionMenuItems = new JAppMenuIconItem[]{
             createSessionMenuItem,
             removeSessionMenuItem,
+            sessionInfoMenuItem,
         };
         videoStreamMenuItems = new JAppMenuIconItem[]{
             startVideoStreamingMenuItem,
@@ -87,6 +90,7 @@ public class TopMenuBar extends JMenuBar {
 
         createSessionMenuItem.addActionListener(e -> controller.openSessionDetailsWindow());
         removeSessionMenuItem.addActionListener(e -> controller.removeSession());
+        sessionInfoMenuItem.addActionListener(e -> controller.openSessionInfoWindow());
 
         startVideoStreamingMenuItem.addActionListener(e -> controller.startVideoStreaming());
         stopVideoStreamingMenuItem.addActionListener(e -> controller.stopVideoStreaming());
@@ -119,6 +123,7 @@ public class TopMenuBar extends JMenuBar {
             final boolean isCreated = state.equals(SessionState.CREATED);
             createSessionMenuItem.setEnabled(!isCreated);
             removeSessionMenuItem.setEnabled(isCreated);
+            sessionInfoMenuItem.setEnabled(isCreated);
         });
 
         final Observable<SessionStreamingAggregator> aggregator = Observable.combineLatest(

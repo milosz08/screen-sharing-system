@@ -22,6 +22,7 @@ public class TopToolbar extends JToolBar {
     private final JAppIconButton createConnectionButton;
     private final JAppIconButton disconnectButton;
     private final JAppIconButton lastConnectionsButton;
+    private final JAppIconButton sessionInfoButton;
     private final JAppIconButton takeScreenshotButton;
 
     private final TopToolbarController controller;
@@ -34,6 +35,8 @@ public class TopToolbar extends JToolBar {
         disconnectButton = new JAppIconButton("Disconnect", ClientIcon.DISCONNECT, true, false);
         lastConnectionsButton = new JAppIconButton("Last connections", LibIcon.CHECK_BOX_LIST, true);
 
+        sessionInfoButton = new JAppIconButton("Session info", LibIcon.STATUS_INFORMATION, true, false);
+
         takeScreenshotButton = new JAppIconButton("Take screenshot", ClientIcon.TAKE_SNAPSHOT, true, false);
 
         initObservables();
@@ -42,11 +45,15 @@ public class TopToolbar extends JToolBar {
         disconnectButton.addActionListener(e -> controller.disconnectFromSession());
         lastConnectionsButton.addActionListener(e -> controller.openLastConnectionsWindow());
 
+        sessionInfoButton.addActionListener(e -> controller.openSessionInfoWindow());
+
         takeScreenshotButton.addActionListener(e -> controller.takeScreenshot());
 
         addButtonWithSeparation(createConnectionButton);
         addButtonWithSeparation(disconnectButton);
         addButtonWithSeparation(lastConnectionsButton);
+        addSeparator();
+        addButtonWithSeparation(sessionInfoButton);
         addSeparator();
         addButtonWithSeparation(takeScreenshotButton);
 
@@ -65,6 +72,7 @@ public class TopToolbar extends JToolBar {
             lastConnectionsButton.setEnabled(!isConnected);
             disconnectButton.setEnabled(isConnected);
             takeScreenshotButton.setEnabled(isConnected);
+            sessionInfoButton.setEnabled(isConnected);
         });
     }
 }

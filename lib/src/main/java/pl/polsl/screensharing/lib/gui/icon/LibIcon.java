@@ -20,6 +20,7 @@ public enum LibIcon implements AppIcon {
     HELP_TABLE_OF_CONTENTS("HelpTableOfContents"),
     PRINT("Print"),
     SAVE("Save"),
+    STATUS_INFORMATION("StatusInformation"),
     UPLOAD("Upload"),
     ;
 

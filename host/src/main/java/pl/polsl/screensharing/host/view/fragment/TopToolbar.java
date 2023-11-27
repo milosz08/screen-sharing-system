@@ -14,6 +14,7 @@ import pl.polsl.screensharing.host.state.StreamingState;
 import pl.polsl.screensharing.host.view.HostIcon;
 import pl.polsl.screensharing.host.view.HostWindow;
 import pl.polsl.screensharing.lib.gui.component.JAppIconButton;
+import pl.polsl.screensharing.lib.gui.icon.LibIcon;
 
 import javax.swing.*;
 
@@ -23,6 +24,7 @@ public class TopToolbar extends JToolBar {
 
     private final JAppIconButton createSessionButton;
     private final JAppIconButton removeSessionButton;
+    private final JAppIconButton sessionInfoButton;
 
     private final JAppIconButton startVideoStreamingButton;
     private final JAppIconButton stopVideoStreamingButton;
@@ -38,6 +40,7 @@ public class TopToolbar extends JToolBar {
 
         createSessionButton = new JAppIconButton("Create session", HostIcon.ADD_LINK, true);
         removeSessionButton = new JAppIconButton("Remove session", HostIcon.REMOVE_LINK, true, false);
+        sessionInfoButton = new JAppIconButton("Session info", LibIcon.STATUS_INFORMATION, true, false);
 
         startVideoStreamingButton = new JAppIconButton("Start streaming", HostIcon.DEBUG_INTERACTIVE_WINDOW, true, false);
         stopVideoStreamingButton = new JAppIconButton("Stop streaming", HostIcon.APPLICATION_ERROR, true, false);
@@ -49,6 +52,7 @@ public class TopToolbar extends JToolBar {
 
         createSessionButton.addActionListener(e -> controller.openSessionDetailsWindow());
         removeSessionButton.addActionListener(e -> controller.removeSession());
+        sessionInfoButton.addActionListener(e -> controller.openSessionInfoWindow());
 
         startVideoStreamingButton.addActionListener(e -> controller.startVideoStreaming());
         stopVideoStreamingButton.addActionListener(e -> controller.stopVideoStreaming());
@@ -58,6 +62,7 @@ public class TopToolbar extends JToolBar {
 
         addButtonWithSeparation(createSessionButton);
         addButtonWithSeparation(removeSessionButton);
+        addButtonWithSeparation(sessionInfoButton);
         addSeparator();
         addButtonWithSeparation(startVideoStreamingButton);
         addButtonWithSeparation(stopVideoStreamingButton);
@@ -78,6 +83,7 @@ public class TopToolbar extends JToolBar {
             final boolean isCreated = state.equals(SessionState.CREATED);
             createSessionButton.setEnabled(!isCreated);
             removeSessionButton.setEnabled(isCreated);
+            sessionInfoButton.setEnabled(isCreated);
         });
 
         final Observable<SessionStreamingAggregator> aggregator = Observable.combineLatest(
