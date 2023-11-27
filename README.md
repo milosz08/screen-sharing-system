@@ -3,9 +3,9 @@
 [![](https://img.shields.io/badge/Made%20with-Java%20SE%201.8-brown.svg)](https://www.java.com/en/)&nbsp;&nbsp;
 [![](https://img.shields.io/badge/Build%20with-Maven%203.9.4-1abc9c.svg)](https://maven.apache.org//)&nbsp;&nbsp;
 
-Protected screen sharing system created with low-level Socket API written in Java SE 1.8
-with JSSE, JCA, JCE and Swing UI. Used event-based reactive programming with observer pattern supplied
-by [RxJava](https://github.com/ReactiveX/RxJava) library.
+Secured screen sharing system created with low-level Socket API written in Java SE 1.8 with JCA, JCE and Swing UI. Uses
+event-based reactive programming with observer pattern supplied by [RxJava](https://github.com/ReactiveX/RxJava)
+library.
 
 ## Table of content
 
@@ -62,11 +62,17 @@ All executable JAR files will be available in `.bin` directory.
 ## Tech stack
 
 * Java SE 1.8
-* JSSE (Java Secure Socket Extension)
 * JCA (Java Cryptography Architecture)
 * JCE (Java Cryptography Extension)
 * Swing UI, AWT
-* RxJava
+* RxJava (reactive pattern)
+* Imgscalr (image processing)
+* Apache Commons Lang, IO (utilities)
+* Logback with Slf4j api
+* JFreeChart (data transfer linear plot)
+* Bcrypt (password hashing)
+* Lombok (accessor annotations)
+* Jackson (json processing)
 
 <a name="project-status"></a>
 
