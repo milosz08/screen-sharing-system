@@ -6,14 +6,25 @@ package pl.polsl.screensharing.host.state;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
+import lombok.Setter;
+import pl.polsl.screensharing.host.model.FrameColorRgb;
 import pl.polsl.screensharing.host.model.SessionDetails;
 
+import java.awt.*;
+import java.util.Base64;
+
 @Getter
+@Setter
 public class PersistedState {
     private final SessionDetails sessionDetails;
+    private FrameColorRgb frameColor;
+    private boolean cursorIsShowing;
 
     public PersistedState() {
         sessionDetails = new SessionDetails();
+        frameColor = new FrameColorRgb(Color.RED);
+        cursorIsShowing = true;
+    }
 
     @JsonIgnore
     public SessionDetails getSessionDetailsWithDecryptedPassword() {

@@ -201,4 +201,8 @@ public class HostState extends AbstractDisposableProvider {
     public Boolean getLastEmittedIsScreenIsShowForParticipants() {
         return isScreenShowForParticipants$.getValue();
     }
+
+    public Boolean getLastEmittedIsCursorShowing() {
+        return isCursorShowing$.getValue();
+    }
 }

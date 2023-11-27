@@ -76,6 +76,7 @@ public class CaptureSettingsController {
             return;
         }
         hostState.updateFrameColor(selectedColor);
+        hostState.getPersistedStateLoader().persistFrameColor();
         log.info("Updated resizable frame color to {}", selectedColor);
     }
 
@@ -85,6 +86,7 @@ public class CaptureSettingsController {
             .getShowCursorCheckbox()
             .isSelected();
         hostState.updateShowingCursorState(isShowing);
+        hostState.getPersistedStateLoader().persistIsCursorShowing();
         log.info("Showing cursor on screen state is {}", isShowing ? "on" : "off");
     }
 }
