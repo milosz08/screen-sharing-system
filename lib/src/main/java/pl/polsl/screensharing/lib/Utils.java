@@ -10,16 +10,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
-import pl.polsl.screensharing.lib.net.InetAddr;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.UnknownHostException;
+import java.net.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
@@ -107,9 +103,12 @@ public class Utils {
         return selectedPort;
     }
 
-    public static InetAddr extractAddrDetails(String merged) {
+    public static InetSocketAddress extractAddrDetails(String merged) {
         final int separatorPos = merged.indexOf(':');
-        return new InetAddr(merged.substring(0, separatorPos), Integer.parseInt(merged.substring(separatorPos + 1)));
+        return new InetSocketAddress(
+            merged.substring(0, separatorPos),
+            Integer.parseInt(merged.substring(separatorPos + 1))
+        );
     }
 
     public static void generateThreadUsagePerTick() {

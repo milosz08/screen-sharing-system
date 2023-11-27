@@ -12,10 +12,10 @@ import pl.polsl.screensharing.client.view.ClientWindow;
 import pl.polsl.screensharing.client.view.dialog.LastConnectionsWindow;
 import pl.polsl.screensharing.client.view.popup.PasswordPopup;
 import pl.polsl.screensharing.lib.Utils;
-import pl.polsl.screensharing.lib.net.InetAddr;
 
 import javax.swing.*;
 import java.beans.PropertyChangeEvent;
+import java.net.InetSocketAddress;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.SortedSet;
@@ -37,12 +37,12 @@ public class LastConnectionsController extends AbstractPopupDialogController {
         if (password == null) {
             return null;
         }
-        final InetAddr hostConnection = Utils.extractAddrDetails(getTableValue(0));
-        final InetAddr clientConnection = Utils.extractAddrDetails(getTableValue(1));
+        final InetSocketAddress hostConnection = Utils.extractAddrDetails(getTableValue(0));
+        final InetSocketAddress clientConnection = Utils.extractAddrDetails(getTableValue(1));
         return ConnectionDetails.builder()
-            .hostIpAddress(hostConnection.getIpAddress())
+            .hostIpAddress(hostConnection.getAddress().getHostAddress())
             .hostPort(hostConnection.getPort())
-            .clientIpAddress(clientConnection.getIpAddress())
+            .clientIpAddress(clientConnection.getAddress().getHostAddress())
             .clientPort(clientConnection.getPort())
             .username(getTableValue(2))
             .password(password)
@@ -117,13 +117,13 @@ public class LastConnectionsController extends AbstractPopupDialogController {
             return;
         }
         for (int i = 0; i < table.getRowCount(); i++) {
-            final InetAddr hostConnection = Utils.extractAddrDetails((String) table.getValueAt(i, 0));
-            final InetAddr clientConnection = Utils.extractAddrDetails((String) table.getValueAt(i, 1));
+            final InetSocketAddress hostConnection = Utils.extractAddrDetails((String) table.getValueAt(i, 0));
+            final InetSocketAddress clientConnection = Utils.extractAddrDetails((String) table.getValueAt(i, 1));
             final SavedConnection savedConnection = SavedConnection.builder()
                 .id(i)
-                .hostIpAddress(hostConnection.getIpAddress())
+                .hostIpAddress(hostConnection.getAddress().getHostAddress())
                 .hostPort(hostConnection.getPort())
-                .clientIpAddress(clientConnection.getIpAddress())
+                .clientIpAddress(clientConnection.getAddress().getHostAddress())
                 .clientPort(clientConnection.getPort())
                 .username((String) table.getValueAt(i, 2))
                 .description((String) table.getValueAt(i, 3))
