@@ -26,10 +26,14 @@ public class PersistedState {
     @JsonProperty("isCursorShowing")
     private Boolean isCursorShowing;
 
+    @JsonProperty("quality")
+    private QualityLevel quality;
+
     public PersistedState() {
         sessionDetails = new SessionDetails();
         frameColor = new FrameColorRgb(Color.RED);
         isCursorShowing = true;
+        quality = QualityLevel.GOOD;
     }
 
     @JsonIgnore

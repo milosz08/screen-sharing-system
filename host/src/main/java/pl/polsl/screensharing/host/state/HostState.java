@@ -205,4 +205,8 @@ public class HostState extends AbstractDisposableProvider {
     public Boolean getLastEmittedIsCursorShowing() {
         return isCursorShowing$.getValue();
     }
+
+    public QualityLevel getLastEmittedQualityLevel() {
+        return streamingQuality$.getValue();
+    }
 }

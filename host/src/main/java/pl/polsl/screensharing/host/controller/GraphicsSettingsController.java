@@ -26,6 +26,7 @@ public class GraphicsSettingsController {
             return;
         }
         hostState.updateStreamingQuality(qualityLevel);
+        hostState.getPersistedStateLoader().persistQualityLevel();
         log.info("Updated streaming quality level to {}", qualityLevel);
     }
 }

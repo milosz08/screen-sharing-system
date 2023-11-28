@@ -22,6 +22,7 @@ public class PersistedStateLoader extends AbstractPersistorStateLoader<HostState
             state.updateSessionDetails(settings.getSessionDetailsWithDecryptedPassword());
             state.updateFrameColor(settings.getFrameColor().getColor());
             state.updateShowingCursorState(settings.getIsCursorShowing());
+            state.updateStreamingQuality(settings.getQuality());
             log.info("Found config file. Moved persisted settings into application context.");
         } catch (Exception ex) {
             log.warn("Cannot localized config file, skipping initialization.");
@@ -58,6 +59,17 @@ public class PersistedStateLoader extends AbstractPersistorStateLoader<HostState
             log.info("Persist is cursor showing state: {}.", settings.getIsCursorShowing());
         } catch (Exception ex) {
             log.error("Failure during persist is cursor showing state. Cause {}.", ex.getMessage());
+        }
+    }
+
+    public void persistQualityLevel() {
+        try {
+            final PersistedState settings = objectMapper.readValue(file, PersistedState.class);
+            settings.setQuality(state.getLastEmittedQualityLevel());
+            objectMapper.writeValue(file, settings);
+            log.info("Persist quality level state: {}.", settings.getQuality());
+        } catch (Exception ex) {
+            log.error("Failure during persist quality level state. Cause {}.", ex.getMessage());
         }
     }
 }
