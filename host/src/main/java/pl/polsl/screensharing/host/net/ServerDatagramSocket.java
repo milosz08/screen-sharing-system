@@ -31,6 +31,8 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static pl.polsl.screensharing.lib.SharedConstants.*;
+
 @Slf4j
 public class ServerDatagramSocket extends AbstractDatagramSocketThread {
     private final HostWindow hostWindow;
@@ -41,9 +43,6 @@ public class ServerDatagramSocket extends AbstractDatagramSocketThread {
     private QualityLevel qualityLevel;
     private ConcurrentMap<Long, ConnectedClientInfo> connectedClients;
     private boolean isShowing;
-
-    private static final int MAX_FRAME_WIDTH = 1920;
-    private static final int MAX_FRAME_HEIGHT = 1080;
 
     public ServerDatagramSocket(HostWindow hostWindow, VideoCanvasController videoCanvasController) {
         super();
@@ -102,7 +101,7 @@ public class ServerDatagramSocket extends AbstractDatagramSocketThread {
                         PACKAGE_SIZE - debugBytesLength);
                     final long encryptedChunkLength = sendEncryptedPackage(chunk);
 
-                    sendBytes += encryptedChunkLength;
+                    sendBytes += PACKAGE_SIZE;
                     unprocessedDataLength -= (PACKAGE_SIZE - debugBytesLength);
                     chunkOffset += (PACKAGE_SIZE - debugBytesLength);
                     packageIteration++;

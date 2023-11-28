@@ -17,9 +17,6 @@ public abstract class AbstractDatagramSocketThread extends Thread {
     @Getter
     protected boolean isThreadActive;
 
-    protected static final int PACKAGE_SIZE = 32_768; // 32kb
-    protected static final int BILION = 1_000_000_000;
-
     protected AbstractDatagramSocketThread() {
         cryptoSymmetricHelper = new CryptoSymmetricHelper();
     }
@@ -39,7 +36,11 @@ public abstract class AbstractDatagramSocketThread extends Thread {
         if (!isAlive()) {
             setName("Thread-UDP-" + getId());
             super.start();
+            postStart();
         }
+    }
+
+    protected void postStart() {
     }
 
     public abstract void createDatagramSocket(byte[] secretKey, int port);

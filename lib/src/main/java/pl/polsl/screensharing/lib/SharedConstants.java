@@ -17,4 +17,8 @@ public class SharedConstants {
     public static final String DEFAULT_USERNAME = "user";
     public static final double DEFAULT_ASPECT_RATIO = 16.0 / 9.0;
     public static final String PASSWORD_REPLACEMENT = "*********";
+    public static final int PACKAGE_SIZE = 49_152; // 48kb
+    public static final int BILION = 1_000_000_000;
+    public static final int MAX_FRAME_WIDTH = 1600;
+    public static final int MAX_FRAME_HEIGHT = 900;
 }

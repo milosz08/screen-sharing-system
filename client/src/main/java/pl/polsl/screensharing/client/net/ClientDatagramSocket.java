@@ -25,6 +25,9 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.util.Arrays;
 
+import static pl.polsl.screensharing.lib.SharedConstants.BILION;
+import static pl.polsl.screensharing.lib.SharedConstants.PACKAGE_SIZE;
+
 @Slf4j
 public class ClientDatagramSocket extends AbstractDatagramSocketThread {
     private final ClientState clientState;
