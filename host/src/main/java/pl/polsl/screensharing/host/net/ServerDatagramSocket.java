@@ -4,6 +4,7 @@
  */
 package pl.polsl.screensharing.host.net;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.imgscalr.Scalr;
 import pl.polsl.screensharing.host.controller.VideoCanvasController;
@@ -26,22 +27,22 @@ import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.PortUnreachableException;
 import java.net.SocketTimeoutException;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
 import static pl.polsl.screensharing.lib.SharedConstants.*;
 
 @Slf4j
 public class ServerDatagramSocket extends AbstractDatagramSocketThread {
     private final HostWindow hostWindow;
+    @Getter
     private final HostState hostState;
     private final VideoCanvasController videoCanvasController;
-    private final ExecutorService executorService;
+    @Getter
+    private final BlockingQueue<byte[]> sendPackagesQueue;
+    private final FrameSenderThread frameSenderThread;
 
     private QualityLevel qualityLevel;
-    private ConcurrentMap<Long, ConnectedClientInfo> connectedClients;
     private boolean isShowing;
 
     public ServerDatagramSocket(HostWindow hostWindow, VideoCanvasController videoCanvasController) {
@@ -50,8 +51,8 @@ public class ServerDatagramSocket extends AbstractDatagramSocketThread {
         hostState = hostWindow.getHostState();
         this.videoCanvasController = videoCanvasController;
         qualityLevel = QualityLevel.GOOD;
-        connectedClients = new ConcurrentHashMap<>();
-        executorService = Executors.newFixedThreadPool(10); // pula wątków wysyłająca paczki do klientów
+        sendPackagesQueue = new ArrayBlockingQueue<>(10000);
+        frameSenderThread = new FrameSenderThread(this);
         initObservables();
     }
 
@@ -99,7 +100,7 @@ public class ServerDatagramSocket extends AbstractDatagramSocketThread {
                     // 3 pakiety debugujące
                     System.arraycopy(compressedData, chunkOffset, chunk, debugBytesLength,
                         PACKAGE_SIZE - debugBytesLength);
-                    final long encryptedChunkLength = sendEncryptedPackage(chunk);
+                    sendPackagesQueue.put(chunk);
 
                     sendBytes += PACKAGE_SIZE;
                     unprocessedDataLength -= (PACKAGE_SIZE - debugBytesLength);
@@ -113,9 +114,9 @@ public class ServerDatagramSocket extends AbstractDatagramSocketThread {
                     chunk[2] = 1; // pakiet terminalny
 
                     System.arraycopy(compressedData, chunkOffset, chunk, debugBytesLength, unprocessedDataLength);
-                    final long encryptedChunkLength = sendEncryptedPackage(chunk);
+                    sendPackagesQueue.put(chunk);
 
-                    sendBytes += encryptedChunkLength;
+                    sendBytes += (unprocessedDataLength + debugBytesLength);
                     compressedData = null;
                     chunkOffset = 0;
                     packageIteration = 1;
@@ -157,17 +158,13 @@ public class ServerDatagramSocket extends AbstractDatagramSocketThread {
 
     @Override
     public void abstractStopAndClear() {
-        executorService.shutdown();
         hostState.updateStreamingState(StreamingState.STOPPED);
         hostState.updateRealFpsBuffer(0);
     }
 
-    private long sendEncryptedPackage(byte[] chunk) throws Exception {
-        final byte[] encryptedChunk = cryptoSymmetricHelper.encrypt(chunk);
-        connectedClients.entrySet().parallelStream().forEach(clientInfo -> {
-            executorService.execute(new FrameSenderThread(datagramSocket, clientInfo.getValue(), encryptedChunk));
-        });
-        return chunk.length;
+    @Override
+    protected void postStart() {
+        frameSenderThread.start();
     }
 
     private byte[] loadImage() throws IOException {
@@ -200,9 +197,6 @@ public class ServerDatagramSocket extends AbstractDatagramSocketThread {
     protected void initObservables() {
         hostState.wrapAsDisposable(hostState.getStreamingQualityLevel$(), qualityLevel -> {
             this.qualityLevel = qualityLevel;
-        });
-        hostState.wrapAsDisposable(hostState.getConnectedClientsInfo$(), connectedClients -> {
-            this.connectedClients = connectedClients;
         });
         hostState.wrapAsDisposable(hostState.isScreenIsShowForParticipants$(), isShowing -> {
             this.isShowing = isShowing;

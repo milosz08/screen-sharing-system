@@ -10,11 +10,10 @@ import lombok.extern.slf4j.Slf4j;
 import java.net.DatagramSocket;
 
 @Slf4j
+@Getter
 public abstract class AbstractDatagramSocketThread extends Thread {
     protected DatagramSocket datagramSocket;
-    @Getter
     protected CryptoSymmetricHelper cryptoSymmetricHelper;
-    @Getter
     protected boolean isThreadActive;
 
     protected AbstractDatagramSocketThread() {
