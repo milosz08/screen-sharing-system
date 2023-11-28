@@ -35,7 +35,7 @@ abstract class AbstractStreamController {
 
             final ServerDatagramSocket serverDatagramSocket = new ServerDatagramSocket(hostWindow,
                 videoCanvas.getController());
-            serverDatagramSocket.createDatagramSocket(datagramKeys.getSecretKey(), datagramKeys.getSecureRandom(), 0);
+            serverDatagramSocket.createDatagramSocket(datagramKeys.getSecretKey(), 0);
             hostWindow.setServerDatagramSocket(serverDatagramSocket);
             serverDatagramSocket.start();
 

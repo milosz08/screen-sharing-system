@@ -147,9 +147,9 @@ public class ServerDatagramSocket extends AbstractDatagramSocketThread {
     }
 
     @Override
-    public void createDatagramSocket(byte[] secretKey, byte[] initVector, int port) {
+    public void createDatagramSocket(byte[] secretKey, int port) {
         try {
-            cryptoSymmetricHelper.initEncrypt(secretKey, initVector);
+            cryptoSymmetricHelper.initEncrypt(secretKey);
             datagramSocket = new DatagramSocket();
         } catch (Exception ex) {
             throw new UnoperableException(ex);

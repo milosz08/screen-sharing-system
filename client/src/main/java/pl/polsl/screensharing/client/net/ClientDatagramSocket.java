@@ -52,7 +52,7 @@ public class ClientDatagramSocket extends AbstractDatagramSocketThread {
         final ByteArrayOutputStream receivedDataBuffer = new ByteArrayOutputStream();
 
         final int debugBytesLength = 3; // ilość bajtów debugujących
-        byte[] receiveBuffer = new byte[PACKAGE_SIZE]; // bufor na dane przychodzące (dane + bufor debugujący)
+        byte[] receiveBuffer = new byte[PACKAGE_SIZE * 2]; // bufor na dane przychodzące (dane + bufor debugujący)
         byte[] rawDataBuffer; // bufor na surowe dane JPEG
         byte countOfPackages; // liczba pakietów uzyskana przez obiornik
         byte packageIteration; // iterator pakietów uzyskany przez obiornik
@@ -149,9 +149,9 @@ public class ClientDatagramSocket extends AbstractDatagramSocketThread {
     }
 
     @Override
-    public void createDatagramSocket(byte[] secretKey, byte[] initVector, int port) {
+    public void createDatagramSocket(byte[] secretKey, int port) {
         try {
-            cryptoSymmetricHelper.initDecrypt(secretKey, initVector);
+            cryptoSymmetricHelper.initDecrypt(secretKey);
             datagramSocket = new DatagramSocket(port);
             datagramSocket.setSoTimeout(1000);
         } catch (Exception ex) {

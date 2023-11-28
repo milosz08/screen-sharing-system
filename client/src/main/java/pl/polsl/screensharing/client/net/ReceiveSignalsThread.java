@@ -134,8 +134,7 @@ public class ReceiveSignalsThread extends Thread {
                 videoCanvas, videoCanvas.getController());
 
             clientWindow.setClientDatagramSocket(clientDatagramSocket);
-            clientDatagramSocket.createDatagramSocket(res.getSecretKeyUdp(), res.getSecureRandomUdp(),
-                details.getClientPort());
+            clientDatagramSocket.createDatagramSocket(res.getSecretKeyUdp(), details.getClientPort());
 
             clientDatagramSocket.start();
         }

@@ -14,7 +14,6 @@ public class DatagramKeys {
     private final SecureRandom secureRnd;
 
     private SecretKey secretKey;
-    private SecretKey secureRandom;
 
     public DatagramKeys() {
         secureRnd = new SecureRandom();
@@ -25,7 +24,6 @@ public class DatagramKeys {
             final KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
             keyGenerator.init(128, secureRnd);
             secretKey = keyGenerator.generateKey();
-            secureRandom = keyGenerator.generateKey();
         } catch (Exception ex) {
             throw new UnoperableException(ex);
         }
@@ -33,9 +31,5 @@ public class DatagramKeys {
 
     public byte[] getSecretKey() {
         return secretKey.getEncoded();
-    }
-
-    public byte[] getSecureRandom() {
-        return secureRandom.getEncoded();
     }
 }

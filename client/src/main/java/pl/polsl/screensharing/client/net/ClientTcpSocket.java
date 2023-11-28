@@ -121,7 +121,7 @@ public class ClientTcpSocket extends AbstractTcpSocketThread<Socket> {
                             videoCanvas, videoCanvas.getController());
 
                         clientDatagramSocket.createDatagramSocket(authPasswordRes.getSecretKeyUdp(),
-                            authPasswordRes.getSecureRandomUdp(), connectionDetails.getClientPort());
+                            connectionDetails.getClientPort());
                         clientWindow.setClientDatagramSocket(clientDatagramSocket);
 
                         final ConnectionData connectionData = ConnectionData.builder()

@@ -21,15 +21,11 @@ public class AuthPasswordRes {
     @JsonProperty("secretKeyUdp")
     private byte[] secretKeyUdp;
 
-    @JsonProperty("secureRandomUdp")
-    private byte[] secureRandomUdp;
-
     @Override
     public String toString() {
         return "{" +
             "validStatus=" + validStatus +
             ", secretKeyUdp=******" +
-            ", secureRandomUdp==******" +
             '}';
     }
 }

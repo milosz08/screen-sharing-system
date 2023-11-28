@@ -42,7 +42,7 @@ public abstract class AbstractDatagramSocketThread extends Thread {
         }
     }
 
-    public abstract void createDatagramSocket(byte[] secretKey, byte[] initVector, int port);
+    public abstract void createDatagramSocket(byte[] secretKey, int port);
     protected abstract void abstractStopAndClear();
     protected abstract void initObservables();
 }

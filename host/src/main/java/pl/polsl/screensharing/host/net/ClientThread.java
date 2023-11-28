@@ -136,10 +136,7 @@ public class ClientThread extends Thread {
                     if (!isValid) {
                         return builder.build();
                     }
-                    return builder
-                        .secretKeyUdp(datagramKeys.getSecretKey())
-                        .secureRandomUdp(datagramKeys.getSecureRandom())
-                        .build();
+                    return builder.secretKeyUdp(datagramKeys.getSecretKey()).build();
                 }, rawResponse -> {
                     log.info("(to-way exchange) Checked client password with result: {}", rawResponse);
                 }, AuthPasswordReq.class);
