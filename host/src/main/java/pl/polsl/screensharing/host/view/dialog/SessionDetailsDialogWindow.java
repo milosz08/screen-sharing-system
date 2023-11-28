@@ -17,8 +17,8 @@ import pl.polsl.screensharing.lib.gui.GridBagDrawer;
 import pl.polsl.screensharing.lib.gui.component.JAppIconButton;
 import pl.polsl.screensharing.lib.gui.component.JAppPasswordTextField;
 import pl.polsl.screensharing.lib.gui.component.JAppTextField;
-import pl.polsl.screensharing.lib.icon.LibIcon;
 import pl.polsl.screensharing.lib.gui.input.SimpleDocumentListener;
+import pl.polsl.screensharing.lib.icon.LibIcon;
 
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
@@ -147,15 +147,15 @@ public class SessionDetailsDialogWindow extends AbstractPopupDialog {
 
     private void initObservables() {
         hostState.wrapAsDisposable(hostState.getSessionDetails$(), sessionDetails -> {
-            ipAddressTextField.setText(sessionDetails.isMachineIp()
+            ipAddressTextField.setText(sessionDetails.getIsMachineIp()
                 ? Utils.getMachineAddress() : sessionDetails.getIpAddress());
-            ipAddressTextField.setEnabled(!sessionDetails.isMachineIp());
-            isMachineIpAddress.setSelected(sessionDetails.isMachineIp());
+            ipAddressTextField.setEnabled(!sessionDetails.getIsMachineIp());
+            isMachineIpAddress.setSelected(sessionDetails.getIsMachineIp());
             portTextField.setText(sessionDetails.getPortAsStr());
             passwordTextField.setText(sessionDetails.getPassword());
-            passwordTextField.setEnabled(sessionDetails.isHasPassword());
-            passwordTogglerCheckbox.setEnabled(sessionDetails.isHasPassword());
-            hasPasswordCheckbox.setSelected(sessionDetails.isHasPassword());
+            passwordTextField.setEnabled(sessionDetails.getHasPassword());
+            passwordTogglerCheckbox.setEnabled(sessionDetails.getHasPassword());
+            hasPasswordCheckbox.setSelected(sessionDetails.getHasPassword());
         });
     }
 }

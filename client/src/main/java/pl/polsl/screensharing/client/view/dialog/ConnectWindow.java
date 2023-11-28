@@ -17,8 +17,8 @@ import pl.polsl.screensharing.lib.gui.component.JAppIconButton;
 import pl.polsl.screensharing.lib.gui.component.JAppPasswordTextField;
 import pl.polsl.screensharing.lib.gui.component.JAppTextArea;
 import pl.polsl.screensharing.lib.gui.component.JAppTextField;
-import pl.polsl.screensharing.lib.icon.LibIcon;
 import pl.polsl.screensharing.lib.gui.input.SimpleDocumentListener;
+import pl.polsl.screensharing.lib.icon.LibIcon;
 
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
@@ -220,11 +220,11 @@ public class ConnectWindow extends AbstractPopupDialog {
             hostIpAddressTextField.setText(fastConnectionsDetails.getHostIpAddress());
             hostPortTextField.setText(fastConnectionsDetails.getHostPortAsStr());
             clientIpAddressTextField.setText(fastConnectionsDetails.getClientIpAddress());
-            clientIpAddressTextField.setEnabled(!fastConnectionsDetails.isMachineIpAddress());
-            isClientMachineIpAddressCheckbox.setSelected(fastConnectionsDetails.isMachineIpAddress());
+            clientIpAddressTextField.setEnabled(!fastConnectionsDetails.getIsMachineIpAddress());
+            isClientMachineIpAddressCheckbox.setSelected(fastConnectionsDetails.getIsMachineIpAddress());
             clientPortTextField.setText(fastConnectionsDetails.getClientPortAsStr());
-            clientPortTextField.setEnabled(!fastConnectionsDetails.isRandomPort());
-            isClientRandomPortCheckbox.setSelected(fastConnectionsDetails.isRandomPort());
+            clientPortTextField.setEnabled(!fastConnectionsDetails.getIsRandomPort());
+            isClientRandomPortCheckbox.setSelected(fastConnectionsDetails.getIsRandomPort());
             usernameTextField.setText(fastConnectionsDetails.getUsername());
             descriptionTextArea.setText(fastConnectionsDetails.getDescription());
         });

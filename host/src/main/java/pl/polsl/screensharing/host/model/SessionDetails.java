@@ -23,13 +23,13 @@ public class SessionDetails {
     private String ipAddress;
 
     @JsonProperty("isMachineIp")
-    private boolean isMachineIp;
+    private Boolean isMachineIp;
 
     @JsonProperty("port")
     private int port;
 
     @JsonProperty("hasPassword")
-    private boolean hasPassword;
+    private Boolean hasPassword;
 
     @JsonProperty("password")
     private String password;

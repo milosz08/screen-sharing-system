@@ -21,7 +21,7 @@ public class PersistedStateLoader extends AbstractPersistorStateLoader<HostState
             final PersistedState settings = objectMapper.readValue(file, PersistedState.class);
             state.updateSessionDetails(settings.getSessionDetailsWithDecryptedPassword());
             state.updateFrameColor(settings.getFrameColor().getColor());
-            state.updateShowingCursorState(settings.isCursorIsShowing());
+            state.updateShowingCursorState(settings.getIsCursorShowing());
             log.info("Found config file. Moved persisted settings into application context.");
         } catch (Exception ex) {
             log.warn("Cannot localized config file, skipping initialization.");
@@ -53,9 +53,9 @@ public class PersistedStateLoader extends AbstractPersistorStateLoader<HostState
     public void persistIsCursorShowing() {
         try {
             final PersistedState settings = objectMapper.readValue(file, PersistedState.class);
-            settings.setCursorIsShowing(state.getLastEmittedIsCursorShowing());
+            settings.setIsCursorShowing(state.getLastEmittedIsCursorShowing());
             objectMapper.writeValue(file, settings);
-            log.info("Persist is cursor showing state: {}.", settings.isCursorIsShowing());
+            log.info("Persist is cursor showing state: {}.", settings.getIsCursorShowing());
         } catch (Exception ex) {
             log.error("Failure during persist is cursor showing state. Cause {}.", ex.getMessage());
         }

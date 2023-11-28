@@ -126,7 +126,7 @@ public class ClientThread extends Thread {
             case CHECK_PASSWORD_REQ: {
                 performSSLExchange(data, decryptedObj -> {
                     boolean isValid = true;
-                    if (sessionDetails.isHasPassword()) {
+                    if (sessionDetails.getHasPassword()) {
                         isValid = BCrypt.verifyer()
                             .verify(sessionDetails.getPassword().toCharArray(), decryptedObj.getPassword())
                             .verified;

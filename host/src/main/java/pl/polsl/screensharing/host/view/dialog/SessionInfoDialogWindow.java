@@ -77,11 +77,11 @@ public class SessionInfoDialogWindow extends AbstractPopupDialog {
             ipAddressInfoBlock.setText(sessionDetails.getIpAddress());
             portInfoBlock.setText(sessionDetails.getPortAsStr());
             password = sessionDetails.getPassword();
-            hasPasswordInfoBlock.setText(String.valueOf(sessionDetails.isHasPassword()));
-            passwordCheckbox.setEnabled(sessionDetails.isHasPassword());
-            passwordInfoBlock.setText(sessionDetails.isHasPassword()
+            hasPasswordInfoBlock.setText(String.valueOf(sessionDetails.getHasPassword()));
+            passwordCheckbox.setEnabled(sessionDetails.getHasPassword());
+            passwordInfoBlock.setText(sessionDetails.getHasPassword()
                 ? SharedConstants.PASSWORD_REPLACEMENT : "no password");
-            passwordInfoBlock.setFontToValue(!sessionDetails.isHasPassword());
+            passwordInfoBlock.setFontToValue(!sessionDetails.getHasPassword());
         });
     }
 }

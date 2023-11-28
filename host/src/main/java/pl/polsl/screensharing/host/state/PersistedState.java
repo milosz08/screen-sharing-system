@@ -23,13 +23,13 @@ public class PersistedState {
     @JsonProperty("frameColor")
     private FrameColorRgb frameColor;
 
-    @JsonProperty("cursorIsShowing")
-    private boolean cursorIsShowing;
+    @JsonProperty("isCursorShowing")
+    private Boolean isCursorShowing;
 
     public PersistedState() {
         sessionDetails = new SessionDetails();
         frameColor = new FrameColorRgb(Color.RED);
-        cursorIsShowing = true;
+        isCursorShowing = true;
     }
 
     @JsonIgnore

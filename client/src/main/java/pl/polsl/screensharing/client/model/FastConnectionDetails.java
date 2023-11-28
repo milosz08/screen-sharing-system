@@ -28,13 +28,13 @@ public class FastConnectionDetails {
     private String clientIpAddress;
 
     @JsonProperty("isMachineIpAddress")
-    private boolean isMachineIpAddress;
+    private Boolean isMachineIpAddress;
 
     @JsonProperty("clientPort")
     private int clientPort;
 
     @JsonProperty("isRandomPort")
-    private boolean isRandomPort;
+    private Boolean isRandomPort;
 
     @JsonProperty("username")
     private String username;
