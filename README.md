@@ -9,11 +9,22 @@ library.
 
 ## Table of content
 
+* [Host and Client window](#host-and-client-window)
 * [Clone and install](#clone-and-install)
 * [Prepare configuration and run](#prepare-configuration-and-run)
 * [Tech stack](#tech-stack)
 * [Project status](#project-status)
 * [License](#license)
+
+<a name="host-and-client-window"></a>
+
+## Host and Client window
+
+* Host window
+  ![](https://github.com/milosz08/screen-sharing-system/blob/master/.github/host.png)
+
+* Client window
+  ![](https://github.com/milosz08/screen-sharing-system/blob/master/.github/client.png)
 
 <a name="clone-and-install"></a>
 
