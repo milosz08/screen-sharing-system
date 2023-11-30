@@ -5,7 +5,9 @@
 package pl.polsl.screensharing.client.controller;
 
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.imgscalr.Scalr;
 import pl.polsl.screensharing.client.view.fragment.VideoCanvas;
 import pl.polsl.screensharing.client.view.tabbed.TabbedVideoStreamPanel;
 import pl.polsl.screensharing.lib.Utils;
@@ -20,8 +22,8 @@ public class VideoCanvasController {
     private final TabbedVideoStreamPanel tabbedVideoStreamPanel;
 
     @Getter
+    @Setter
     private BufferedImage receivedImage;
-    private BufferedImage renderedImage;
 
     public VideoCanvasController(VideoCanvas videoCanvas, TabbedVideoStreamPanel tabbedVideoStreamPanel) {
         this.videoCanvas = videoCanvas;
@@ -40,13 +42,9 @@ public class VideoCanvasController {
     }
 
     public void drawContent(Graphics graphics) {
+        final Dimension size = videoCanvas.getSize();
         if (receivedImage != null) {
-            graphics.drawImage(renderedImage, 0, 0, videoCanvas);
+            graphics.drawImage(Scalr.resize(receivedImage, size.width, size.height), 0, 0, videoCanvas);
         }
-    }
-
-    public void setReceivedAndRenderedImage(BufferedImage receivedImage, BufferedImage renderedImage) {
-        this.receivedImage = receivedImage;
-        this.renderedImage = renderedImage;
     }
 }

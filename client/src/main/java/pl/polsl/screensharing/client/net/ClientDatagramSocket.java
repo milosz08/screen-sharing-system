@@ -5,10 +5,10 @@
 package pl.polsl.screensharing.client.net;
 
 import lombok.extern.slf4j.Slf4j;
-import org.imgscalr.Scalr;
 import pl.polsl.screensharing.client.controller.BottomInfobarController;
 import pl.polsl.screensharing.client.controller.VideoCanvasController;
 import pl.polsl.screensharing.client.state.ClientState;
+import pl.polsl.screensharing.client.state.ConnectionState;
 import pl.polsl.screensharing.client.state.VisibilityState;
 import pl.polsl.screensharing.client.view.ClientWindow;
 import pl.polsl.screensharing.client.view.fragment.VideoCanvas;
@@ -17,16 +17,12 @@ import pl.polsl.screensharing.lib.UnoperableException;
 import pl.polsl.screensharing.lib.net.AbstractDatagramSocketThread;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.util.Arrays;
 
-import static pl.polsl.screensharing.lib.SharedConstants.BILION;
-import static pl.polsl.screensharing.lib.SharedConstants.PACKAGE_SIZE;
+import static pl.polsl.screensharing.lib.SharedConstants.*;
 
 @Slf4j
 public class ClientDatagramSocket extends AbstractDatagramSocketThread {
@@ -55,8 +51,8 @@ public class ClientDatagramSocket extends AbstractDatagramSocketThread {
         final ByteArrayOutputStream receivedDataBuffer = new ByteArrayOutputStream();
 
         final int debugBytesLength = 3; // ilość bajtów debugujących
-        byte[] receiveBuffer = new byte[PACKAGE_SIZE * 2]; // bufor na dane przychodzące (dane + bufor debugujący)
-        byte[] rawDataBuffer; // bufor na surowe dane JPEG
+        // bufor na dane przychodzące (dane + bufor debugujący + IV)
+        byte[] receiveBuffer = new byte[PACKAGE_SIZE + (AES_KEY_SIZE / 8)];
         byte countOfPackages; // liczba pakietów uzyskana przez obiornik
         byte packageIteration; // iterator pakietów uzyskany przez obiornik
         byte realPackagesIteration = 1; // ilość przebiegów pętli po pakiety (rzeczywista pobrana ilość)
@@ -83,25 +79,21 @@ public class ClientDatagramSocket extends AbstractDatagramSocketThread {
             logTimer += (currentTime - lastTime);
             lastTime = currentTime;
             try {
-                final Dimension size = videoCanvas.getSize();
-                DatagramPacket receivePacket = new DatagramPacket(receiveBuffer, receiveBuffer.length);
+                final DatagramPacket receivePacket = new DatagramPacket(receiveBuffer, receiveBuffer.length);
                 datagramSocket.receive(receivePacket);
                 recvBytes += receivePacket.getLength();
 
-                // odkodowanie danych przy użyciu klucza AES (UWAGA! Istotnia jest metoda Arrays.copyOf, ponieważ bez
-                // niej AES rozpoznawał ciąg bajtów jako nieprawidłowy ponieważ dodawał swoje dopełnienie do niepełnej
-                // klatki zamiast ustawić tam zera
+                // odkodowanie danych przy użyciu klucza AES oraz zaszyfrowanego w nim IV (z uwagi na CTR
                 final byte[] decrypted = cryptoSymmetricHelper
-                    .decrypt(Arrays.copyOf(receivePacket.getData(), receivePacket.getLength()));
+                    .decrypt(receivePacket.getData(), receivePacket.getLength());
 
-                rawDataBuffer = new byte[decrypted.length - debugBytesLength];
+                // przenieś odszyfrowane 3 bajty debugujące do zmiennych
                 countOfPackages = decrypted[0];
                 packageIteration = decrypted[1];
                 isTerminated = decrypted[2] == 1;
 
-                // kopiuj zawartość bez bajtów debugujących
-                System.arraycopy(decrypted, debugBytesLength, rawDataBuffer, 0, decrypted.length - debugBytesLength);
-                receivedDataBuffer.write(rawDataBuffer, 0, rawDataBuffer.length);
+                // dodaj odszyfrowane dane z pominięciem bajtów debugujących do bufora
+                receivedDataBuffer.write(decrypted, debugBytesLength, decrypted.length - debugBytesLength);
 
                 // jeśli wykryje, że klatki są w niewłaściwej kolejności, ustaw klatkę jako corrupted
                 if (realPackagesIteration < packageIteration - 1) {
@@ -115,11 +107,9 @@ public class ClientDatagramSocket extends AbstractDatagramSocketThread {
                     if (countOfPackages == packageIteration && !isCorrupted) {
                         final byte[] receivedData = receivedDataBuffer.toByteArray();
                         final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(receivedData);
-                        final BufferedImage receivedImage = ImageIO.read(byteArrayInputStream);
-                        final BufferedImage renderedImage = Scalr.resize(receivedImage, size.width, size.height);
-                        videoCanvasController.setReceivedAndRenderedImage(receivedImage, renderedImage);
-                        byteArrayInputStream.close();
+                        videoCanvasController.setReceivedImage(ImageIO.read(byteArrayInputStream));
                         videoCanvas.repaint();
+                        byteArrayInputStream.close();
                     }
                     if (isCorrupted) {
                         corruptedFrames++;
@@ -154,7 +144,7 @@ public class ClientDatagramSocket extends AbstractDatagramSocketThread {
     @Override
     public void createDatagramSocket(byte[] secretKey, int port) {
         try {
-            cryptoSymmetricHelper.initDecrypt(secretKey);
+            cryptoSymmetricHelper.init(secretKey);
             datagramSocket = new DatagramSocket(port);
             datagramSocket.setSoTimeout(1000);
         } catch (Exception ex) {

@@ -92,14 +92,13 @@ public class ServerDatagramSocket extends AbstractDatagramSocketThread {
                 // bajtów debugujących
                 if (unprocessedDataLength > PACKAGE_SIZE - debugBytesLength) {
                     // prześlij fragment obrazu (jeden pakiet, rozmiar ramki ~32kb (plus bajty debugujące)
-                    chunk = new byte[PACKAGE_SIZE];
+                    chunk = new byte[PACKAGE_SIZE + (AES_KEY_SIZE / 8)];
                     chunk[0] = countOfPackages;
                     chunk[1] = packageIteration;
                     chunk[2] = 0; // fragment
                     // kopiowanie strumienia bajtów JPEG do chunka z przesunięciem o już przetworzone pakiety oraz
                     // 3 pakiety debugujące
-                    System.arraycopy(compressedData, chunkOffset, chunk, debugBytesLength,
-                        PACKAGE_SIZE - debugBytesLength);
+                    System.arraycopy(compressedData, chunkOffset, chunk, debugBytesLength, PACKAGE_SIZE - debugBytesLength);
                     sendPackagesQueue.put(chunk);
 
                     sendBytes += PACKAGE_SIZE;
@@ -121,7 +120,7 @@ public class ServerDatagramSocket extends AbstractDatagramSocketThread {
                     chunkOffset = 0;
                     packageIteration = 1;
                 }
-                sleep(1);
+                sleep(0);
             } catch (SocketTimeoutException | PortUnreachableException ex) {
                 JOptionPane.showMessageDialog(hostWindow, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 log.error("Unexpected network error. Cause: {}", ex.getMessage());
@@ -149,7 +148,7 @@ public class ServerDatagramSocket extends AbstractDatagramSocketThread {
     @Override
     public void createDatagramSocket(byte[] secretKey, int port) {
         try {
-            cryptoSymmetricHelper.initEncrypt(secretKey);
+            cryptoSymmetricHelper.init(secretKey);
             datagramSocket = new DatagramSocket();
         } catch (Exception ex) {
             throw new UnoperableException(ex);
