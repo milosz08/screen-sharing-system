@@ -4,25 +4,26 @@
  */
 package pl.polsl.screensharing.host.net;
 
+import pl.polsl.screensharing.lib.SharedConstants;
 import pl.polsl.screensharing.lib.UnoperableException;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import java.security.SecureRandom;
 
-public class DatagramKeys {
+public class DatagramKey {
     private final SecureRandom secureRnd;
 
     private SecretKey secretKey;
 
-    public DatagramKeys() {
+    public DatagramKey() {
         secureRnd = new SecureRandom();
     }
 
-    public void generateKeys() {
+    public void generateKey() {
         try {
             final KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
-            keyGenerator.init(128, secureRnd);
+            keyGenerator.init(SharedConstants.AES_KEY_SIZE, secureRnd);
             secretKey = keyGenerator.generateKey();
         } catch (Exception ex) {
             throw new UnoperableException(ex);

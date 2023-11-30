@@ -7,7 +7,7 @@ package pl.polsl.screensharing.host.view;
 import lombok.Getter;
 import lombok.Setter;
 import pl.polsl.screensharing.host.controller.BottomInfobarController;
-import pl.polsl.screensharing.host.net.DatagramKeys;
+import pl.polsl.screensharing.host.net.DatagramKey;
 import pl.polsl.screensharing.host.net.ServerDatagramSocket;
 import pl.polsl.screensharing.host.net.ServerTcpSocket;
 import pl.polsl.screensharing.host.state.HostState;
@@ -19,8 +19,8 @@ import pl.polsl.screensharing.host.view.fragment.TopToolbar;
 import pl.polsl.screensharing.host.view.fragment.VideoCanvas;
 import pl.polsl.screensharing.host.view.tabbed.TabbedPaneWindow;
 import pl.polsl.screensharing.lib.AppType;
-import pl.polsl.screensharing.lib.gui.AbstractRootFrame;
 import pl.polsl.screensharing.lib.file.FileUtils;
+import pl.polsl.screensharing.lib.gui.AbstractRootFrame;
 
 import javax.swing.*;
 import java.awt.*;
@@ -47,7 +47,7 @@ public class HostWindow extends AbstractRootFrame {
     @Setter
     private ServerTcpSocket serverTcpSocket;
     @Setter
-    private DatagramKeys datagramKeys;
+    private DatagramKey datagramKey;
 
     public HostWindow(HostState hostState) {
         super(AppType.HOST, hostState, HostWindow.class);

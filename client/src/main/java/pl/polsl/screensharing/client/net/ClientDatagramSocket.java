@@ -158,6 +158,7 @@ public class ClientDatagramSocket extends AbstractDatagramSocketThread {
             datagramSocket = new DatagramSocket(port);
             datagramSocket.setSoTimeout(1000);
         } catch (Exception ex) {
+            clientState.updateConnectionState(ConnectionState.DISCONNECTED);
             throw new UnoperableException(ex);
         }
     }

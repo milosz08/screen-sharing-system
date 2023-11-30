@@ -9,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import pl.polsl.screensharing.host.model.SessionDetails;
 import pl.polsl.screensharing.host.net.ConnectionHandler;
-import pl.polsl.screensharing.host.net.DatagramKeys;
+import pl.polsl.screensharing.host.net.DatagramKey;
 import pl.polsl.screensharing.host.net.ServerTcpSocket;
 import pl.polsl.screensharing.host.state.HostState;
 import pl.polsl.screensharing.host.state.SessionState;
@@ -38,9 +38,9 @@ public class SessionDetailsController implements ConnectionHandler {
         final SessionDetails sessionDetails = instantiateSessionDetails();
         hostState.updateSessionDetails(sessionDetails);
 
-        final DatagramKeys datagramKeys = new DatagramKeys();
-        datagramKeys.generateKeys();
-        hostWindow.setDatagramKeys(datagramKeys);
+        final DatagramKey datagramKey = new DatagramKey();
+        datagramKey.generateKey();
+        hostWindow.setDatagramKey(datagramKey);
 
         final ServerTcpSocket serverTcpSocket = new ServerTcpSocket(hostWindow, this);
         hostWindow.setServerTcpSocket(serverTcpSocket);

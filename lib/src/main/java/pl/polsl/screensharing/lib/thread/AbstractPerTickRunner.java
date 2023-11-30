@@ -4,12 +4,14 @@
  */
 package pl.polsl.screensharing.lib.thread;
 
+import pl.polsl.screensharing.lib.SharedConstants;
+
 public abstract class AbstractPerTickRunner extends Thread {
-    private static final int BILION = 1_000_000_000;
     private static final double MAX_FPS = 60.0;
 
     @Override
     public void run() {
+        final double drawInterval = SharedConstants.BILION / MAX_FPS;
         double delta = 0;
         long lastTime = System.nanoTime();
         long currentTime;
@@ -17,7 +19,6 @@ public abstract class AbstractPerTickRunner extends Thread {
         int drawCount = 0;
 
         while (true) {
-            final double drawInterval = BILION / MAX_FPS;
             currentTime = System.nanoTime();
             delta += (currentTime - lastTime) / drawInterval;
             timer += (currentTime - lastTime);
@@ -27,7 +28,7 @@ public abstract class AbstractPerTickRunner extends Thread {
                 delta--;
                 drawCount++;
             }
-            if (timer >= BILION) {
+            if (timer >= SharedConstants.BILION) {
                 onUpdateFpsState(drawCount);
                 drawCount = 0;
                 timer = 0;

@@ -131,12 +131,12 @@ public class ClientThread extends Thread {
                             .verify(sessionDetails.getPassword().toCharArray(), decryptedObj.getPassword())
                             .verified;
                     }
-                    final DatagramKeys datagramKeys = hostWindow.getDatagramKeys();
+                    final DatagramKey datagramKey = hostWindow.getDatagramKey();
                     final AuthPasswordRes.AuthPasswordResBuilder builder = AuthPasswordRes.builder().validStatus(isValid);
                     if (!isValid) {
                         return builder.build();
                     }
-                    return builder.secretKeyUdp(datagramKeys.getSecretKey()).build();
+                    return builder.secretKeyUdp(datagramKey.getSecretKey()).build();
                 }, rawResponse -> {
                     log.info("(to-way exchange) Checked client password with result: {}", rawResponse);
                 }, AuthPasswordReq.class);
