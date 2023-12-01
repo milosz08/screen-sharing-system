@@ -69,7 +69,7 @@ public class ServerDatagramSocket extends AbstractDatagramSocketThread {
         long lastTime = System.nanoTime();
         long currentTime;
         long timer = 0, logTimer = 0;
-        long sendBytes = 0;
+        long sentBytes = 0;
 
         // Wątek działa w pętli dopóki istnieje sesja UDP. Kolejne przebiegi pętli to wysyłanie kolejnych to fragmentów
         // jednej klatki obrazu w formie pakietów po ~32kb + 3 bajty debugujące definiujące ilość fragmentów na jedną
@@ -101,7 +101,7 @@ public class ServerDatagramSocket extends AbstractDatagramSocketThread {
                     System.arraycopy(compressedData, chunkOffset, chunk, debugBytesLength, PACKAGE_SIZE - debugBytesLength);
                     sendPackagesQueue.put(chunk);
 
-                    sendBytes += PACKAGE_SIZE;
+                    sentBytes += PACKAGE_SIZE;
                     unprocessedDataLength -= (PACKAGE_SIZE - debugBytesLength);
                     chunkOffset += (PACKAGE_SIZE - debugBytesLength);
                     packageIteration++;
@@ -115,7 +115,7 @@ public class ServerDatagramSocket extends AbstractDatagramSocketThread {
                     System.arraycopy(compressedData, chunkOffset, chunk, debugBytesLength, unprocessedDataLength);
                     sendPackagesQueue.put(chunk);
 
-                    sendBytes += (unprocessedDataLength + debugBytesLength);
+                    sentBytes += (unprocessedDataLength + debugBytesLength);
                     compressedData = null;
                     chunkOffset = 0;
                     packageIteration = 1;
@@ -128,17 +128,17 @@ public class ServerDatagramSocket extends AbstractDatagramSocketThread {
             } catch (Exception ignored) {
             }
             if (logTimer >= BILION * 6L) {
-                if (sendBytes > 0) {
-                    log.info("Host datagram socket processed {} bytes", sendBytes);
+                if (sentBytes > 0) {
+                    log.info("Host datagram socket processed {} bytes", sentBytes);
                 }
                 logTimer = 0;
             }
             if (timer >= BILION) {
                 if (isShowing) {
-                    hostState.updateSendBytesPerSec(sendBytes);
+                    hostState.updateSentBytesPerSec(sentBytes);
                 }
-                log.debug("Host datagram socket processed {} bytes", sendBytes);
-                sendBytes = 0;
+                log.debug("Host datagram socket processed {} bytes", sentBytes);
+                sentBytes = 0;
                 timer = 0;
             }
         }

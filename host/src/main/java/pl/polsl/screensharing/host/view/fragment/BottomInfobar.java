@@ -26,7 +26,7 @@ public class BottomInfobar extends AbstractBottomInfobar {
     private final JAppActionRectInfo streamingRectInfo;
     private final JLabel streamingTimeLabel;
     private final JLabel fpsInfoLabel;
-    private final JLabel sendBytesPerSecLabel;
+    private final JLabel sentBytesPerSecLabel;
 
     public BottomInfobar(HostWindow hostWindow) {
         hostState = hostWindow.getHostState();
@@ -38,7 +38,7 @@ public class BottomInfobar extends AbstractBottomInfobar {
         sessionTimeLabel = new JLabel();
         streamingTimeLabel = new JLabel();
         fpsInfoLabel = new JLabel();
-        sendBytesPerSecLabel = new JLabel();
+        sentBytesPerSecLabel = new JLabel();
 
         initObservables();
 
@@ -58,7 +58,7 @@ public class BottomInfobar extends AbstractBottomInfobar {
         rightCompoundPanel.add(streamingTimeLabel);
         rightCompoundPanel.add(memoryUsageLabel);
         rightCompoundPanel.add(fpsInfoLabel);
-        rightCompoundPanel.add(sendBytesPerSecLabel);
+        rightCompoundPanel.add(sentBytesPerSecLabel);
 
         addPanels();
     }
@@ -77,8 +77,8 @@ public class BottomInfobar extends AbstractBottomInfobar {
         hostState.wrapAsDisposable(hostState.getRealFpsBuffer$(), realFps -> {
             fpsInfoLabel.setText(String.format("FPS: %s", realFps));
         });
-        hostState.wrapAsDisposable(hostState.getSendBytesPerSec$(), bytes -> {
-            sendBytesPerSecLabel.setText(Utils.parseBytesPerSecToMegaBytes(bytes, "Send"));
+        hostState.wrapAsDisposable(hostState.getSentBytesPerSec$(), bytes -> {
+            sentBytesPerSecLabel.setText(Utils.parseBytesPerSecToMegaBytes(bytes, "Sent"));
         });
     }
 }

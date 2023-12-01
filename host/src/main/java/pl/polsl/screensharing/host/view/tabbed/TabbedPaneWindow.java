@@ -25,7 +25,7 @@ public class TabbedPaneWindow extends JTabbedPane {
 
     public TabbedPaneWindow(HostWindow hostWindow) {
         hostState = hostWindow.getHostState();
-        sendBytesStream$ = hostState.getSendBytesPerSec$();
+        sendBytesStream$ = hostState.getSentBytesPerSec$();
 
         tabbedScreenFramePanel = new TabbedScreenFramePanel(hostWindow);
         tabbedChartPanel = new JAppTabbedDataChartPanel(hostState, sendBytesStream$);

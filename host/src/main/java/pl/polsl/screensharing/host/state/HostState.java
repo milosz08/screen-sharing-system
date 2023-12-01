@@ -21,7 +21,7 @@ public class HostState extends AbstractDisposableProvider {
     private final BehaviorSubject<SessionState> sessionState$;
     private final BehaviorSubject<Long> sessionTime$;
     private final BehaviorSubject<Integer> realFpsBuffer$;
-    private final BehaviorSubject<Long> sendBytesPerSec$;
+    private final BehaviorSubject<Long> sentBytesPerSec$;
     private final BehaviorSubject<GraphicsDevice> selectedGraphicsDevice$;
     private final BehaviorSubject<QualityLevel> streamingQuality$;
     private final BehaviorSubject<Color> frameColor$;
@@ -44,7 +44,7 @@ public class HostState extends AbstractDisposableProvider {
         sessionState$ = BehaviorSubject.createDefault(SessionState.INACTIVE);
         sessionTime$ = BehaviorSubject.createDefault(0L);
         realFpsBuffer$ = BehaviorSubject.createDefault(30);
-        sendBytesPerSec$ = BehaviorSubject.createDefault(0L);
+        sentBytesPerSec$ = BehaviorSubject.createDefault(0L);
         selectedGraphicsDevice$ = BehaviorSubject.create();
         streamingQuality$ = BehaviorSubject.createDefault(QualityLevel.GOOD);
         frameColor$ = BehaviorSubject.createDefault(Color.RED);
@@ -78,8 +78,8 @@ public class HostState extends AbstractDisposableProvider {
         realFpsBuffer$.onNext(fps);
     }
 
-    public void updateSendBytesPerSec(Long bytesPerSec) {
-        sendBytesPerSec$.onNext(bytesPerSec);
+    public void updateSentBytesPerSec(Long bytesPerSec) {
+        sentBytesPerSec$.onNext(bytesPerSec);
     }
 
     public void updateSelectedGraphicsDevice(GraphicsDevice graphicsDevice) {
@@ -138,8 +138,8 @@ public class HostState extends AbstractDisposableProvider {
         return realFpsBuffer$.hide();
     }
 
-    public Observable<Long> getSendBytesPerSec$() {
-        return sendBytesPerSec$.hide();
+    public Observable<Long> getSentBytesPerSec$() {
+        return sentBytesPerSec$.hide();
     }
 
     public Observable<GraphicsDevice> getSelectedGraphicsDevice$() {

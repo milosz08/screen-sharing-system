@@ -59,7 +59,7 @@ abstract class AbstractStreamController {
         if (serverDatagramSocket != null) {
             serverDatagramSocket.stopAndClear();
         }
-        hostState.updateSendBytesPerSec(0L);
+        hostState.updateSentBytesPerSec(0L);
         bottomInfoBarController.stopStreamingTimer();
         log.info("Stopped screen streaming");
     }
@@ -73,7 +73,7 @@ abstract class AbstractStreamController {
             serverTcpSocket.sendSignalToAllClients(SocketState.EVENT_TOGGLE_SCREEN_VISIBILITY);
         }
         if (!isShowing) {
-            hostState.updateSendBytesPerSec(0L);
+            hostState.updateSentBytesPerSec(0L);
         }
         log.info("Turn {} showing screen for participants", isShowing ? "on" : "off");
     }

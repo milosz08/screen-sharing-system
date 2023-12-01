@@ -113,7 +113,7 @@ public class ServerTcpSocket extends AbstractTcpSocketThread<ServerSocket> {
         final BottomInfobarController bottomInfobarController = hostWindow.getBottomInfobarController();
         bottomInfobarController.stopSessionTimer();
         hostState.updateSessionState(SessionState.INACTIVE);
-        hostState.updateSendBytesPerSec(0L);
+        hostState.updateSentBytesPerSec(0L);
         isEstabilished = false;
         sendSignalToAllClients(SocketState.END_UP_SESSION);
     }
