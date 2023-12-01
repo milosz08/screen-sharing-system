@@ -120,7 +120,7 @@ public class ServerDatagramSocket extends AbstractDatagramSocketThread {
                     chunkOffset = 0;
                     packageIteration = 1;
                 }
-                sleep(0);
+                sleep(1);
             } catch (SocketTimeoutException | PortUnreachableException ex) {
                 JOptionPane.showMessageDialog(hostWindow, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 log.error("Unexpected network error. Cause: {}", ex.getMessage());
