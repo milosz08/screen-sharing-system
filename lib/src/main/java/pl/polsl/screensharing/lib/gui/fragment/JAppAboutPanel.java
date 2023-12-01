@@ -8,9 +8,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import pl.polsl.screensharing.lib.AppType;
 import pl.polsl.screensharing.lib.SystemProp;
-import pl.polsl.screensharing.lib.gui.component.JAppLink;
 import pl.polsl.screensharing.lib.file.Alignment;
 import pl.polsl.screensharing.lib.file.FileUtils;
+import pl.polsl.screensharing.lib.gui.component.JAppLink;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -25,11 +25,13 @@ public class JAppAboutPanel extends JPanel {
     private final JPanel imageContent;
     private final JPanel rightContent;
     private final JPanel bottomContent;
+    private final JPanel legalContent;
 
     private final JLabel iconLabel;
     private final JLabel titleLabel;
     private final JLabel aboutLabel;
     private final JAppLink repoLinkLabel;
+    private final JAppLink iconsLinkLabel;
     private final JLabel jvmProperties;
 
     public JAppAboutPanel(AppType appType) {
@@ -38,11 +40,13 @@ public class JAppAboutPanel extends JPanel {
         imageContent = new JPanel();
         rightContent = new JPanel();
         bottomContent = new JPanel();
+        legalContent = new JPanel();
 
         iconLabel = new JLabel(loadImageIcon());
         titleLabel = new JLabel(appType.getRootWindowTitle());
         aboutLabel = new JLabel(loadDescription());
         repoLinkLabel = new JAppLink("https://github.com/Milosz08/screen-sharing-system", "Github Repo");
+        iconsLinkLabel = new JAppLink("https://www.microsoft.com/en-us/download/details.aspx?id=35825", "Icons by MS Visual Studio Icons");
         jvmProperties = new JLabel(generateJvmProperties());
 
         titleLabel.setFont(new Font(titleLabel.getFont().getName(), Font.BOLD, 16));
@@ -53,9 +57,13 @@ public class JAppAboutPanel extends JPanel {
         imageContent.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
         imageContent.add(iconLabel);
 
+        legalContent.setLayout(new BoxLayout(legalContent, BoxLayout.Y_AXIS));
+        legalContent.add(repoLinkLabel);
+        legalContent.add(iconsLinkLabel);
+
         bottomContent.setLayout(new BoxLayout(bottomContent, BoxLayout.X_AXIS));
         bottomContent.add(jvmProperties);
-        bottomContent.add(repoLinkLabel);
+        bottomContent.add(legalContent);
 
         rightContent.setLayout(new GridLayout(3, 1, 0, 0));
         rightContent.add(titleLabel);
