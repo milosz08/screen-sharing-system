@@ -51,13 +51,12 @@ public class ClientDatagramSocket extends AbstractDatagramSocketThread {
         log.info("Started datagram thread with TID {}", getName());
         final ByteArrayOutputStream receivedDataBuffer = new ByteArrayOutputStream();
 
-        final int debugBytesLength = 3; // ilość bajtów debugujących
+        final int debugBytesLength = 2; // ilość bajtów debugujących
         // bufor na dane przychodzące (dane + bufor debugujący + IV)
         byte[] receiveBuffer = new byte[FRAME_SIZE];
         byte countOfPackages; // liczba pakietów uzyskana przez obiornik
         byte packageIteration; // iterator pakietów uzyskany przez obiornik
         byte realPackagesIteration = 1; // ilość przebiegów pętli po pakiety (rzeczywista pobrana ilość)
-        boolean isTerminated;
         boolean isCorrupted = false;
 
         // Wątek odbierający dane nadawane na kanał UDP przez hosta. Posiada prosty system korekcji błędów. Główna pętla
@@ -91,7 +90,6 @@ public class ClientDatagramSocket extends AbstractDatagramSocketThread {
                 // przenieś odszyfrowane 3 bajty debugujące do zmiennych
                 countOfPackages = decrypted[0];
                 packageIteration = decrypted[1];
-                isTerminated = decrypted[2] == 1;
 
                 // dodaj odszyfrowane dane z pominięciem bajtów debugujących i 128 bitowego IV do bufora
                 receivedDataBuffer.write(decrypted, debugBytesLength,
@@ -103,17 +101,16 @@ public class ClientDatagramSocket extends AbstractDatagramSocketThread {
                 }
                 realPackagesIteration++;
 
-                if (isTerminated) {
-                    // poskładaj klatki i wygeneruj obraz jeśli przesłano wszystkie
-                    // fragmenty klatki oraz nie są one uszkodzone
-                    if (countOfPackages == packageIteration && !isCorrupted) {
+                // poskładaj klatki i wygeneruj obraz jeśli przesłano wszystkie
+                // fragmenty klatki oraz nie są one uszkodzone
+                if (countOfPackages == packageIteration) {
+                    if (!isCorrupted) {
                         final byte[] receivedData = receivedDataBuffer.toByteArray();
                         final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(receivedData);
                         videoCanvasController.setReceivedImage(ImageIO.read(byteArrayInputStream));
                         videoCanvas.repaint();
                         byteArrayInputStream.close();
-                    }
-                    if (isCorrupted) {
+                    } else {
                         corruptedFrames++;
                     }
                     isCorrupted = false;

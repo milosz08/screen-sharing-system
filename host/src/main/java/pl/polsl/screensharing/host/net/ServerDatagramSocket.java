@@ -64,7 +64,8 @@ public class ServerDatagramSocket extends AbstractDatagramSocketThread {
         int unprocessedDataLength = 0; // długość nieprzetworzonych danych
         byte countOfPackages = 0; // liczba przesłanych pakietów na jedną klatkę
         byte packageIteration = 1; // iterator przesłanych pakietów
-        final int debugBytesLength = 3; // ilość bajtów debugujących
+        final int debugBytesLength = 2; // ilość bajtów debugujących
+        final int lengthWithoutIV = PACKAGE_SIZE - debugBytesLength; // długość danych bez IV
 
         long lastTime = System.nanoTime();
         long currentTime;
@@ -86,32 +87,30 @@ public class ServerDatagramSocket extends AbstractDatagramSocketThread {
                 if (compressedData == null) {
                     compressedData = loadImage();
                     unprocessedDataLength = compressedData.length;
-                    countOfPackages = (byte) Math.ceil((double) compressedData.length / PACKAGE_SIZE);
+                    countOfPackages = (byte) Math.ceil((double) compressedData.length / lengthWithoutIV);
                 }
                 // przesyłaj pakiety dopóki ilość nieprzetworzonych bajtów będzie większa od rozmiaru ramki bez
                 // bajtów debugujących
-                if (unprocessedDataLength > PACKAGE_SIZE - debugBytesLength) {
+                if (unprocessedDataLength > lengthWithoutIV) {
                     // prześlij fragment obrazu (jeden pakiet, rozmiar ramki ~32kb (plus bajty debugujące)
                     chunk = new byte[FRAME_SIZE];
                     chunk[0] = countOfPackages;
                     chunk[1] = packageIteration;
-                    chunk[2] = 0; // fragment
+
                     // kopiowanie strumienia bajtów JPEG do chunka z przesunięciem o już przetworzone pakiety oraz
                     // 3 pakiety debugujące
-                    System.arraycopy(compressedData, chunkOffset, chunk, debugBytesLength,
-                        FRAME_SIZE - debugBytesLength);
+                    System.arraycopy(compressedData, chunkOffset, chunk, debugBytesLength, lengthWithoutIV);
                     sendPackagesQueue.put(chunk);
 
                     sentBytes += FRAME_SIZE;
-                    unprocessedDataLength -= (PACKAGE_SIZE - debugBytesLength);
-                    chunkOffset += (PACKAGE_SIZE - debugBytesLength);
+                    unprocessedDataLength -= lengthWithoutIV;
+                    chunkOffset += lengthWithoutIV;
                     packageIteration++;
                 } else {
                     // przeslij jeden pakiet (lub ostatni pakiet)
                     chunk = new byte[unprocessedDataLength + debugBytesLength + IV_SIZE];
                     chunk[0] = countOfPackages;
                     chunk[1] = packageIteration;
-                    chunk[2] = 1; // pakiet terminalny
 
                     System.arraycopy(compressedData, chunkOffset, chunk, debugBytesLength, unprocessedDataLength);
                     sendPackagesQueue.put(chunk);
