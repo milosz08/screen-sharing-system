@@ -92,22 +92,23 @@ public class ServerDatagramSocket extends AbstractDatagramSocketThread {
                 // bajtów debugujących
                 if (unprocessedDataLength > PACKAGE_SIZE - debugBytesLength) {
                     // prześlij fragment obrazu (jeden pakiet, rozmiar ramki ~32kb (plus bajty debugujące)
-                    chunk = new byte[PACKAGE_SIZE + (AES_KEY_SIZE / 8)];
+                    chunk = new byte[FRAME_SIZE];
                     chunk[0] = countOfPackages;
                     chunk[1] = packageIteration;
                     chunk[2] = 0; // fragment
                     // kopiowanie strumienia bajtów JPEG do chunka z przesunięciem o już przetworzone pakiety oraz
                     // 3 pakiety debugujące
-                    System.arraycopy(compressedData, chunkOffset, chunk, debugBytesLength, PACKAGE_SIZE - debugBytesLength);
+                    System.arraycopy(compressedData, chunkOffset, chunk, debugBytesLength,
+                        FRAME_SIZE - debugBytesLength);
                     sendPackagesQueue.put(chunk);
 
-                    sentBytes += PACKAGE_SIZE;
+                    sentBytes += FRAME_SIZE;
                     unprocessedDataLength -= (PACKAGE_SIZE - debugBytesLength);
                     chunkOffset += (PACKAGE_SIZE - debugBytesLength);
                     packageIteration++;
                 } else {
                     // przeslij jeden pakiet (lub ostatni pakiet)
-                    chunk = new byte[unprocessedDataLength + debugBytesLength];
+                    chunk = new byte[unprocessedDataLength + debugBytesLength + IV_SIZE];
                     chunk[0] = countOfPackages;
                     chunk[1] = packageIteration;
                     chunk[2] = 1; // pakiet terminalny
@@ -115,7 +116,7 @@ public class ServerDatagramSocket extends AbstractDatagramSocketThread {
                     System.arraycopy(compressedData, chunkOffset, chunk, debugBytesLength, unprocessedDataLength);
                     sendPackagesQueue.put(chunk);
 
-                    sentBytes += (unprocessedDataLength + debugBytesLength);
+                    sentBytes += (unprocessedDataLength + debugBytesLength + IV_SIZE);
                     compressedData = null;
                     chunkOffset = 0;
                     packageIteration = 1;

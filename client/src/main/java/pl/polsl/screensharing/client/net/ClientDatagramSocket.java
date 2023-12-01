@@ -22,7 +22,8 @@ import java.io.ByteArrayOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 
-import static pl.polsl.screensharing.lib.SharedConstants.*;
+import static pl.polsl.screensharing.lib.SharedConstants.BILION;
+import static pl.polsl.screensharing.lib.SharedConstants.FRAME_SIZE;
 
 @Slf4j
 public class ClientDatagramSocket extends AbstractDatagramSocketThread {
@@ -52,7 +53,7 @@ public class ClientDatagramSocket extends AbstractDatagramSocketThread {
 
         final int debugBytesLength = 3; // ilość bajtów debugujących
         // bufor na dane przychodzące (dane + bufor debugujący + IV)
-        byte[] receiveBuffer = new byte[PACKAGE_SIZE + (AES_KEY_SIZE / 8)];
+        byte[] receiveBuffer = new byte[FRAME_SIZE];
         byte countOfPackages; // liczba pakietów uzyskana przez obiornik
         byte packageIteration; // iterator pakietów uzyskany przez obiornik
         byte realPackagesIteration = 1; // ilość przebiegów pętli po pakiety (rzeczywista pobrana ilość)
@@ -92,8 +93,9 @@ public class ClientDatagramSocket extends AbstractDatagramSocketThread {
                 packageIteration = decrypted[1];
                 isTerminated = decrypted[2] == 1;
 
-                // dodaj odszyfrowane dane z pominięciem bajtów debugujących do bufora
-                receivedDataBuffer.write(decrypted, debugBytesLength, decrypted.length - debugBytesLength);
+                // dodaj odszyfrowane dane z pominięciem bajtów debugujących i 128 bitowego IV do bufora
+                receivedDataBuffer.write(decrypted, debugBytesLength,
+                    decrypted.length - debugBytesLength);
 
                 // jeśli wykryje, że klatki są w niewłaściwej kolejności, ustaw klatkę jako corrupted
                 if (realPackagesIteration < packageIteration - 1) {

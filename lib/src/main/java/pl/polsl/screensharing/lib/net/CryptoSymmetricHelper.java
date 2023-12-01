@@ -11,7 +11,7 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.SecureRandom;
 
-import static pl.polsl.screensharing.lib.SharedConstants.AES_KEY_SIZE;
+import static pl.polsl.screensharing.lib.SharedConstants.IV_SIZE;
 import static pl.polsl.screensharing.lib.SharedConstants.PACKAGE_SIZE;
 
 @Getter
@@ -34,7 +34,7 @@ public class CryptoSymmetricHelper {
     }
 
     public byte[] decrypt(byte[] data, int length) throws Exception {
-        byte[] iv = new byte[AES_KEY_SIZE / 8];
+        byte[] iv = new byte[IV_SIZE];
         byte[] encryptedWithoutIv = new byte[PACKAGE_SIZE];
         // przenoszenie IV do tablicy iv
         System.arraycopy(data, length - iv.length, iv, 0, iv.length);
