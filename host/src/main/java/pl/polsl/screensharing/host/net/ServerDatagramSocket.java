@@ -73,9 +73,8 @@ public class ServerDatagramSocket extends AbstractDatagramSocketThread {
         long sentBytes = 0;
 
         // Wątek działa w pętli dopóki istnieje sesja UDP. Kolejne przebiegi pętli to wysyłanie kolejnych to fragmentów
-        // jednej klatki obrazu w formie pakietów po ~32kb + 3 bajty debugujące definiujące ilość fragmentów na jedną
-        // klatkę, indeks fragmentu oraz czy jest to fragment terminalny. Wartości te potrzebne są do korekcji błędów
-        // po stronie odbiorcy.
+        // jednej klatki obrazu w formie pakietów po N + 2 bajty debugujące definiujące ilość fragmentów na jedną
+        // klatkę oraz indeks fragmentu. Wartości te potrzebne są do korekcji błędów po stronie odbiorcy.
 
         log.info("Started datagram thread with TID {}", getName());
         while (isThreadActive) {
@@ -92,13 +91,13 @@ public class ServerDatagramSocket extends AbstractDatagramSocketThread {
                 // przesyłaj pakiety dopóki ilość nieprzetworzonych bajtów będzie większa od rozmiaru ramki bez
                 // bajtów debugujących
                 if (unprocessedDataLength > lengthWithoutIV) {
-                    // prześlij fragment obrazu (jeden pakiet, rozmiar ramki ~32kb (plus bajty debugujące)
+                    // prześlij fragment obrazu (jeden pakiet, rozmiar ramki (plus bajty debugujące)
                     chunk = new byte[FRAME_SIZE];
                     chunk[0] = countOfPackages;
                     chunk[1] = packageIteration;
 
                     // kopiowanie strumienia bajtów JPEG do chunka z przesunięciem o już przetworzone pakiety oraz
-                    // 3 pakiety debugujące
+                    // 2 pakiety debugujące
                     System.arraycopy(compressedData, chunkOffset, chunk, debugBytesLength, lengthWithoutIV);
                     sendPackagesQueue.put(chunk);
 

@@ -58,11 +58,12 @@ public class ServerTcpSocket extends AbstractTcpSocketThread<ServerSocket> {
                 clientThread.start();
             }
         } catch (SocketException ignored) {
+            stopAndClear();
         } catch (IOException ex) {
+            stopAndClear();
             log.error(ex.getMessage());
             JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
-        stopAndClear();
     }
 
     public void sendSignalToAllClients(SocketState socketState) {

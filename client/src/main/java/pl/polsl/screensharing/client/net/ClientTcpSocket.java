@@ -8,6 +8,7 @@ import at.favre.lib.crypto.bcrypt.BCrypt;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import pl.polsl.screensharing.client.controller.BottomInfobarController;
 import pl.polsl.screensharing.client.model.ConnectionDetails;
 import pl.polsl.screensharing.client.model.FastConnectionDetails;
 import pl.polsl.screensharing.client.state.ClientState;
@@ -161,6 +162,7 @@ public class ClientTcpSocket extends AbstractTcpSocketThread<Socket> {
         } catch (SocketException ignored) {
             stopAndClear();
         } catch (Exception ex) {
+            stopAndClear();
             log.error(ex.getMessage());
             JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
