@@ -5,7 +5,6 @@
 package pl.polsl.screensharing.client.net;
 
 import lombok.extern.slf4j.Slf4j;
-import pl.polsl.screensharing.client.controller.BottomInfobarController;
 import pl.polsl.screensharing.client.controller.VideoCanvasController;
 import pl.polsl.screensharing.client.state.ClientState;
 import pl.polsl.screensharing.client.state.ConnectionState;
@@ -28,7 +27,6 @@ import static pl.polsl.screensharing.lib.SharedConstants.FRAME_SIZE;
 @Slf4j
 public class ClientDatagramSocket extends AbstractDatagramSocketThread {
     private final ClientState clientState;
-    private final ClientWindow clientWindow;
     private final VideoCanvas videoCanvas;
     private final VideoCanvasController videoCanvasController;
 
@@ -38,7 +36,6 @@ public class ClientDatagramSocket extends AbstractDatagramSocketThread {
         ClientWindow clientWindow, VideoCanvas videoCanvas, VideoCanvasController videoCanvasController
     ) {
         super();
-        this.clientWindow = clientWindow;
         clientState = clientWindow.getClientState();
         this.videoCanvas = videoCanvas;
         this.videoCanvasController = videoCanvasController;
@@ -154,13 +151,11 @@ public class ClientDatagramSocket extends AbstractDatagramSocketThread {
 
     @Override
     protected void abstractStopAndClear() {
-        final BottomInfobarController bottomInfobarController = clientWindow.getBottomInfobarController();
         if (!visibilityState.equals(VisibilityState.TEMPORARY_HIDDEN)) {
             clientState.updateVisibilityState(VisibilityState.WAITING_FOR_CONNECTION);
         }
         clientState.updateFrameAspectRation(SharedConstants.DEFAULT_ASPECT_RATIO);
         clientState.updateRecvBytesPerSec(0L);
-        bottomInfobarController.stopConnectionTimer();
     }
 
     @Override

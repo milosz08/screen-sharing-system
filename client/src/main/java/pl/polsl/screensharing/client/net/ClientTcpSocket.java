@@ -199,12 +199,14 @@ public class ClientTcpSocket extends AbstractTcpSocketThread<Socket> {
 
     @Override
     public void abstractStopAndClear() {
+        final BottomInfobarController bottomInfobarController = clientWindow.getBottomInfobarController();
         log.info("Disconnected with host: {}:{}", fastConnectionDetails.getHostIpAddress(),
             fastConnectionDetails.getHostPort());
 
         clientState.updateRecvBytesPerSec(0L);
         clientState.updateVisibilityState(VisibilityState.WAITING_FOR_CONNECTION);
         clientState.updateConnectionState(ConnectionState.DISCONNECTED);
+        bottomInfobarController.stopConnectionTimer();
 
         if (clientDatagramSocket != null) {
             clientDatagramSocket.stopAndClear();
