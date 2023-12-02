@@ -53,8 +53,9 @@ public class ClientDatagramSocket extends AbstractDatagramSocketThread {
         byte[] receiveBuffer = new byte[FRAME_SIZE];
         byte countOfPackages; // liczba pakietów uzyskana przez obiornik
         byte packageIteration; // iterator pakietów uzyskany przez obiornik
-        byte realPackagesIteration = 1; // ilość przebiegów pętli po pakiety (rzeczywista pobrana ilość)
+        byte realPackagesIteration = 0; // ilość przebiegów pętli po pakiety (rzeczywista pobrana ilość)
         boolean isCorrupted = false;
+        boolean isStarted = false;
 
         // Wątek odbierający dane nadawane na kanał UDP przez hosta. Posiada prosty system korekcji błędów. Główna pętla
         // co iteracje pobiera kolejne paczki nadsyłane przez hosta. Z paczek ~32kb pobierany jest 3 bajtowy ciąg
@@ -79,6 +80,7 @@ public class ClientDatagramSocket extends AbstractDatagramSocketThread {
                 final DatagramPacket receivePacket = new DatagramPacket(receiveBuffer, receiveBuffer.length);
                 datagramSocket.receive(receivePacket);
                 recvBytes += receivePacket.getLength();
+                realPackagesIteration += 1;
 
                 // odkodowanie danych przy użyciu klucza AES oraz zaszyfrowanego w nim IV (z uwagi na CTR
                 final byte[] decrypted = cryptoSymmetricHelper
@@ -88,6 +90,16 @@ public class ClientDatagramSocket extends AbstractDatagramSocketThread {
                 countOfPackages = decrypted[0];
                 packageIteration = decrypted[1];
 
+                // jeśli dołączono w trakcie, ignoruj fragmenty do momentu pierwszego fragmentu klatki
+                if (!isStarted) {
+                    if (packageIteration == 1) {
+                        isStarted = true;
+                    } else {
+                        realPackagesIteration = 0;
+                        continue;
+                    }
+                }
+
                 // dodaj odszyfrowane dane z pominięciem bajtów debugujących i 128 bitowego IV do bufora
                 receivedDataBuffer.write(decrypted, debugBytesLength,
                     decrypted.length - debugBytesLength);
@@ -96,8 +108,6 @@ public class ClientDatagramSocket extends AbstractDatagramSocketThread {
                 if (realPackagesIteration < packageIteration - 1) {
                     isCorrupted = true;
                 }
-                realPackagesIteration++;
-
                 // poskładaj klatki i wygeneruj obraz jeśli przesłano wszystkie
                 // fragmenty klatki oraz nie są one uszkodzone
                 if (countOfPackages == packageIteration) {
@@ -112,7 +122,7 @@ public class ClientDatagramSocket extends AbstractDatagramSocketThread {
                     }
                     isCorrupted = false;
                     receivedDataBuffer.reset(); // wyczyść bufor na fragmenty klatek
-                    realPackagesIteration = 0;
+                    realPackagesIteration = 1;
                 }
             } catch (Exception ex) {
                 isCorrupted = false;

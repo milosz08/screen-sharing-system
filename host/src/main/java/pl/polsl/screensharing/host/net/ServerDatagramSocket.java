@@ -51,7 +51,7 @@ public class ServerDatagramSocket extends AbstractDatagramSocketThread {
         hostState = hostWindow.getHostState();
         this.videoCanvasController = videoCanvasController;
         qualityLevel = QualityLevel.GOOD;
-        sendPackagesQueue = new ArrayBlockingQueue<>(10000);
+        sendPackagesQueue = new ArrayBlockingQueue<>(100);
         frameSenderThread = new FrameSenderThread(this);
         initObservables();
     }
