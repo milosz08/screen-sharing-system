@@ -54,7 +54,7 @@ public class ReceiveSignalsThread extends Thread {
     public void run() {
         log.info("Starting TCP client receive events thread...");
         try (final BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
-            while (socket.isConnected() && !isConnectionEnded) {
+            while (socket.isConnected() && clientTcpSocket.isAlive()) {
                 final String line = in.readLine();
                 if (line == null) {
                     break;

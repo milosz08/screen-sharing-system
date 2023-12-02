@@ -43,6 +43,7 @@ abstract class AbstractMenuActionController extends AbstractStreamController {
             if (serverTcpSocket != null) {
                 serverTcpSocket.stopAndClear();
             }
+            System.gc();
         }
     }
 }

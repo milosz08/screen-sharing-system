@@ -61,6 +61,7 @@ abstract class AbstractStreamController {
         }
         hostState.updateSentBytesPerSec(0L);
         bottomInfoBarController.stopStreamingTimer();
+        System.gc();
         log.info("Stopped screen streaming");
     }
 

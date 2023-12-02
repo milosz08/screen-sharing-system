@@ -41,6 +41,7 @@ public class ClientTcpSocket extends AbstractTcpSocketThread<Socket> {
     private AuthPasswordRes authPasswordRes;
     private PrintWriter printWriter;
     private BufferedReader bufferedReader;
+    private boolean isThreadActive;
 
     @Getter
     private final ClientWindow clientWindow;
@@ -76,7 +77,7 @@ public class ClientTcpSocket extends AbstractTcpSocketThread<Socket> {
         ) {
             bufferedReader = in;
             printWriter = out;
-            while (true) {
+            while (isThreadActive) {
                 switch (socketState) {
                     // wysłanie klucza publicznego klienta do hosta (serwera)
                     case EXHANGE_KEYS_REQ: {
@@ -193,6 +194,7 @@ public class ClientTcpSocket extends AbstractTcpSocketThread<Socket> {
         try {
             initSocketAndKeys();
             startThread();
+            isThreadActive = true;
         } catch (IOException | GeneralSecurityException ex) {
             log.error(ex.getMessage());
             connectionHandler.onFailure(connectionDetails, null);
@@ -211,6 +213,7 @@ public class ClientTcpSocket extends AbstractTcpSocketThread<Socket> {
         bottomInfobarController.stopConnectionTimer();
 
         if (clientDatagramSocket != null) {
+            isThreadActive = false;
             clientDatagramSocket.stopAndClear();
         }
     }

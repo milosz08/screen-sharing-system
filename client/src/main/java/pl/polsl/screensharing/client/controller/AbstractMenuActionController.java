@@ -53,6 +53,7 @@ abstract class AbstractMenuActionController {
             if (clientTcpSocket != null) {
                 clientTcpSocket.stopAndClear();
             }
+            System.gc();
             log.info("Disconected from session.");
         }
     }

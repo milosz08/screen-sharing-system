@@ -54,6 +54,7 @@ public class ClientThread extends Thread {
     @Getter
     private long threadId;
     private ConcurrentMap<Long, ConnectedClientInfo> connectedClients;
+    private boolean isThreadActive;
 
     public ClientThread(Socket socket, ServerTcpSocket serverTcpSocket) {
         this.socket = socket;
@@ -77,7 +78,7 @@ public class ClientThread extends Thread {
             final PrintWriter out = new PrintWriter(socket.getOutputStream(), true)
         ) {
             printWriter = out;
-            while (socket.isConnected()) {
+            while (socket.isConnected() && isThreadActive) {
                 final String line = in.readLine();
                 if (line == null) {
                     break;
@@ -90,6 +91,7 @@ public class ClientThread extends Thread {
             log.error(ex.getMessage());
         }
         stopAndClose();
+        System.gc();
     }
 
     public void sendSignalEvent(SocketState eventSignalState) {
@@ -187,6 +189,7 @@ public class ClientThread extends Thread {
         if (!isAlive()) {
             threadId = generateRandomThreadNumber();
             setName("Thread-TCP-Client-" + threadId + "-" + getId());
+            isThreadActive = true;
             super.start();
         }
     }
@@ -205,6 +208,7 @@ public class ClientThread extends Thread {
         final ConnectedClientInfo removed = connectedClients.remove(threadId);
         hostState.updateConnectedClients(connectedClients);
         log.info("Removed user with details {} from all connected users list", removed);
+        isThreadActive = false;
         try {
             socket.close();
         } catch (IOException ignore) {

@@ -99,7 +99,7 @@ public class SendSignalsThread extends Thread {
         log.info("Started client send events thread with PID {}", getId());
         try (final PrintWriter out = new PrintWriter(socket.getOutputStream(), true)) {
             printWriter = out;
-            while (socket.isConnected()) {
+            while (socket.isConnected() && clientThread.isAlive()) {
                 signalEventLoop();
             }
         } catch (SocketException ignored) {

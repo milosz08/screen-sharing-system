@@ -131,6 +131,7 @@ public class ServerDatagramSocket extends AbstractDatagramSocketThread {
                     log.info("Host datagram socket processed {} bytes", sentBytes);
                 }
                 logTimer = 0;
+                System.gc();
             }
             if (timer >= BILION) {
                 if (isShowing) {
@@ -158,6 +159,8 @@ public class ServerDatagramSocket extends AbstractDatagramSocketThread {
     public void abstractStopAndClear() {
         hostState.updateStreamingState(StreamingState.STOPPED);
         hostState.updateRealFpsBuffer(0);
+        sendPackagesQueue.clear();
+        System.gc();
     }
 
     @Override
