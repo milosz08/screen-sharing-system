@@ -6,6 +6,7 @@
 Secured screen sharing system created with low-level Socket API written in Java SE 1.8 with JCA, JCE and Swing UI. Uses
 event-based reactive programming with observer pattern supplied by [RxJava](https://github.com/ReactiveX/RxJava)
 library.
+
 [YouTube Demo](https://www.youtube.com/watch?v=zfW8Ah0KPZM&t=94s)
 
 ## Table of content
