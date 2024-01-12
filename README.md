@@ -91,7 +91,7 @@ All executable JAR files will be available in `.bin` directory.
 
 ## Project status
 
-Project is still in development.
+Project is finished.
 
 <a name="license"></a>
 
