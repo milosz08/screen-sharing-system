@@ -9,6 +9,8 @@ library.
 
 ## Table of content
 
+* [Package error correction system](#package-error-correction-system)
+* [Sequence diagram](#sequence-diagram)
 * [Host and Client window](#host-and-client-window)
 * [Clone and install](#clone-and-install)
 * [Prepare configuration and run](#prepare-configuration-and-run)
@@ -16,15 +18,36 @@ library.
 * [Project status](#project-status)
 * [License](#license)
 
+<a name="package-error-correction-system"></a>
+
+## Package error correction system
+
+App supports HD resolution, so each frame is split into smaller chunks due to the maximum UDP frame size (65kb). I
+decided to create simple error correction system, because UDP protocol can loose the packets which caused visible
+artifacts in result video stream.
+
+TL;DR: If the image fragments were not transmitted in the correct order, frame is not
+displayed in the user interface. Solves the problem of displaying artifacts in the image.
+
+<img src=".github/diagrams/host.png" width="600">
+<img src=".github/diagrams/client.png" width="600">
+
+<a name="sequence-diagram"></a>
+
+## Sequence diagram
+
+<img src=".github/diagrams/sequence.png" width="800">
+
 <a name="host-and-client-window"></a>
 
 ## Host and Client window
 
 * Host window
-  ![](https://github.com/milosz08/screen-sharing-system/blob/master/.github/host.png)
+  <img src=".github/host.png">
+
 
 * Client window
-  ![](https://github.com/milosz08/screen-sharing-system/blob/master/.github/client.png)
+  <img src=".github/client.png">
 
 <a name="clone-and-install"></a>
 
