@@ -26,7 +26,7 @@ App supports HD resolution, so each frame is split into smaller chunks due to th
 decided to create simple error correction system, because UDP protocol can loose the packets which caused visible
 artifacts in result video stream.
 
-TL;DR: If the image fragments were not transmitted in the correct order, frame is not
+*TL;DR:* If the image fragments were not transmitted in the correct order, frame is not
 displayed in the user interface. Solves the problem of displaying artifacts in the image.
 
 <img src=".github/diagrams/host.png" width="600">
