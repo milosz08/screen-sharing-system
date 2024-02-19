@@ -1,11 +1,10 @@
 # Screen sharing system
 
-[![](https://img.shields.io/badge/Made%20with-Java%20SE%201.8-brown.svg)](https://www.java.com/en/)&nbsp;&nbsp;
-[![](https://img.shields.io/badge/Build%20with-Maven%203.9.4-1abc9c.svg)](https://maven.apache.org//)&nbsp;&nbsp;
-
 Secured screen sharing system created with low-level Socket API written in Java SE 1.8 with JCA, JCE and Swing UI. Uses
 event-based reactive programming with observer pattern supplied by [RxJava](https://github.com/ReactiveX/RxJava)
 library.
+
+[YouTube Demo](https://www.youtube.com/watch?v=zfW8Ah0KPZM)
 
 ## Table of content
 
@@ -112,7 +111,7 @@ All executable JAR files will be available in `.bin` directory.
 
 ## Project status
 
-Project is still in development.
+Project is finished.
 
 <a name="license"></a>
 
