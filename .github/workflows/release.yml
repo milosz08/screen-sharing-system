@@ -35,11 +35,10 @@ jobs:
       - name: Clean build dir
         run: ./mvnw clean
 
-      - name: Install library
-        run: ./mvnw install -pl lib
-
-      - name: Package to JAR
-        run: ./mvnw package -pl client,host
+      - name: Install library and package to JAR
+        run: |
+          ./mvnw package install -pl lib
+          ./mvnw package -pl client,host
 
       - name: Create tag v${{ github.event.inputs.version }}
         uses: rickstaa/action-create-tag@v1
