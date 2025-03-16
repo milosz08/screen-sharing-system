@@ -91,7 +91,7 @@ $ ./mvnw package -pl client,host      # for UNIX
 .\mvnw.cmd package -pl client,host    # for Windows
 ```
 
-> [!TIP]
+> [!NOTE]
 > All executable JAR files will be available in `.bin` directory.
 
 5. To run host or client, type:
