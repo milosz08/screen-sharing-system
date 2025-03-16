@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2023 by MULTIPLE AUTHORS
- * Part of the CS study course project.
- */
 package pl.polsl.screensharing.lib.net;
 
 import lombok.Getter;
@@ -53,6 +49,8 @@ public abstract class AbstractTcpSocketThread<S extends Closeable> extends Threa
     }
 
     protected abstract void createTcpSocket() throws IOException;
+
     protected abstract void startExecutor();
+
     protected abstract void abstractStopAndClear();
 }

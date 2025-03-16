@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2023 by MULTIPLE AUTHORS
- * Part of the CS study course project.
- */
 package pl.polsl.screensharing.client.view.popup;
 
 import pl.polsl.screensharing.lib.gui.AbstractPopupDialog;
@@ -15,7 +11,7 @@ public class PasswordPopup extends JPanel {
 
     private final JAppPasswordTextField passwordTextField;
     private final JCheckBox passwordTogglerCheckbox;
-    private final String[] options = { "OK", "Cancel" };
+    private final String[] options = {"OK", "Cancel"};
 
     public PasswordPopup(AbstractPopupDialog root) {
         this.root = root;

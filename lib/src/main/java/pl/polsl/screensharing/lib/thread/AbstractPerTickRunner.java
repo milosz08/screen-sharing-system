@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2023 by MULTIPLE AUTHORS
- * Part of the CS study course project.
- */
 package pl.polsl.screensharing.lib.thread;
 
 import pl.polsl.screensharing.lib.SharedConstants;
@@ -37,5 +33,6 @@ public abstract class AbstractPerTickRunner extends Thread {
     }
 
     public abstract void onTickUpdate();
+
     public abstract void onUpdateFpsState(int fpsValue);
 }

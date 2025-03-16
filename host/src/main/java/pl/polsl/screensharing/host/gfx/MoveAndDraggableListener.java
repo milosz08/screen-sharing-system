@@ -1,8 +1,6 @@
-/*
- * Copyright (c) 2023 by MULTIPLE AUTHORS
- * Part of the CS study course project.
- */
 package pl.polsl.screensharing.host.gfx;
+
+import lombok.Setter;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,6 +15,7 @@ public class MoveAndDraggableListener extends MouseAdapter {
     private final Point mouseCoords;
     private final Point screenCoords;
 
+    @Setter
     private Dimension minSize;
     private boolean resizing;
     private boolean dragging;
@@ -32,10 +31,6 @@ public class MoveAndDraggableListener extends MouseAdapter {
 
     public void toogleActionResizingCapability(boolean isDisabledResizing) {
         this.isDisabledResizing = isDisabledResizing;
-    }
-
-    public void setMinSize(Dimension minSize) {
-        this.minSize = minSize;
     }
 
     @Override

@@ -1,8 +1,4 @@
 #!/usr/bin/sh
-#
-# Copyright (c) 2023 by MULTIPLE AUTHORS
-# Part of the CS study course project.
-#
 
 set -e
 set -u

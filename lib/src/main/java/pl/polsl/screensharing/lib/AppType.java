@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2023 by MULTIPLE AUTHORS
- * Part of the CS study course project.
- */
 package pl.polsl.screensharing.lib;
 
 import lombok.Getter;
@@ -15,7 +11,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public enum AppType {
     HOST("HOST", "HostIcon", "host.json", new Dimension(1280, 720)),
-    CLIENT("CLIENT", "ClientIcon", "client.json", new Dimension(1280, 720));
+    CLIENT("CLIENT", "ClientIcon", "client.json", new Dimension(1280, 720)),
+    ;
 
     private final String rootWindowName;
     private final String iconName;

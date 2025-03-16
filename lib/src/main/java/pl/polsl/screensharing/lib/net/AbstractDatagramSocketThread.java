@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2023 by MULTIPLE AUTHORS
- * Part of the CS study course project.
- */
 package pl.polsl.screensharing.lib.net;
 
 import lombok.Getter;
@@ -43,6 +39,8 @@ public abstract class AbstractDatagramSocketThread extends Thread {
     }
 
     public abstract void createDatagramSocket(byte[] secretKey, int port);
+
     protected abstract void abstractStopAndClear();
+
     protected abstract void initObservables();
 }

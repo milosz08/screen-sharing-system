@@ -1,8 +1,4 @@
 @echo off
-rem
-rem Copyright (c) 2023 by MULTIPLE AUTHORS
-rem Part of the CS study course project.
-rem
 
 setlocal enabledelayedexpansion
 

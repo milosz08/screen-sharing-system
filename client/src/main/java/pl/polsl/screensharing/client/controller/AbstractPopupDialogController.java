@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2023 by MULTIPLE AUTHORS
- * Part of the CS study course project.
- */
 package pl.polsl.screensharing.client.controller;
 
 import lombok.RequiredArgsConstructor;
@@ -65,5 +61,6 @@ abstract class AbstractPopupDialogController implements ConnectionHandler {
     }
 
     protected abstract ConnectionDetails createConnectionParameters();
+
     protected abstract void onSuccessConnect(ConnectionDetails connectionDetails);
 }

@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2023 by MULTIPLE AUTHORS
- * Part of the CS study course project.
- */
 package pl.polsl.screensharing.client.view.dialog;
 
 import lombok.Getter;
@@ -14,8 +10,8 @@ import pl.polsl.screensharing.lib.AppType;
 import pl.polsl.screensharing.lib.gui.AbstractPopupDialog;
 import pl.polsl.screensharing.lib.gui.CellEditableModel;
 import pl.polsl.screensharing.lib.gui.component.JAppIconButton;
-import pl.polsl.screensharing.lib.icon.LibIcon;
 import pl.polsl.screensharing.lib.gui.input.AppCellEditor;
+import pl.polsl.screensharing.lib.icon.LibIcon;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -36,7 +32,7 @@ public class LastConnectionsWindow extends AbstractPopupDialog {
     private final JAppIconButton removeRowButton;
     private final JAppIconButton removeAllRowsButton;
 
-    private final String[] tableHeaders = { "Host", "Client", "Username", "Description" };
+    private final String[] tableHeaders = {"Host", "Client", "Username", "Description"};
 
     private final JTable table;
     private final DefaultTableModel tableModel;

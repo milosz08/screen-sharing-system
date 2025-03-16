@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2023 by MULTIPLE AUTHORS
- * Part of the CS study course project.
- */
 package pl.polsl.screensharing.host.view.dialog;
 
 import lombok.Getter;
@@ -34,7 +30,7 @@ public class ParticipantsDialogWindow extends AbstractPopupDialog {
     private final JAppIconButton removeAllButton;
     private final JAppIconButton cancelButton;
 
-    private final String[] tableHeaders = { "Thread ID", "Client IP", "Username" };
+    private final String[] tableHeaders = {"Thread ID", "Client IP", "Username"};
 
     private final JTable table;
     private final DefaultTableModel tableModel;

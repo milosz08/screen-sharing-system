@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2023 by MULTIPLE AUTHORS
- * Part of the CS study course project.
- */
 package pl.polsl.screensharing.client.net;
 
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +29,7 @@ public class ClientDatagramSocket extends AbstractDatagramSocketThread {
     private VisibilityState visibilityState;
 
     public ClientDatagramSocket(
-            ClientWindow clientWindow, VideoCanvas videoCanvas, VideoCanvasController videoCanvasController
+        ClientWindow clientWindow, VideoCanvas videoCanvas, VideoCanvasController videoCanvasController
     ) {
         super();
         clientState = clientWindow.getClientState();
@@ -83,7 +79,7 @@ public class ClientDatagramSocket extends AbstractDatagramSocketThread {
 
                 // odkodowanie danych przy użyciu klucza AES oraz zaszyfrowanego w nim IV (z uwagi na CTR
                 final byte[] decrypted = cryptoSymmetricHelper
-                        .decrypt(receivePacket.getData(), receivePacket.getLength());
+                    .decrypt(receivePacket.getData(), receivePacket.getLength());
 
                 // przenieś odszyfrowane 3 bajty debugujące do zmiennych
                 countOfPackages = decrypted[0];
@@ -100,7 +96,7 @@ public class ClientDatagramSocket extends AbstractDatagramSocketThread {
 
                 // dodaj odszyfrowane dane z pominięciem bajtów debugujących i 128 bitowego IV do bufora
                 receivedDataBuffer.write(decrypted, debugBytesLength,
-                        decrypted.length - debugBytesLength);
+                    decrypted.length - debugBytesLength);
 
                 // jeśli wykryje, że klatki są w niewłaściwej kolejności, ustaw klatkę jako corrupted
                 if (prevPackageIteration < packageIteration - 1) {

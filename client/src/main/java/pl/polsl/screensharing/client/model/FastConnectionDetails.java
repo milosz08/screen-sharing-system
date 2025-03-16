@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2023 by MULTIPLE AUTHORS
- * Part of the CS study course project.
- */
 package pl.polsl.screensharing.client.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -49,7 +45,7 @@ public class FastConnectionDetails {
         isMachineIpAddress = true;
         clientPort = Utils.getRandomPortOrDefault(443);
         isRandomPort = true;
-        username = SharedConstants.DEFAULT_USERNAME + RandomStringUtils.randomNumeric(4);
+        username = SharedConstants.DEFAULT_USERNAME + RandomStringUtils.insecure().nextNumeric(4);
         description = StringUtils.EMPTY;
     }
 

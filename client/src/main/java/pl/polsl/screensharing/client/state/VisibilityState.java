@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2023 by MULTIPLE AUTHORS
- * Part of the CS study course project.
- */
 package pl.polsl.screensharing.client.state;
 
 import lombok.Getter;
@@ -15,7 +11,8 @@ import java.util.Arrays;
 public enum VisibilityState {
     VISIBLE(null, StreamingSignalState.STREAMING),
     WAITING_FOR_CONNECTION("Waiting for connection with host", StreamingSignalState.STOPPED),
-    TEMPORARY_HIDDEN("Screen temporary hidden by host", StreamingSignalState.SCREEN_HIDDEN);
+    TEMPORARY_HIDDEN("Screen temporary hidden by host", StreamingSignalState.SCREEN_HIDDEN),
+    ;
 
     private final String state;
     private final StreamingSignalState streamingSignalState;
