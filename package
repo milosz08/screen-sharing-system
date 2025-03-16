@@ -1,9 +1,0 @@
-#!/usr/bin/sh
-
-set -e
-set -u
-
-./mvnw clean package install
-
-./mvnw -pl "client" clean assembly:assembly
-./mvnw -pl "host" clean assembly:assembly

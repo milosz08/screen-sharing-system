@@ -1,3 +1,0 @@
-@echo off
-
-start java -jar scs-client-1.0.0-min.jar -Xms1g -Xmx1g
