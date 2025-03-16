@@ -1,8 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!--
-  ~ Copyright (c) 2023 by MULTIPLE AUTHORS
-  ~ Part of the CS study course project.
-  -->
 <configuration>
   <import class="ch.qos.logback.core.rolling.RollingFileAppender"/>
   <import class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy"/>
