@@ -52,7 +52,7 @@ jobs:
         with:
           files: |
             ${{ github.workspace }}/.bin/*.jar
-            ${{ github.workspace }}/.start/
+            ${{ github.workspace }}/.start/**
           tag_name: v${{ github.event.inputs.version }}
           name: Release ${{ github.event.inputs.version }}
           token: ${{ secrets.GITHUB_TOKEN }}
