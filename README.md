@@ -10,12 +10,10 @@ library.
 ## Table of content
 
 * [Project info](#project-info)
-* [Sequence diagram](#sequence-diagram)
 * [Gallery](#gallery)
 * [Clone and install](#clone-and-install)
 * [Build and run](#build-and-run)
 * [Tech stack](#tech-stack)
-* [Project status](#project-status)
 * [License](#license)
 
 ## Project info
